@@ -50,18 +50,18 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 5 Metrics Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5">
         {steps.map((item, i) => (
           <div
             key={i}
             onClick={() => setCurrentPage(item.page)}
-            className="bg-white border border-[#DBEAFE] rounded-md p-4 flex flex-col justify-between hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer group h-[136px]"
+            className="bg-white border border-[#DBEAFE] rounded-md p-3.5 sm:p-4 flex flex-col justify-between hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer group min-h-[120px] sm:h-[136px]"
           >
-            <div className="text-xs font-medium text-slate-500">{item.step}</div>
+            <div className="text-[11px] sm:text-xs font-medium text-slate-500">{item.step}</div>
             <div>
-              <div className="text-xl font-bold text-slate-900 tracking-tight">{item.count}</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">{item.count}</div>
               {item.sub ? (
-                <div className="text-xs text-slate-400 mt-1 truncate">{item.sub}</div>
+                <div className="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">{item.sub}</div>
               ) : (
                 <div className="h-4" />
               )}
@@ -89,7 +89,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Section 1: Brief Menunggu Persetujuan */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between pb-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
             <div className="flex items-center gap-2">
               <span className="text-base font-semibold text-slate-900">
                 1. Brief Menunggu Persetujuan
@@ -98,7 +98,7 @@ export const DashboardPage: React.FC = () => {
                 4 Menunggu
               </span>
             </div>
-            <span className="text-sm text-slate-400">Target produksi artikel</span>
+            <span className="text-xs sm:text-sm text-slate-400">Target produksi artikel</span>
           </div>
 
           {/* Brief Items List */}
@@ -120,7 +120,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('brief')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Tinjau Brief
               </button>
@@ -143,7 +143,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('brief')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Tinjau Brief
               </button>
@@ -166,7 +166,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('brief')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Tinjau Brief
               </button>
@@ -179,7 +179,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Section 2: Draf Siap Diperiksa */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between pb-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
             <div className="flex items-center gap-2">
               <span className="text-base font-semibold text-slate-900">
                 2. Draf Siap Diperiksa
@@ -188,7 +188,7 @@ export const DashboardPage: React.FC = () => {
                 3 Siap Salin
               </span>
             </div>
-            <span className="text-sm text-slate-400">Naskah AI siap verifikasi editor</span>
+            <span className="text-xs sm:text-sm text-slate-400">Naskah AI siap verifikasi editor</span>
           </div>
 
           {/* Draf Items List */}
@@ -211,7 +211,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('draft')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Sunting Draf
               </button>
@@ -235,7 +235,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('draft')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Sunting Draf
               </button>
@@ -259,7 +259,7 @@ export const DashboardPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setCurrentPage('draft')}
-                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-center"
+                className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
                 Sunting Draf
               </button>

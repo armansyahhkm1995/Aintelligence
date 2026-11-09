@@ -206,7 +206,7 @@ export const ClusterPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-1">
+            <div className="flex flex-wrap items-center justify-end gap-2.5 pt-1">
               <button
                 onClick={() =>
                   handleOpenRejectModal({
@@ -221,7 +221,7 @@ export const ClusterPage: React.FC = () => {
                     supportingKeywords: [],
                   })
                 }
-                className="h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
+                className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
               >
                 Tolak
               </button>
@@ -239,13 +239,13 @@ export const ClusterPage: React.FC = () => {
                     supportingKeywords: [],
                   })
                 }
-                className="h-[36px] px-4 bg-white border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-medium rounded-[6px] transition-colors"
+                className="flex-1 sm:flex-initial h-[36px] px-4 bg-white border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-medium rounded-[6px] transition-colors"
               >
                 Perbarui Cluster
               </button>
               <button
                 onClick={handleCreateBrief}
-                className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+                className="w-full sm:w-auto h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
               >
                 Buat Brief
               </button>
@@ -328,7 +328,7 @@ export const ClusterPage: React.FC = () => {
                 Tindakan diperlukan agar tidak membuat dua artikel yang bersaing di mesin pencari.
               </span>
 
-              <div className="flex items-center gap-2.5 self-end sm:self-center">
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   onClick={() =>
                     handleOpenRejectModal({
@@ -343,13 +343,13 @@ export const ClusterPage: React.FC = () => {
                       supportingKeywords: [],
                     })
                   }
-                  className="h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
+                  className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
                 >
                   Tolak
                 </button>
                 <button
                   onClick={() => setIsSeparatingKeywords(!isSeparatingKeywords)}
-                  className={`h-[36px] px-4 border rounded-[6px] text-xs font-medium transition-colors ${
+                  className={`flex-1 sm:flex-initial h-[36px] px-4 border rounded-[6px] text-xs font-medium transition-colors ${
                     isSeparatingKeywords
                       ? 'bg-amber-50 border-amber-300 text-amber-800 font-semibold'
                       : 'bg-white border-[#DBEAFE] hover:bg-slate-50 text-slate-800'
@@ -359,7 +359,7 @@ export const ClusterPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {}}
-                  className="h-[36px] px-4 bg-[#9A3412] hover:bg-[#7C2D12] text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+                  className="w-full sm:w-auto h-[36px] px-4 bg-[#9A3412] hover:bg-[#7C2D12] text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
                 >
                   Abaikan
                 </button>
@@ -426,7 +426,7 @@ export const ClusterPage: React.FC = () => {
                 Saran AI: Tolak cluster ini atau perbarui artikel lama di CMS RRI.
               </span>
 
-              <div className="flex items-center gap-2.5 self-end sm:self-center">
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   onClick={() =>
                     handleOpenRejectModal({
@@ -441,7 +441,7 @@ export const ClusterPage: React.FC = () => {
                       supportingKeywords: [],
                     })
                   }
-                  className="h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
+                  className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
                 >
                   Tolak
                 </button>
@@ -461,7 +461,7 @@ export const ClusterPage: React.FC = () => {
                       cmsPublishDate: '12 Jan 2026',
                     })
                   }
-                  className="h-[36px] px-4 bg-[#B91C1C] hover:bg-rose-800 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+                  className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#B91C1C] hover:bg-rose-800 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
                 >
                   Tetap Lanjutkan
                 </button>

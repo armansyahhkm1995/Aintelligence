@@ -194,11 +194,11 @@ export const SettingsPage: React.FC = () => {
       {/* COMP-TodoList-Editor: 949px Standard Container */}
       <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-5">
         {/* Segmented Pill Tab Navigation exactly matching Figma */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 grid grid-cols-3 gap-1 bg-white select-none">
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-3 gap-1 bg-white select-none overflow-x-auto max-w-full">
           <button
             type="button"
             onClick={() => setActiveTab('filter')}
-            className={`h-[36px] rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center ${
+            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
               activeTab === 'filter'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -210,7 +210,7 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('bukugaya')}
-            className={`h-[36px] rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center ${
+            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
               activeTab === 'bukugaya'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -222,7 +222,7 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('api')}
-            className={`h-[36px] rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center ${
+            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
               activeTab === 'api'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -317,7 +317,8 @@ export const SettingsPage: React.FC = () => {
 
             {/* Main Table */}
             <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
-              <table className="w-full text-left text-xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[650px]">
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
                     <th className="py-3 px-4 font-semibold">Nama Aturan</th>
@@ -418,6 +419,7 @@ export const SettingsPage: React.FC = () => {
                   })}
                 </tbody>
               </table>
+              </div>
 
               {/* Pagination Bar */}
               <div className="p-3.5 bg-white border-t border-[#DBEAFE] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">

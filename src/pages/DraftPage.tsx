@@ -56,9 +56,9 @@ export const DraftPage: React.FC = () => {
         {/* Left Column (lg:col-span-7) */}
         <div className="lg:col-span-7 space-y-3">
           {/* Rich Text Toolbar */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-2 flex flex-wrap items-center gap-1.5 shadow-xs">
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-2 flex items-center gap-1.5 shadow-xs overflow-x-auto max-w-full">
             {/* Heading Selector */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 type="button"
                 className="h-[32px] px-3 bg-white border border-[#DBEAFE] rounded text-xs font-semibold text-slate-700 flex items-center gap-1.5 hover:bg-slate-50"
@@ -71,7 +71,7 @@ export const DraftPage: React.FC = () => {
             {/* Active B button (Solid blue) */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center shadow-xs"
+              className="h-[32px] w-[32px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0"
             >
               B
             </button>
@@ -79,7 +79,7 @@ export const DraftPage: React.FC = () => {
             {/* I button */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 italic font-serif font-bold text-xs flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 italic font-serif font-bold text-xs flex items-center justify-center shrink-0"
             >
               I
             </button>
@@ -87,51 +87,51 @@ export const DraftPage: React.FC = () => {
             {/* U button */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 underline font-bold text-xs flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 underline font-bold text-xs flex items-center justify-center shrink-0"
             >
               U
             </button>
 
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
             >
               <AlignLeft className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
             >
               <AlignCenter className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
             >
               <AlignRight className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center"
+              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
             >
               <AlignJustify className="w-4 h-4" />
             </button>
 
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600"
+              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
             >
               H1
             </button>
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600"
+              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
             >
               H2
             </button>
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600"
+              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
             >
               H3
             </button>

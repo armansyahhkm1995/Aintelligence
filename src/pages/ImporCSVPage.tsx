@@ -127,7 +127,8 @@ export const ImporCSVPage: React.FC = () => {
 
           {/* Preview Table */}
           <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
-            <table className="w-full text-left text-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[700px]">
               <thead>
                 <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
                   <th className="py-3 px-4 font-semibold">Kata Kunci</th>
@@ -194,19 +195,20 @@ export const ImporCSVPage: React.FC = () => {
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-2">
             <button
               onClick={() => {}}
-              className="h-[40px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
+              className="w-full sm:w-auto h-[40px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
             >
               Ganti CSV
             </button>
             <button
               onClick={handleImportSubmit}
-              className="h-[40px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+              className="w-full sm:w-auto h-[40px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
             >
               Import Kata Kunci
             </button>
@@ -233,7 +235,8 @@ export const ImporCSVPage: React.FC = () => {
 
         {/* Table matching Figma */}
         <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
-          <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[650px]">
             <thead>
               <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
                 <th className="py-3 px-4 font-semibold">Nama CSV</th>
@@ -343,6 +346,7 @@ export const ImporCSVPage: React.FC = () => {
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

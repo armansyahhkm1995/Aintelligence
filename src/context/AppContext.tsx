@@ -37,6 +37,8 @@ interface AppContextType {
   // Navigation & Page State
   currentPage: AppPage
   setCurrentPage: (page: AppPage) => void
+  isMobileNavOpen: boolean
+  setIsMobileNavOpen: (open: boolean) => void
 
   // Auth
   currentUser: User
@@ -177,6 +179,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Navigation
   const [currentPage, setCurrentPage] = useState<AppPage>('dashboard')
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false)
 
   // Auth
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true)
@@ -454,6 +457,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         currentPage,
         setCurrentPage,
+        isMobileNavOpen,
+        setIsMobileNavOpen,
         currentUser,
         isAuthenticated,
         login,

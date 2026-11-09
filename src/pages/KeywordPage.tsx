@@ -366,7 +366,7 @@ export const KeywordPage: React.FC = () => {
 
           {/* Pagination Bar */}
           <div className="p-3.5 bg-white border-t border-[#DBEAFE] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between w-full sm:w-auto gap-2">
               <span>Menampilkan 1-5 dari 42 data</span>
               <div className="relative">
                 <select className="h-[28px] pl-2 pr-6 bg-white border border-[#DBEAFE] rounded text-xs text-slate-700 appearance-none cursor-pointer">
@@ -378,24 +378,24 @@ export const KeywordPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <button className="h-[28px] px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs">
+            <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-0.5">
+              <button className="h-[28px] px-2.5 sm:px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs shrink-0">
                 Sebelumnya
               </button>
-              <button className="h-[28px] w-[28px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center">
+              <button className="h-[28px] w-[28px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center shrink-0">
                 1
               </button>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center">
+              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
                 2
               </button>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center">
+              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
                 3
               </button>
-              <span className="px-1 text-slate-400">...</span>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center">
+              <span className="px-1 text-slate-400 shrink-0">...</span>
+              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
                 10
               </button>
-              <button className="h-[28px] px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs">
+              <button className="h-[28px] px-2.5 sm:px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs shrink-0">
                 Selanjutnya
               </button>
             </div>
