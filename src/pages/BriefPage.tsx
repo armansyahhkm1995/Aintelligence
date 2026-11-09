@@ -4,7 +4,8 @@ import { useToast } from '../context/ToastContext'
 import {
   GripVertical,
   Trash2,
-  PlusCircle,
+  Plus,
+  X,
   ExternalLink,
   ChevronDown,
 } from 'lucide-react'
@@ -43,6 +44,42 @@ export const BriefPage: React.FC = () => {
   ])
   const [openLevelId, setOpenLevelId] = useState<string | null>(null)
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
+
+  // Cluster Asal state with autocomplete
+  const [clustersList, setClustersList] = useState<string[]>([
+    'Cluster #12 (Reksadana)',
+  ])
+  const [isAddingCluster, setIsAddingCluster] = useState(false)
+  const [clusterInput, setClusterInput] = useState('')
+
+  const allClusterSuggestions = [
+    'Cluster #08 (Pasar Uang)',
+    'Cluster #15 (Investasi Saham)',
+    'Cluster #22 (Dana Pensiun)',
+    'Cluster #04 (Obligasi Negara)',
+    'Cluster #09 (IHSG Harian)',
+    'Cluster #18 (Kripto & Aset Digital)',
+    'Cluster #25 (Fintech & P2P)',
+  ]
+
+  const filteredClusterSuggestions = allClusterSuggestions.filter(
+    (c) =>
+      !clustersList.includes(c) &&
+      c.toLowerCase().includes(clusterInput.toLowerCase())
+  )
+
+  const handleAddCluster = (clusterName: string) => {
+    if (clusterName && !clustersList.includes(clusterName)) {
+      setClustersList((prev) => [...prev, clusterName])
+      showSuccess('Cluster Topik', `Berhasil menambahkan ${clusterName} ke brief.`)
+    }
+    setClusterInput('')
+    setIsAddingCluster(false)
+  }
+
+  const handleRemoveCluster = (clusterName: string) => {
+    setClustersList((prev) => prev.filter((c) => c !== clusterName))
+  }
 
   const handleDragStart = (idx: number) => {
     setDraggedIdx(idx)
@@ -359,12 +396,82 @@ export const BriefPage: React.FC = () => {
                   600 - 800 kata
                 </span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                <span className="text-[#64748B]">Cluster Asal:</span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                  <span>Cluster #12 (Reksadana)</span>
-                  <PlusCircle className="w-3.5 h-3.5 text-[#1866EF]" />
-                </span>
+              <div className="flex items-center justify-between py-1 border-b border-slate-50 gap-2">
+                <span className="text-[#64748B] shrink-0">Cluster Asal:</span>
+                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                  {clustersList.map((cl, idx) => (
+                    <span
+                      key={cl}
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]"
+                    >
+                      <span>{cl}</span>
+                      {idx > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveCluster(cl)}
+                          className="hover:text-red-600 transition-colors ml-0.5"
+                          title="Hapus Cluster"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </span>
+                  ))}
+
+                  {/* Autocomplete Input or Plus Pill Button */}
+                  {isAddingCluster ? (
+                    <div className="relative inline-block">
+                      <input
+                        type="text"
+                        autoFocus
+                        value={clusterInput}
+                        onChange={(e) => setClusterInput(e.target.value)}
+                        placeholder="Ketik cluster..."
+                        className="h-[24px] px-2.5 text-xs bg-white border border-[#1866EF] rounded-full text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 w-[140px]"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            if (filteredClusterSuggestions.length > 0) {
+                              handleAddCluster(filteredClusterSuggestions[0])
+                            } else if (clusterInput.trim()) {
+                              handleAddCluster(clusterInput.trim())
+                            }
+                          } else if (e.key === 'Escape') {
+                            setIsAddingCluster(false)
+                          }
+                        }}
+                        onBlur={() => {
+                          setTimeout(() => setIsAddingCluster(false), 200)
+                        }}
+                      />
+                      {/* Autocomplete Dropdown */}
+                      {filteredClusterSuggestions.length > 0 && (
+                        <div className="absolute right-0 top-[28px] w-[210px] bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg py-1 z-30 max-h-[160px] overflow-y-auto">
+                          {filteredClusterSuggestions.map((sug) => (
+                            <button
+                              key={sug}
+                              type="button"
+                              onMouseDown={() => handleAddCluster(sug)}
+                              className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-slate-800 flex items-center justify-between transition-colors"
+                            >
+                              <span>{sug}</span>
+                              <Plus className="w-3 h-3 text-[#1866EF]" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingCluster(true)}
+                      className="inline-flex items-center justify-center h-[22px] w-[22px] rounded-full bg-[#EFF6FF] text-[#1866EF] border border-[#BFDBFE] hover:bg-blue-100 transition-colors"
+                      title="Tambah Cluster Lain"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="flex items-center justify-between py-1 border-b border-slate-50">
                 <span className="text-[#64748B]">Tingkat Kesulitan (KD):</span>

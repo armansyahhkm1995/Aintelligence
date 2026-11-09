@@ -1,15 +1,63 @@
 import React, { useState } from 'react'
-import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import {
   Upload,
   ChevronDown,
 } from 'lucide-react'
 
+interface PreviewItem {
+  id: string
+  keyword: string
+  volumeText: string
+  volumeNum: number
+  kd: number
+  intent: 'Informational' | 'Transactional' | 'Commercial'
+  status: 'Valid' | 'Tidak Valid' | 'Duplikat'
+  note: string
+}
+
+const INITIAL_PREVIEW_ITEMS: PreviewItem[] = [
+  {
+    id: 'prv-1',
+    keyword: 'cara daftar bansos kemensos online 2027',
+    volumeText: '33.100',
+    volumeNum: 33100,
+    kd: 48,
+    intent: 'Informational',
+    status: 'Valid',
+    note: 'Format data lengkap & siap diimpor',
+  },
+  {
+    id: 'prv-2',
+    keyword: 'bantuan subsidi upah pekerja kemnaker',
+    volumeText: 'Teks: N/A',
+    volumeNum: 0,
+    kd: 35,
+    intent: 'Transactional',
+    status: 'Tidak Valid',
+    note: 'Kolom volume bukan angka',
+  },
+  {
+    id: 'prv-3',
+    keyword: 'cek desil bansos dtks jateng online',
+    volumeText: '14.200',
+    volumeNum: 14200,
+    kd: 42,
+    intent: 'Commercial',
+    status: 'Duplikat',
+    note: 'Update volume/difficulty',
+  },
+]
+
 export const ImporCSVPage: React.FC = () => {
-  const { setCurrentPage } = useApp()
   const { showSuccess } = useToast()
   const [isUploading, setIsUploading] = useState<boolean>(false)
+
+  // Filter States (empty string displays the placeholder)
+  const [filterStatus, setFilterStatus] = useState<string>('')
+  const [filterVolume, setFilterVolume] = useState<string>('')
+  const [filterKd, setFilterKd] = useState<string>('')
+  const [filterIntent, setFilterIntent] = useState<string>('')
 
   const handleSimulateFilePick = () => {
     setIsUploading(true)
@@ -19,10 +67,28 @@ export const ImporCSVPage: React.FC = () => {
     }, 800)
   }
 
-  const handleImportSubmit = () => {
-    showSuccess('Manajemen kata kunci', 'Aturan kelayakan berhasil disimpan.')
-    setCurrentPage('keyword')
+  const handleClearFilters = () => {
+    setFilterStatus('')
+    setFilterVolume('')
+    setFilterKd('')
+    setFilterIntent('')
   }
+
+  // Filter logic
+  const filteredPreviewItems = INITIAL_PREVIEW_ITEMS.filter((item) => {
+    if (filterStatus && item.status !== filterStatus) return false
+    if (filterVolume) {
+      if (filterVolume === '> 10.000' && item.volumeNum <= 10000) return false
+      if (filterVolume === '< 10.000' && (item.volumeNum >= 10000 || item.volumeNum === 0)) return false
+    }
+    if (filterKd) {
+      if (filterKd === '< 30%' && item.kd >= 30) return false
+      if (filterKd === '30% - 60%' && (item.kd < 30 || item.kd > 60)) return false
+      if (filterKd === '> 60%' && item.kd <= 60) return false
+    }
+    if (filterIntent && item.intent !== filterIntent) return false
+    return true
+  })
 
   return (
     <div className="space-y-6">
@@ -53,7 +119,7 @@ export const ImporCSVPage: React.FC = () => {
             <button
               onClick={handleSimulateFilePick}
               disabled={isUploading}
-              className="h-[40px] px-6 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+              className="h-[40px] px-6 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs cursor-pointer"
             >
               {isUploading ? 'Memproses Berkas...' : 'Pilih File CSV dari Komputer'}
             </button>
@@ -76,50 +142,80 @@ export const ImporCSVPage: React.FC = () => {
             </span>
           </div>
 
-          {/* Filter Row: 4 Dropdowns + Bersihkan Filter */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-            <div className="relative">
-              <select className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-700 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
-                <option>Status Validasi</option>
-                <option>Valid</option>
-                <option>Tidak Valid</option>
-                <option>Duplikat</option>
+          {/* Filter Row: 4 Dropdowns + Hug Content Clear Filter */}
+          <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3">
+            {/* Dropdown 1: Status Validasi */}
+            <div className="relative flex-1 min-w-[140px] w-full sm:w-auto">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterStatus ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
+              >
+                <option value="" disabled hidden>Status Validasi</option>
+                <option value="Valid">Valid</option>
+                <option value="Tidak Valid">Tidak Valid</option>
+                <option value="Duplikat">Duplikat</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
-              <select className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-700 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
-                <option>Volume</option>
-                <option>&gt; 10.000</option>
-                <option>&lt; 10.000</option>
+            {/* Dropdown 2: Volume */}
+            <div className="relative flex-1 min-w-[120px] w-full sm:w-auto">
+              <select
+                value={filterVolume}
+                onChange={(e) => setFilterVolume(e.target.value)}
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterVolume ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
+              >
+                <option value="" disabled hidden>Volume</option>
+                <option value="> 10.000">&gt; 10.000</option>
+                <option value="< 10.000">&lt; 10.000</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
-              <select className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-700 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
-                <option>Kesulitan Kata Kunci</option>
-                <option>&lt; 30%</option>
-                <option>30% - 60%</option>
-                <option>&gt; 60%</option>
+            {/* Dropdown 3: Kesulitan Kata Kunci */}
+            <div className="relative flex-1 min-w-[160px] w-full sm:w-auto">
+              <select
+                value={filterKd}
+                onChange={(e) => setFilterKd(e.target.value)}
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterKd ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
+              >
+                <option value="" disabled hidden>Kesulitan Kata Kunci</option>
+                <option value="< 30%">&lt; 30%</option>
+                <option value="30% - 60%">30% - 60%</option>
+                <option value="> 60%">&gt; 60%</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
-              <select className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-700 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
-                <option>Intensi</option>
-                <option>Informational</option>
-                <option>Transactional</option>
-                <option>Commercial</option>
+            {/* Dropdown 4: Intensi */}
+            <div className="relative flex-1 min-w-[130px] w-full sm:w-auto">
+              <select
+                value={filterIntent}
+                onChange={(e) => setFilterIntent(e.target.value)}
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterIntent ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
+              >
+                <option value="" disabled hidden>Intensi</option>
+                <option value="Informational">Informational</option>
+                <option value="Transactional">Transactional</option>
+                <option value="Commercial">Commercial</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
+            {/* Bersihkan Filter Button (Hug content) */}
             <button
               type="button"
-              className="w-full h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors flex items-center justify-center"
+              onClick={handleClearFilters}
+              className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors flex items-center justify-center shrink-0 whitespace-nowrap cursor-pointer self-start sm:self-auto"
             >
               Bersihkan Filter
             </button>
@@ -129,88 +225,68 @@ export const ImporCSVPage: React.FC = () => {
           <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs min-w-[700px]">
-              <thead>
-                <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
-                  <th className="py-3 px-4 font-semibold">Kata Kunci</th>
-                  <th className="py-3 px-4 font-semibold">Volume</th>
-                  <th className="py-3 px-4 font-semibold">Kesulitan Kata Kunci</th>
-                  <th className="py-3 px-4 font-semibold">Intensi</th>
-                  <th className="py-3 px-4 font-semibold">Status Validasi</th>
-                  <th className="py-3 px-4 font-semibold">Keterangan Validasi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {/* Row 1: Valid */}
-                <tr className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-4 font-medium text-slate-900">
-                    cara daftar bansos kemensos online 2027
-                  </td>
-                  <td className="py-3.5 px-4 font-mono text-slate-900">33.100</td>
-                  <td className="py-3.5 px-4 font-mono text-slate-900">48%</td>
-                  <td className="py-3.5 px-4 text-slate-700">Informational</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                      Valid
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-600">
-                    Format data lengkap & siap diimpor
-                  </td>
-                </tr>
-
-                {/* Row 2: Tidak Valid */}
-                <tr className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-4 font-medium text-slate-900">
-                    bantuan subsidi upah pekerja kemnaker
-                  </td>
-                  <td className="py-3.5 px-4 font-mono font-medium text-[#EF4444]">Teks: N/A</td>
-                  <td className="py-3.5 px-4 font-mono text-slate-900">35%</td>
-                  <td className="py-3.5 px-4 text-slate-700">Transaksional</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
-                      Tidak Valid
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-600">
-                    Kolom volume bukan angka
-                  </td>
-                </tr>
-
-                {/* Row 3: Duplikat */}
-                <tr className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-4 font-medium text-slate-900">
-                    cek desil bansos dtks jateng online
-                  </td>
-                  <td className="py-3.5 px-4 font-mono text-slate-900">14.200</td>
-                  <td className="py-3.5 px-4 font-mono text-slate-900">42%</td>
-                  <td className="py-3.5 px-4 text-slate-700">Komersial</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                      Duplikat
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-600">
-                    Update volume/difficulty
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                <thead>
+                  <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
+                    <th className="py-3 px-4 font-semibold">Kata Kunci</th>
+                    <th className="py-3 px-4 font-semibold">Volume</th>
+                    <th className="py-3 px-4 font-semibold">Kesulitan Kata Kunci</th>
+                    <th className="py-3 px-4 font-semibold">Intensi</th>
+                    <th className="py-3 px-4 font-semibold">Status Validasi</th>
+                    <th className="py-3 px-4 font-semibold">Keterangan Validasi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {filteredPreviewItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3.5 px-4 font-medium text-slate-900">
+                        {item.keyword}
+                      </td>
+                      <td className={`py-3.5 px-4 font-mono ${item.status === 'Tidak Valid' ? 'font-medium text-[#EF4444]' : 'text-slate-900'}`}>
+                        {item.volumeText}
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-900">{item.kd}%</td>
+                      <td className="py-3.5 px-4 text-slate-700">{item.intent}</td>
+                      <td className="py-3.5 px-4">
+                        {item.status === 'Valid' && (
+                          <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
+                            Valid
+                          </span>
+                        )}
+                        {item.status === 'Tidak Valid' && (
+                          <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                            Tidak Valid
+                          </span>
+                        )}
+                        {item.status === 'Duplikat' && (
+                          <span className="inline-block px-3 py-0.5 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                            Duplikat
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600">
+                        {item.note}
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredPreviewItems.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-xs text-slate-400">
+                        Tidak ada baris data pratinjau yang cocok dengan filter yang dipilih.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-2">
+          {/* Action Buttons: ONLY Ganti CSV (Import Kata Kunci removed per user request) */}
+          <div className="flex items-center justify-end gap-3 pt-2">
             <button
-              onClick={() => {}}
-              className="w-full sm:w-auto h-[40px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
+              onClick={handleSimulateFilePick}
+              className="w-full sm:w-auto h-[40px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors cursor-pointer"
             >
               Ganti CSV
-            </button>
-            <button
-              onClick={handleImportSubmit}
-              className="w-full sm:w-auto h-[40px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-            >
-              Import Kata Kunci
             </button>
           </div>
         </div>
@@ -237,26 +313,100 @@ export const ImporCSVPage: React.FC = () => {
         <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs min-w-[650px]">
-            <thead>
-              <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
-                <th className="py-3 px-4 font-semibold">Nama CSV</th>
-                <th className="py-3 px-4 font-semibold">Pengunggah</th>
-                <th className="py-3 px-4 font-semibold">Statistik Hasil Impor</th>
-                <th className="py-3 px-4 font-semibold">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
-              {/* Row 1 */}
-              <tr className="hover:bg-slate-50/70 transition-colors">
-                <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
-                  semrush_export_nov.csv
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="font-semibold text-slate-900">Budi Prasetyo (Editor)</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="flex flex-col gap-1.5">
+              <thead>
+                <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
+                  <th className="py-3 px-4 font-semibold">Nama CSV</th>
+                  <th className="py-3 px-4 font-semibold">Pengunggah</th>
+                  <th className="py-3 px-4 font-semibold">Statistik Hasil Impor</th>
+                  <th className="py-3 px-4 font-semibold">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {/* Row 1 */}
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
+                    semrush_export_nov.csv
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-slate-900">Budi Prasetyo (Editor)</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                          5.000 Total
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
+                          4.800 Berhasil
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                          150 Duplikat
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                          50 Gagal
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <button
+                      onClick={() => {}}
+                      className="h-[36px] px-4 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors cursor-pointer"
+                    >
+                      Unduh Log Galat
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Row 2 */}
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
+                    semrush_mudik_transjawa_2027.csv
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-slate-900">Cameron Newton (Editor)</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                          5.000 Total
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
+                          4.800 Berhasil
+                        </span>
+                      </div>
+                      <div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                          150 Duplikat
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <button
+                      onClick={() => {}}
+                      className="h-[36px] px-4 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors cursor-pointer"
+                    >
+                      Unduh Log Galat
+                    </button>
+                  </td>
+                </tr>
+
+                {/* Row 3 */}
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
+                    semrush_bansos_nasional_batch1.csv
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-slate-900">Siti Rahma (Editor)</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
+                  </td>
+                  <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5">
                       <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
                         5.000 Total
@@ -265,87 +415,13 @@ export const ImporCSVPage: React.FC = () => {
                         4.800 Berhasil
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                        150 Duplikat
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
-                        50 Gagal
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-3.5 px-4">
-                  <button
-                    onClick={() => {}}
-                    className="h-[36px] px-4 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
-                  >
-                    Unduh Log Galat
-                  </button>
-                </td>
-              </tr>
-
-              {/* Row 2 */}
-              <tr className="hover:bg-slate-50/70 transition-colors">
-                <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
-                  semrush_mudik_transjawa_2027.csv
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="font-semibold text-slate-900">Cameron Newton (Editor)</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                        5.000 Total
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                        4.800 Berhasil
-                      </span>
-                    </div>
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                        150 Duplikat
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-3.5 px-4">
-                  <button
-                    onClick={() => {}}
-                    className="h-[36px] px-4 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
-                  >
-                    Unduh Log Galat
-                  </button>
-                </td>
-              </tr>
-
-              {/* Row 3 */}
-              <tr className="hover:bg-slate-50/70 transition-colors">
-                <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
-                  semrush_bansos_nasional_batch1.csv
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="font-semibold text-slate-900">Siti Rahma (Editor)</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">06 Nov 2026, 14:00 WIB</div>
-                </td>
-                <td className="py-3.5 px-4">
-                  <div className="flex items-center gap-1.5">
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                      5.000 Total
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                      4.800 Berhasil
-                    </span>
-                  </div>
-                </td>
-                <td className="py-3.5 px-4 text-slate-500 font-medium">
-                  Tidak ada galat
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                  <td className="py-3.5 px-4 text-slate-500 font-medium">
+                    Tidak ada galat
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

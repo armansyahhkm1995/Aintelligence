@@ -22,6 +22,15 @@ export const DraftPage: React.FC = () => {
     'Ubah gaya bahasa agar lebih santai dan tambahkan H2 tentang risiko psikologis FOMO...'
   )
 
+  // Interactive WYSIWYG Toolbar states (hover & click only, document text unchanged)
+  const [selectedHeading, setSelectedHeading] = useState('Heading 1')
+  const [isHeadingDropdownOpen, setIsHeadingDropdownOpen] = useState(false)
+  const [isBold, setIsBold] = useState(true) // defaults to active as in Figma
+  const [isItalic, setIsItalic] = useState(false)
+  const [isUnderline, setIsUnderline] = useState(false)
+  const [activeAlign, setActiveAlign] = useState<'left' | 'center' | 'right' | 'justify'>('left')
+  const [activeHLevel, setActiveHLevel] = useState<'H1' | 'H2' | 'H3' | null>(null)
+
   const handleCopyDraft = () => {
     const textToCopy = `${draft?.title || ''}\n\n${draft?.content || ''}`
     navigator.clipboard.writeText(textToCopy)
@@ -55,83 +64,165 @@ export const DraftPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column (lg:col-span-7) */}
         <div className="lg:col-span-7 space-y-3">
-          {/* Rich Text Toolbar */}
+          {/* Rich Text Toolbar with functional hover and click interactions */}
           <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-2 flex items-center gap-1.5 shadow-xs overflow-x-auto max-w-full">
             {/* Heading Selector */}
             <div className="relative shrink-0">
               <button
                 type="button"
-                className="h-[32px] px-3 bg-white border border-[#DBEAFE] rounded text-xs font-semibold text-slate-700 flex items-center gap-1.5 hover:bg-slate-50"
+                onClick={() => setIsHeadingDropdownOpen(!isHeadingDropdownOpen)}
+                className="h-[32px] px-3 bg-white border border-[#DBEAFE] rounded text-xs font-semibold text-slate-700 flex items-center gap-1.5 hover:bg-slate-50 transition-colors cursor-pointer"
               >
-                <span>Heading 1</span>
+                <span>{selectedHeading}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
+
+              {isHeadingDropdownOpen && (
+                <div className="absolute left-0 top-[36px] w-[140px] bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg py-1 z-30">
+                  {['Heading 1', 'Heading 2', 'Heading 3', 'Paragraf Normal'].map((lvl) => (
+                    <button
+                      key={lvl}
+                      type="button"
+                      onClick={() => {
+                        setSelectedHeading(lvl)
+                        setIsHeadingDropdownOpen(false)
+                      }}
+                      className={`w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-blue-50 cursor-pointer ${
+                        selectedHeading === lvl
+                          ? 'text-[#1866EF] font-bold bg-blue-50/50'
+                          : 'text-slate-700'
+                      }`}
+                    >
+                      {lvl}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Active B button (Solid blue) */}
+            {/* B (Bold) button */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0"
+              onClick={() => setIsBold(!isBold)}
+              className={`h-[32px] w-[32px] rounded font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                isBold
+                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+              }`}
+              title="Tebal (Bold)"
             >
               B
             </button>
 
-            {/* I button */}
+            {/* I (Italic) button */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 italic font-serif font-bold text-xs flex items-center justify-center shrink-0"
+              onClick={() => setIsItalic(!isItalic)}
+              className={`h-[32px] w-[32px] rounded font-serif italic font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                isItalic
+                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+              }`}
+              title="Miring (Italic)"
             >
               I
             </button>
 
-            {/* U button */}
+            {/* U (Underline) button */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200 text-slate-700 underline font-bold text-xs flex items-center justify-center shrink-0"
+              onClick={() => setIsUnderline(!isUnderline)}
+              className={`h-[32px] w-[32px] rounded underline font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                isUnderline
+                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+              }`}
+              title="Garis Bawah (Underline)"
             >
               U
             </button>
 
+            {/* Alignments */}
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
+              onClick={() => setActiveAlign('left')}
+              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                activeAlign === 'left'
+                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
+                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
+              }`}
+              title="Rata Kiri"
             >
               <AlignLeft className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
+              onClick={() => setActiveAlign('center')}
+              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                activeAlign === 'center'
+                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
+                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
+              }`}
+              title="Rata Tengah"
             >
               <AlignCenter className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
+              onClick={() => setActiveAlign('right')}
+              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                activeAlign === 'right'
+                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
+                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
+              }`}
+              title="Rata Kanan"
             >
               <AlignRight className="w-4 h-4" />
             </button>
             <button
               type="button"
-              className="h-[32px] w-[32px] rounded bg-white hover:bg-slate-50 text-slate-500 flex items-center justify-center shrink-0"
+              onClick={() => setActiveAlign('justify')}
+              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                activeAlign === 'justify'
+                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
+                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
+              }`}
+              title="Rata Kanan Kiri"
             >
               <AlignJustify className="w-4 h-4" />
             </button>
 
+            {/* Headings H1, H2, H3 */}
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
+              onClick={() => setActiveHLevel(activeHLevel === 'H1' ? null : 'H1')}
+              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+                activeHLevel === 'H1'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
+              }`}
             >
               H1
             </button>
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
+              onClick={() => setActiveHLevel(activeHLevel === 'H2' ? null : 'H2')}
+              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+                activeHLevel === 'H2'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
+              }`}
             >
               H2
             </button>
             <button
               type="button"
-              className="h-[32px] px-2 rounded bg-white hover:bg-slate-50 text-xs font-semibold text-slate-600 shrink-0"
+              onClick={() => setActiveHLevel(activeHLevel === 'H3' ? null : 'H3')}
+              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+                activeHLevel === 'H3'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
+              }`}
             >
               H3
             </button>

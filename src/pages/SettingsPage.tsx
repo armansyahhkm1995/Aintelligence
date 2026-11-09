@@ -18,6 +18,8 @@ export const SettingsPage: React.FC = () => {
     setIsTambahAturanOpen,
     setIsHapusAturanOpen,
     setRuleToDelete,
+    setRuleToEdit,
+    editRule,
   } = useApp()
   const { showSuccess } = useToast()
 
@@ -25,51 +27,13 @@ export const SettingsPage: React.FC = () => {
 
   // Search & Filters for Tab 1
   const [searchRule, setSearchRule] = useState('')
-  const [filterCategory, setFilterCategory] = useState('Semua')
-  const [filterStatus, setFilterStatus] = useState('Semua')
-
-  // Rule items local state with toggle support
-  const [ruleItems, setRuleItems] = useState<FilterRule[]>([
-    {
-      id: 'RULE-01',
-      name: 'Kata kunci piala dunia',
-      description: 'Query musiman event olahraga',
-      keywords: ['bola', 'messi'],
-      category: 'Musiman',
-      status: 'Aktif',
-      updatedAt: '02 Nov 2026',
-      updatedBy: 'Admin',
-    },
-    {
-      id: 'RULE-02',
-      name: 'Kata kunci tentang judi',
-      description: 'Aktivitas ilegal',
-      keywords: ['judi online', 'slot gacor'],
-      category: 'Berisiko',
-      status: 'Aktif',
-      updatedAt: '02 Nov 2026',
-      updatedBy: 'Admin',
-    },
-    {
-      id: 'RULE-03',
-      name: 'jadwal bioskop hari ini',
-      description: 'Pola harian / non-evergreen',
-      keywords: ['film', 'aadc'],
-      category: 'Non-evergreen',
-      status: 'Nonaktif',
-      updatedAt: '02 Nov 2026',
-      updatedBy: 'Admin',
-    },
-  ])
+  const [filterCategory, setFilterCategory] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
 
   const toggleRuleStatus = (id: string) => {
-    setRuleItems((prev) =>
-      prev.map((r) =>
-        r.id === id
-          ? { ...r, status: r.status === 'Aktif' ? 'Nonaktif' : 'Aktif' }
-          : r
-      )
-    )
+    const current = rules.find((r) => r.id === id)
+    if (!current) return
+    editRule(id, { status: current.status === 'Aktif' ? 'Nonaktif' : 'Aktif' })
     showSuccess('Status Aturan', 'Status aturan filter berhasil diperbarui.')
   }
 
@@ -169,13 +133,13 @@ export const SettingsPage: React.FC = () => {
     setBlacklist(blacklist.filter((w) => w !== word))
   }
 
-  const filteredRules = ruleItems.filter((r) => {
+  const filteredRules = (rules || []).filter((r) => {
     if (!r) return false
     const matchSearch =
       (r.name || '').toLowerCase().includes(searchRule.toLowerCase()) ||
       (Array.isArray(r.keywords) ? r.keywords.join(' ') : '').toLowerCase().includes(searchRule.toLowerCase())
-    const matchCat = filterCategory === 'Semua' || r.category === filterCategory
-    const matchStat = filterStatus === 'Semua' || r.status === filterStatus
+    const matchCat = !filterCategory || r.category === filterCategory
+    const matchStat = !filterStatus || r.status === filterStatus
     return matchSearch && matchCat && matchStat
   })
 
@@ -249,7 +213,10 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               <button
-                onClick={() => setIsTambahAturanOpen(true)}
+                onClick={() => {
+                  setRuleToEdit(null)
+                  setIsTambahAturanOpen(true)
+                }}
                 className="h-[36px] px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs flex items-center gap-1.5 shrink-0 self-start sm:self-center"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -277,9 +244,11 @@ export const SettingsPage: React.FC = () => {
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                    className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                      filterCategory ? 'text-slate-900 font-medium' : 'text-slate-500'
+                    }`}
                   >
-                    <option value="Semua">Pilih: Semua Jenis</option>
+                    <option value="" disabled hidden>Pilih: Semua Jenis</option>
                     <option value="Musiman">Musiman</option>
                     <option value="Berisiko">Berisiko</option>
                     <option value="Non-evergreen">Non-evergreen</option>
@@ -291,9 +260,11 @@ export const SettingsPage: React.FC = () => {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                    className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                      filterStatus ? 'text-slate-900 font-medium' : 'text-slate-500'
+                    }`}
                   >
-                    <option value="Semua">Pilih: Semua Status</option>
+                    <option value="" disabled hidden>Pilih: Semua Status</option>
                     <option value="Aktif">Aktif</option>
                     <option value="Nonaktif">Nonaktif</option>
                   </select>
@@ -305,10 +276,10 @@ export const SettingsPage: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setSearchRule('')
-                    setFilterCategory('Semua')
-                    setFilterStatus('Semua')
+                    setFilterCategory('')
+                    setFilterStatus('')
                   }}
-                  className="h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap"
+                  className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap self-start sm:self-auto cursor-pointer"
                 >
                   Bersihkan Filter
                 </button>
@@ -399,7 +370,10 @@ export const SettingsPage: React.FC = () => {
                         <td className="py-3.5 px-4 text-center">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
-                              onClick={() => setIsTambahAturanOpen(true)}
+                              onClick={() => {
+                                setRuleToEdit(rule)
+                                setIsTambahAturanOpen(true)
+                              }}
                               className="p-1.5 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
                               title="Sunting"
                             >

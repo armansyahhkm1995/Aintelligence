@@ -265,8 +265,8 @@ Memahami profil risiko dan horizon investasi menjadi kunci utama. Reksadana Pasa
 export const INITIAL_RULES: FilterRule[] = [
   {
     id: 'RUL-001',
-    name: 'jadwal bioskop hari ini',
-    description: 'query musiman event olahraga',
+    name: 'Kata kunci piala dunia',
+    description: 'Query musiman event olahraga',
     keywords: ['bola', 'messi'],
     category: 'Musiman',
     status: 'Aktif',

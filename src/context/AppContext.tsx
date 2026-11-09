@@ -79,9 +79,12 @@ interface AppContextType {
   // Settings / Rules
   rules: FilterRule[]
   addRule: (rule: Omit<FilterRule, 'id' | 'updatedAt' | 'updatedBy'>) => void
+  editRule: (id: string, updates: Partial<FilterRule>) => void
   deleteRule: (id: string) => void
   ruleToDelete: FilterRule | null
   setRuleToDelete: (rule: FilterRule | null) => void
+  ruleToEdit: FilterRule | null
+  setRuleToEdit: (rule: FilterRule | null) => void
 
   // Users
   users: User[]
@@ -227,6 +230,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isTambahAturanOpen, setIsTambahAturanOpen] = useState(false)
   const [isHapusAturanOpen, setIsHapusAturanOpen] = useState(false)
   const [ruleToDelete, setRuleToDelete] = useState<FilterRule | null>(null)
+  const [ruleToEdit, setRuleToEdit] = useState<FilterRule | null>(null)
   const [isTambahPenggunaOpen, setIsTambahPenggunaOpen] = useState(false)
   const [isNonaktifkanPenggunaOpen, setIsNonaktifkanPenggunaOpen] = useState(false)
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null)
@@ -407,6 +411,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsTambahAturanOpen(false)
   }
 
+  const editRule = (id: string, updates: Partial<FilterRule>) => {
+    setRules((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, ...updates, updatedAt: '02 Nov 2026' } : r))
+    )
+    addAuditLog('Perubahan Aturan', `Memperbarui aturan filter keyword: '${updates.name || id}'.`)
+    showSuccess('Pengaturan Redaksi', 'Aturan filter berhasil diperbarui')
+    setIsTambahAturanOpen(false)
+    setRuleToEdit(null)
+  }
+
   const deleteRule = (id: string) => {
     const target = rules.find((r) => r.id === id)
     setRules((prev) => prev.filter((r) => r.id !== id))
@@ -487,9 +501,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteDraft,
         rules,
         addRule,
+        editRule,
         deleteRule,
         ruleToDelete,
         setRuleToDelete,
+        ruleToEdit,
+        setRuleToEdit,
         users,
         addUser,
         editUser,

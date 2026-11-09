@@ -8,7 +8,8 @@ import {
 export const AuditLogPage: React.FC = () => {
   const { auditLogs } = useApp()
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterCategory, setFilterCategory] = useState('Semua')
+  const [filterCategory, setFilterCategory] = useState('')
+  const [filterTime, setFilterTime] = useState('')
 
   const safeLogs = Array.isArray(auditLogs) && auditLogs.length > 0
     ? auditLogs
@@ -65,7 +66,7 @@ export const AuditLogPage: React.FC = () => {
     const matchSearch =
       (log.details || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (log.user || '').toLowerCase().includes(searchQuery.toLowerCase())
-    const matchCategory = filterCategory === 'Semua' || log.category === filterCategory
+    const matchCategory = !filterCategory || log.category === filterCategory
     return matchSearch && matchCategory
   })
 
@@ -104,9 +105,11 @@ export const AuditLogPage: React.FC = () => {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterCategory ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Semua Kategori Aktivitas</option>
+                <option value="" disabled hidden>Semua Kategori Aktivitas</option>
                 <option value="Koreksi Keyword">Koreksi Keyword</option>
                 <option value="Aktivitas Sistem AI">Aktivitas Sistem AI</option>
                 <option value="Persetujuan">Persetujuan</option>
@@ -119,22 +122,29 @@ export const AuditLogPage: React.FC = () => {
             {/* Dropdown 2: Waktu */}
             <div className="relative flex-1 w-full">
               <select
-                className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                value={filterTime}
+                onChange={(e) => setFilterTime(e.target.value)}
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterTime ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option>7 Hari Terakhir</option>
-                <option>30 Hari Terakhir</option>
-                <option>Semua Waktu</option>
+                <option value="" disabled hidden>7 Hari Terakhir</option>
+                <option value="7_hari">7 Hari Terakhir</option>
+                <option value="30_hari">30 Hari Terakhir</option>
+                <option value="semua">Semua Waktu</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
             {/* Hug Content Clear Button */}
             <button
+              type="button"
               onClick={() => {
                 setSearchQuery('')
-                setFilterCategory('Semua')
+                setFilterCategory('')
+                setFilterTime('')
               }}
-              className="h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap"
+              className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap self-start sm:self-auto cursor-pointer"
             >
               Bersihkan Filter
             </button>

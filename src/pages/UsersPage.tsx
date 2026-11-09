@@ -21,8 +21,8 @@ export const UsersPage: React.FC = () => {
   } = useApp()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterRole, setFilterRole] = useState('Semua')
-  const [filterStatus, setFilterStatus] = useState('Semua')
+  const [filterRole, setFilterRole] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
 
   const safeUsers: User[] = Array.isArray(users) && users.length > 0
     ? users
@@ -85,9 +85,9 @@ export const UsersPage: React.FC = () => {
       (u.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (u.email || '').toLowerCase().includes(searchQuery.toLowerCase())
     const matchRole =
-      filterRole === 'Semua' || (u.role && u.role.toLowerCase() === filterRole.toLowerCase())
+      !filterRole || (u.role && u.role.toLowerCase() === filterRole.toLowerCase())
     const matchStatus =
-      filterStatus === 'Semua' || (u.status && u.status.toLowerCase() === filterStatus.toLowerCase())
+      !filterStatus || (u.status && u.status.toLowerCase() === filterStatus.toLowerCase())
     return matchSearch && matchRole && matchStatus
   })
 
@@ -180,9 +180,11 @@ export const UsersPage: React.FC = () => {
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterRole ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Peran: Semua (Admin & Editor)</option>
+                <option value="" disabled hidden>Peran: Semua (Admin & Editor)</option>
                 <option value="Admin">Administrator</option>
                 <option value="Editor">Editor</option>
               </select>
@@ -194,9 +196,11 @@ export const UsersPage: React.FC = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                className={`w-full h-[40px] px-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                  filterStatus ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Status: Semua</option>
+                <option value="" disabled hidden>Status: Semua</option>
                 <option value="Aktif">Aktif</option>
                 <option value="Nonaktif">Non-aktif</option>
               </select>
@@ -205,12 +209,13 @@ export const UsersPage: React.FC = () => {
 
             {/* Hug Content Clear Button */}
             <button
+              type="button"
               onClick={() => {
                 setSearchQuery('')
-                setFilterRole('Semua')
-                setFilterStatus('Semua')
+                setFilterRole('')
+                setFilterStatus('')
               }}
-              className="h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap"
+              className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors shrink-0 whitespace-nowrap self-start sm:self-auto cursor-pointer"
             >
               Bersihkan Filter
             </button>

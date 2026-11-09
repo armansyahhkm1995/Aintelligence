@@ -19,11 +19,11 @@ export const KeywordPage: React.FC = () => {
   } = useApp()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterUnggahan, setFilterUnggahan] = useState('Semua')
-  const [filterIntensi, setFilterIntensi] = useState('Semua')
-  const [filterAturan, setFilterAturan] = useState('Semua')
-  const [filterKelayakan, setFilterKelayakan] = useState('Semua')
-  const [filterStatus, setFilterStatus] = useState('Semua')
+  const [filterUnggahan, setFilterUnggahan] = useState('')
+  const [filterIntensi, setFilterIntensi] = useState('')
+  const [filterAturan, setFilterAturan] = useState('')
+  const [filterKelayakan, setFilterKelayakan] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
 
   // Dummy items exactly as shown in user screenshot
   const displayKeywords: KeywordItem[] = [
@@ -71,17 +71,29 @@ export const KeywordPage: React.FC = () => {
     },
   ]
 
+  const filteredKeywords = displayKeywords.filter((kw) => {
+    if (searchQuery.trim() && !kw.keyword.toLowerCase().includes(searchQuery.toLowerCase().trim())) {
+      return false
+    }
+    if (filterUnggahan && kw.sourceFile !== filterUnggahan) return false
+    if (filterIntensi && kw.intent !== filterIntensi) return false
+    if (filterAturan && !kw.aturan.toLowerCase().includes(filterAturan.toLowerCase())) return false
+    if (filterKelayakan && kw.kelayakanAI !== filterKelayakan) return false
+    if (filterStatus && kw.status !== filterStatus) return false
+    return true
+  })
+
   const isAllSelected =
-    displayKeywords.length > 0 &&
-    displayKeywords.every((k) => (selectedKeywordIds || []).includes(k.id))
+    filteredKeywords.length > 0 &&
+    filteredKeywords.every((k) => (selectedKeywordIds || []).includes(k.id))
 
   const handleClearFilters = () => {
     setSearchQuery('')
-    setFilterUnggahan('Semua')
-    setFilterIntensi('Semua')
-    setFilterAturan('Semua')
-    setFilterKelayakan('Semua')
-    setFilterStatus('Semua')
+    setFilterUnggahan('')
+    setFilterIntensi('')
+    setFilterAturan('')
+    setFilterKelayakan('')
+    setFilterStatus('')
   }
 
   const handleOpenSingleOverride = (kw: KeywordItem) => {
@@ -147,9 +159,11 @@ export const KeywordPage: React.FC = () => {
               <select
                 value={filterUnggahan}
                 onChange={(e) => setFilterUnggahan(e.target.value)}
-                className="w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate"
+                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
+                  filterUnggahan ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Pilih: Unggahan Asal</option>
+                <option value="" disabled hidden>Pilih: Unggahan Asal</option>
                 <option value="semrush_export_nov.csv">semrush_export_nov.csv</option>
                 <option value="semrush_finansial_q4.csv">semrush_finansial_q4.csv</option>
               </select>
@@ -161,9 +175,11 @@ export const KeywordPage: React.FC = () => {
               <select
                 value={filterIntensi}
                 onChange={(e) => setFilterIntensi(e.target.value)}
-                className="w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate"
+                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
+                  filterIntensi ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Pilih: Intensi</option>
+                <option value="" disabled hidden>Pilih: Intensi</option>
                 <option value="Informational">Informasional</option>
                 <option value="Commercial">Komersial</option>
                 <option value="Transactional">Transaksional</option>
@@ -176,9 +192,11 @@ export const KeywordPage: React.FC = () => {
               <select
                 value={filterAturan}
                 onChange={(e) => setFilterAturan(e.target.value)}
-                className="w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate"
+                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
+                  filterAturan ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Pilih: Aturan Filter</option>
+                <option value="" disabled hidden>Pilih: Aturan Filter</option>
                 <option value="Judi">Kata kunci tentang judi</option>
                 <option value="Musiman">Filter Musiman</option>
               </select>
@@ -186,16 +204,18 @@ export const KeywordPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Row 2: 2 Dropdowns + Bersihkan Filter Button */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Row 2: 2 Dropdowns + Hug Content Bersihkan Filter Button */}
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             {/* Dropdown 4: Kelayakan */}
-            <div className="relative">
+            <div className="relative flex-1 w-full">
               <select
                 value={filterKelayakan}
                 onChange={(e) => setFilterKelayakan(e.target.value)}
-                className="w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate"
+                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
+                  filterKelayakan ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Pilih: Kelayakan</option>
+                <option value="" disabled hidden>Pilih: Kelayakan</option>
                 <option value="Layak">Layak</option>
                 <option value="Tidak Layak">Tidak Layak</option>
               </select>
@@ -203,23 +223,26 @@ export const KeywordPage: React.FC = () => {
             </div>
 
             {/* Dropdown 5: Status */}
-            <div className="relative">
+            <div className="relative flex-1 w-full">
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-[#020617] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate"
+                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
+                  filterStatus ? 'text-slate-900 font-medium' : 'text-slate-500'
+                }`}
               >
-                <option value="Semua">Pilih: Status</option>
+                <option value="" disabled hidden>Pilih: Status</option>
                 <option value="Dikelompokkan">Dikelompokkan</option>
                 <option value="Baru">Baru</option>
               </select>
               <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
 
-            {/* Bersihkan Filter Button */}
+            {/* Bersihkan Filter Button (Hug Content) */}
             <button
+              type="button"
               onClick={handleClearFilters}
-              className="w-full h-[40px] px-3 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors flex items-center justify-center truncate"
+              className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors flex items-center justify-center shrink-0 whitespace-nowrap cursor-pointer self-start sm:self-auto"
             >
               Bersihkan Filter
             </button>
@@ -253,7 +276,7 @@ export const KeywordPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
-                {displayKeywords.map((kw, idx) => {
+                {filteredKeywords.map((kw, idx) => {
                   const isSelected = (selectedKeywordIds || []).includes(kw.id)
                   const isLayak = kw.kelayakanAI === 'Layak'
 
@@ -360,6 +383,13 @@ export const KeywordPage: React.FC = () => {
                     </tr>
                   )
                 })}
+                {filteredKeywords.length === 0 && (
+                  <tr>
+                    <td colSpan={11} className="py-8 text-center text-xs text-slate-400">
+                      Tidak ada kata kunci yang cocok dengan pencarian atau filter yang dipilih.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
