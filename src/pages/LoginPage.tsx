@@ -6,9 +6,9 @@ import loginHero from '../assets/login-hero.png'
 import cfBrand from '../assets/cloudflare-brand.svg'
 
 export const LoginPage: React.FC = () => {
-  const { verify2FA } = useApp()
+  const { verify2FA, login } = useApp()
   const [step, setStep] = useState<'login' | '2fa'>('login')
-  const [identifier, setIdentifier] = useState('user1@rri.co.id')
+  const [identifier, setIdentifier] = useState('admin@rri.co.id')
   const [password, setPassword] = useState('••••••••••••')
   const [showPassword, setShowPassword] = useState(false)
   const [isHumanVerified, setIsHumanVerified] = useState(false)
@@ -25,6 +25,7 @@ export const LoginPage: React.FC = () => {
       setErrorMsg('Harap centang verifikasi "Verify you are human".')
       return
     }
+    login(identifier, password)
     setErrorMsg('')
     setStep('2fa')
   }

@@ -186,7 +186,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Auth
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true)
-  const [currentUser] = useState<User>(() =>
+  const [currentUser, setCurrentUser] = useState<User>(() =>
     getStored('user', INITIAL_USERS[0]) // Budi Prasetyo (Admin)
   )
 
@@ -261,7 +261,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }
 
   // Auth methods
-  const login = () => {
+  const login = (email: string, _password?: string) => {
+    const trimmed = (email || '').toLowerCase().trim()
+    if (trimmed.includes('editor') || trimmed.includes('siti')) {
+      const editorUser: User = {
+        id: 'USR-002',
+        name: 'Siti Rahmawati',
+        email: email || 'editor@rri.co.id',
+        role: 'editor',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+        status: 'aktif',
+        lastActive: 'Sedang aktif',
+        department: 'Redaksi Utama Pro3 RRI',
+        has2FA: true,
+      }
+      setCurrentUser(editorUser)
+      setStored('user', editorUser)
+    } else {
+      const adminUser: User = {
+        id: 'USR-001',
+        name: 'Cameron Newton',
+        email: email || 'admin@rri.co.id',
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+        status: 'aktif',
+        lastActive: 'Sedang aktif',
+        department: 'Divisi TI & Regulasi Digital',
+        has2FA: true,
+      }
+      setCurrentUser(adminUser)
+      setStored('user', adminUser)
+    }
     return true
   }
 
