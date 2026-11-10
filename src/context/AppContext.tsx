@@ -237,6 +237,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
 
   // Persist
+  useEffect(() => setStored('user', currentUser), [currentUser])
   useEffect(() => setStored('keywords', keywords), [keywords])
   useEffect(() => setStored('clusters', clusters), [clusters])
   useEffect(() => setStored('brief', brief), [brief])
@@ -263,10 +264,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Auth methods
   const login = (email: string, _password?: string) => {
     const trimmed = (email || '').toLowerCase().trim()
-    if (trimmed.includes('editor') || trimmed.includes('siti')) {
+    const isAdmin =
+      trimmed === 'admin' ||
+      trimmed.startsWith('admin@') ||
+      trimmed.includes('cameron') ||
+      trimmed.includes('budi')
+
+    if (!isAdmin) {
+      // Editor account
+      const editorName = trimmed.includes('ahmad')
+        ? 'Ahmad Fauzi'
+        : trimmed.includes('dina')
+        ? 'Dina Mariana'
+        : trimmed.includes('rudi')
+        ? 'Rudi Hermawan'
+        : 'Siti Rahmawati'
+
       const editorUser: User = {
         id: 'USR-002',
-        name: 'Siti Rahmawati',
+        name: editorName,
         email: email || 'editor@rri.co.id',
         role: 'editor',
         avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',

@@ -60,7 +60,9 @@ export const Header: React.FC = () => {
         {/* User Profile (Text only, matching Figma) */}
         <div className="flex flex-col text-left leading-tight">
           <span className="text-xs font-semibold text-slate-900 truncate max-w-[110px] sm:max-w-none">
-            {currentUser?.name || 'Cameron Newton'}
+            {currentUser?.role === 'editor'
+              ? (currentUser?.name && currentUser.name !== 'Cameron Newton' ? currentUser.name : 'Siti Rahmawati')
+              : 'Cameron Newton'}
           </span>
           <span className="text-[11px] text-slate-400 font-normal">
             {currentUser?.role === 'editor' ? 'Editor' : 'Admin'}

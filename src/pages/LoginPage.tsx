@@ -49,6 +49,7 @@ export const LoginPage: React.FC = () => {
       setErrorMsg('Harap masukkan 6-digit kode OTP lengkap.')
       return
     }
+    login(identifier, password)
     const success = verify2FA(fullCode)
     if (!success) {
       setErrorMsg('Kode OTP salah. Coba masukkan 6 digit angka apa saja.')
@@ -176,7 +177,7 @@ export const LoginPage: React.FC = () => {
                   Verifikasi Dua Langkah (2FA)
                 </h1>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Kami mengirimkan 6-digit kode OTP ke <span className="font-semibold text-slate-800">email user1@rri.co.id</span>.
+                  Kami mengirimkan 6-digit kode OTP ke <span className="font-semibold text-slate-800">email {identifier || 'editor@rri.co.id'}</span>.
                 </p>
               </div>
 

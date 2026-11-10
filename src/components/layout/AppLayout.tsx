@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useApp } from '../../context/AppContext'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
@@ -29,7 +29,14 @@ import { DeactivateUserModal } from '../modals/DeactivateUserModal'
 import { EditClusterDrawer } from '../drawers/EditClusterDrawer'
 
 export const AppLayout: React.FC = () => {
-  const { currentPage, isAuthenticated } = useApp()
+  const { currentPage, setCurrentPage, isAuthenticated, currentUser } = useApp()
+
+  // Redirect editor away from admin pages if navigated directly
+  useEffect(() => {
+    if (currentUser?.role === 'editor' && ['settings', 'users', 'auditlog'].includes(currentPage)) {
+      setCurrentPage('dashboard')
+    }
+  }, [currentUser, currentPage, setCurrentPage])
 
   if (!isAuthenticated) {
     return <LoginPage />

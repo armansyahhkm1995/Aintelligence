@@ -17,7 +17,7 @@ import {
 import rriLogo from '../../assets/rri-logo.svg'
 
 export const Sidebar: React.FC = () => {
-  const { currentPage, setCurrentPage, logout, isMobileNavOpen, setIsMobileNavOpen } = useApp()
+  const { currentPage, setCurrentPage, logout, isMobileNavOpen, setIsMobileNavOpen, currentUser } = useApp()
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -119,39 +119,41 @@ export const Sidebar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Section: ADMIN */}
-        <div className="space-y-1 pt-1">
-          <div className="px-3 py-1 text-[11px] font-bold text-slate-400 tracking-wider">
-            ADMIN
-          </div>
-          <nav className="space-y-0.5">
-            {adminNavItems.map((item) => {
-              const Icon = item.icon
-              const isActive = currentPage === item.id
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center justify-between px-2.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                    isActive
-                      ? 'bg-[#0375E5] text-white shadow-sm font-semibold'
-                      : 'text-slate-700 hover:bg-blue-50/60 hover:text-slate-900 active:bg-blue-100/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 truncate">
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                    <span className="truncate">{item.label}</span>
-                  </div>
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 shrink-0 ${
-                      isActive ? 'text-white/80' : 'text-slate-400'
+        {/* Section: ADMIN (Khusus Akun Admin) */}
+        {currentUser?.role === 'admin' && (
+          <div className="space-y-1 pt-1">
+            <div className="px-3 py-1 text-[11px] font-bold text-slate-400 tracking-wider">
+              ADMIN
+            </div>
+            <nav className="space-y-0.5">
+              {adminNavItems.map((item) => {
+                const Icon = item.icon
+                const isActive = currentPage === item.id
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full flex items-center justify-between px-2.5 py-2.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                      isActive
+                        ? 'bg-[#0375E5] text-white shadow-sm font-semibold'
+                        : 'text-slate-700 hover:bg-blue-50/60 hover:text-slate-900 active:bg-blue-100/50'
                     }`}
-                  />
-                </button>
-              )
-            })}
-          </nav>
-        </div>
+                  >
+                    <div className="flex items-center gap-2.5 truncate">
+                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                      <span className="truncate">{item.label}</span>
+                    </div>
+                    <ChevronRight
+                      className={`w-3.5 h-3.5 shrink-0 ${
+                        isActive ? 'text-white/80' : 'text-slate-400'
+                      }`}
+                    />
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
+        )}
       </div>
 
       {/* Bottom Area */}
