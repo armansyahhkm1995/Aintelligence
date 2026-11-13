@@ -6,6 +6,8 @@ import {
   ChevronDown,
   Edit3,
 } from 'lucide-react'
+import { MilestoneStepper } from '../components/common/MilestoneStepper'
+import { NextStepBanner } from '../components/common/NextStepBanner'
 
 export const KeywordPage: React.FC = () => {
   const {
@@ -103,15 +105,28 @@ export const KeywordPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="text-xs text-slate-400">
+        <span>Riset & Produksi Berita</span>
+        <span className="mx-1.5 text-slate-300">/</span>
+        <span className="text-[#1866EF] font-semibold">Saring Kata Kunci</span>
+      </div>
+
+      {/* 1. Milestone Stepper: Step 2 Active */}
+      <MilestoneStepper currentStep={2} />
+
       {/* Title and description */}
-      <div className="max-w-[500px]">
-        <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
           50 Daftar Keyword & Klasifikasi
         </h1>
-        <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
           Tinjau kelayakan kata kunci dari Semrush, filter topik liputan, dan lakukan koreksi manual (override) redaksional.
         </p>
       </div>
+
+      {/* 2. Next Step Banner */}
+      <NextStepBanner currentStep={2} />
 
       {/* COMP-TodoList-Editor: 949px Standard Container */}
       <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4">
