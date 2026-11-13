@@ -472,13 +472,6 @@ export const BriefPage: React.FC = () => {
           <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
-              onClick={handleCancelApproval}
-              className="h-10 px-4 bg-[#EF4444] hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
-            >
-              Tolak Arahan Artikel
-            </button>
-            <button
-              type="button"
               onClick={handleRegenerateWithAI}
               className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
@@ -791,7 +784,7 @@ export const BriefPage: React.FC = () => {
               onClick={() => setIsTolakBriefOpen(true)}
               className="w-full h-10 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-bold rounded-lg transition-colors cursor-pointer"
             >
-              Tolak Brief
+              Tolak Arahan Artikel
             </button>
 
             <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">

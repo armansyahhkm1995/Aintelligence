@@ -128,8 +128,8 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Panduan Lengkap Mudik Lebaran 2027 Rute Tol Trans-Jawa
                 </h3>
-                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
-                  <div className="flex items-center gap-1.5">
+                <div className="space-y-1 text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
                     <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
                       mudik lebaran 2027
@@ -163,8 +163,8 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Kompilasi Bansos Cair November 2026: Syarat & Cara Cek NIK
                 </h3>
-                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
-                  <div className="flex items-center gap-1.5">
+                <div className="space-y-1 text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
                     <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
                       bansos cair november 2026
@@ -198,8 +198,8 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Update Harga Emas Antam Hari Ini dan Tips Investasi Pemula
                 </h3>
-                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
-                  <div className="flex items-center gap-1.5">
+                <div className="space-y-1 text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
                     <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
                       harga emas antam hari ini
@@ -265,6 +265,16 @@ export const DashboardPage: React.FC = () => {
                     Jumlah Kata: 920 Kata
                   </span>
                 </div>
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                    <span>Butuh Verifikasi Fakta: Konfirmasi nilai statistik resmi OJK terbaru</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                    <span>Kutipan Narasumber Dibutuhkan</span>
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setCurrentPage('draft')}
@@ -291,6 +301,12 @@ export const DashboardPage: React.FC = () => {
                     Jumlah Kata: 900 Kata
                   </span>
                 </div>
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                    <span>Kutipan Narasumber Dibutuhkan</span>
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setCurrentPage('draft')}
@@ -315,6 +331,12 @@ export const DashboardPage: React.FC = () => {
                   </span>
                   <span className="bg-slate-50 text-slate-700 text-xs font-medium px-2 py-0.5 rounded border border-slate-200">
                     Jumlah Kata: 800 Kata
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                    <span>Butuh Verifikasi Fakta: Konfirmasi nilai statistik resmi OJK terbaru</span>
                   </span>
                 </div>
               </div>
