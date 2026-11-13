@@ -117,6 +117,12 @@ export const KeywordPage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [activePage, setActivePage] = useState<number>(1)
 
+  const handleClearFilters = () => {
+    setSearchQuery('')
+    setFilterRule('Semua')
+    setFilterStatus('Semua')
+  }
+
   const handleToggleSelectAll = () => {
     if (selectedIds.length === filteredKeywords.length) {
       setSelectedIds([])
@@ -224,50 +230,58 @@ export const KeywordPage: React.FC = () => {
 
       {/* 5. Main Table Container matching Image 1 */}
       <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
-        {/* Search & Filter Header Row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-[320px]">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Cari kata kunci ..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
-            />
+        {/* Full width Search Box (100% mengikuti parent div) */}
+        <div className="relative w-full">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Cari kata kunci ..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
+          />
+        </div>
+
+        {/* Filter Dropdowns + Bersihkan Filter Button (Layout persis seperti Kelompok Topik) */}
+        <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3">
+          {/* Filter Aturan Kata Kunci */}
+          <div className="relative flex-1 min-w-[180px] w-full sm:w-auto">
+            <select
+              value={filterRule}
+              onChange={(e) => setFilterRule(e.target.value as any)}
+              className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
+            >
+              <option value="Semua">Pilih: Semua Aturan Kata Kunci</option>
+              <option value="Musiman">Musiman</option>
+              <option value="Berisiko">Berisiko</option>
+              <option value="Non-evergreen">Non-evergreen</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            {/* Filter Aturan Kata Kunci */}
-            <div className="relative flex-1 sm:flex-initial">
-              <select
-                value={filterRule}
-                onChange={(e) => setFilterRule(e.target.value as any)}
-                className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
-              >
-                <option value="Semua">Aturan Kata Kunci</option>
-                <option value="Musiman">Musiman</option>
-                <option value="Berisiko">Berisiko</option>
-                <option value="Non-evergreen">Non-evergreen</option>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            {/* Filter Status */}
-            <div className="relative flex-1 sm:flex-initial">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as any)}
-                className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
-              >
-                <option value="Semua">Status</option>
-                <option value="Layak">Layak</option>
-                <option value="Tidak Layak">Tidak Layak</option>
-                <option value="Perlu Ditinjau">Perlu Ditinjau</option>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+          {/* Filter Status */}
+          <div className="relative flex-1 min-w-[180px] w-full sm:w-auto">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as any)}
+              className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
+            >
+              <option value="Semua">Pilih: Semua Status</option>
+              <option value="Layak">Layak</option>
+              <option value="Tidak Layak">Tidak Layak</option>
+              <option value="Perlu Ditinjau">Perlu Ditinjau</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
+
+          {/* Bersihkan Filter Button */}
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="w-full sm:w-auto h-10 px-4 border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0"
+          >
+            Bersihkan Filter
+          </button>
         </div>
 
         {/* Table */}

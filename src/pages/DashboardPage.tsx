@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import {
-  Brain,
-  History,
   Sparkles,
   CheckCircle2,
   AlertTriangle,
@@ -17,7 +15,6 @@ import {
   Trash2,
   ExternalLink,
   ChevronRight,
-  Filter,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
@@ -295,60 +292,48 @@ export const DashboardPage: React.FC = () => {
       {/* ========================================================================= */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-5">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#1866EF] flex items-center justify-center shrink-0">
-              <Brain className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-slate-900">Daftar Keputusan AI</h2>
-                <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
-                  Transparansi Alasan Model
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Alasan logis dan pertimbangan otomatis AI pada setiap tahap: dari kata kunci, kelompok topik, hingga rumusan arahan & draf artikel.
-              </p>
-            </div>
-          </div>
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">Daftar Keputusan AI</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Alasan logis dan pertimbangan otomatis AI pada setiap tahap: dari kata kunci, kelompok topik, hingga rumusan arahan & draf artikel.
+          </p>
+        </div>
 
-          {/* Tab Selector */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg self-start sm:self-center">
-            <button
-              type="button"
-              onClick={() => setAiDecisionTab('keyword')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                aiDecisionTab === 'keyword'
-                  ? 'bg-white text-[#1866EF] shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Kata Kunci
-            </button>
-            <button
-              type="button"
-              onClick={() => setAiDecisionTab('cluster')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                aiDecisionTab === 'cluster'
-                  ? 'bg-white text-[#1866EF] shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Kelompok Topik
-            </button>
-            <button
-              type="button"
-              onClick={() => setAiDecisionTab('brief')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                aiDecisionTab === 'brief'
-                  ? 'bg-white text-[#1866EF] shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Arahan & Draf Artikel
-            </button>
-          </div>
+        {/* Tab Selector: Full width matching SettingsPage */}
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-3 gap-1 bg-white select-none overflow-x-auto w-full">
+          <button
+            type="button"
+            onClick={() => setAiDecisionTab('keyword')}
+            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+              aiDecisionTab === 'keyword'
+                ? 'bg-[#1866EF] text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            Kata Kunci
+          </button>
+          <button
+            type="button"
+            onClick={() => setAiDecisionTab('cluster')}
+            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+              aiDecisionTab === 'cluster'
+                ? 'bg-[#1866EF] text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            Kelompok Topik
+          </button>
+          <button
+            type="button"
+            onClick={() => setAiDecisionTab('brief')}
+            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+              aiDecisionTab === 'brief'
+                ? 'bg-[#1866EF] text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            Arahan & Draf Artikel
+          </button>
         </div>
 
         {/* Tab Content 1: Saring Kata Kunci */}
@@ -554,51 +539,35 @@ export const DashboardPage: React.FC = () => {
       {/* ========================================================================= */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#B45309] flex items-center justify-center shrink-0">
-              <History className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-slate-900">Daftar Override Editor</h2>
-                <span className="bg-[#FFFBEB] text-[#B45309] text-xs font-medium px-2 py-0.5 rounded border border-amber-200">
-                  6 Tindakan Manual Redaksi
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Riwayat intervensi, koreksi manual, penolakan, serta resolusi konflik oleh redaktur terhadap keputusan AI di seluruh modul.
-              </p>
-            </div>
-          </div>
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">Daftar Override Editor</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Riwayat intervensi, koreksi manual, penolakan, serta resolusi konflik oleh redaktur terhadap keputusan AI di seluruh modul.
+          </p>
+        </div>
 
-          {/* Module Filter */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs text-slate-400 mr-1 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" />
-              <span>Filter:</span>
-            </span>
-            {[
-              { id: 'all', label: 'Semua Modul' },
-              { id: 'keyword', label: 'Kata Kunci' },
-              { id: 'cluster', label: 'Kelompok Topik' },
-              { id: 'brief', label: 'Arahan Artikel' },
-              { id: 'draft', label: 'Draf Artikel' },
-            ].map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setOverrideFilter(f.id as any)}
-                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors cursor-pointer ${
-                  overrideFilter === f.id
-                    ? 'bg-[#1866EF] text-white shadow-2xs'
-                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+        {/* Module Filter Tabs: Full width matching SettingsPage */}
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-5 gap-1 bg-white select-none overflow-x-auto w-full">
+          {[
+            { id: 'all', label: 'Semua Modul' },
+            { id: 'keyword', label: 'Kata Kunci' },
+            { id: 'cluster', label: 'Kelompok Topik' },
+            { id: 'brief', label: 'Arahan Artikel' },
+            { id: 'draft', label: 'Draf Artikel' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setOverrideFilter(f.id as any)}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                overrideFilter === f.id
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
 
         {/* Override Logs Table */}

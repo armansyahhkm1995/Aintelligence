@@ -285,15 +285,15 @@ export const DraftPage: React.FC = () => {
 
         {/* 4. Table Container matching Image 10 */}
         <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
-          {/* Search Header Row */}
-          <div className="relative w-full sm:w-[320px]">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          {/* Search Header Row: Full width 100% mengikuti div parent */}
+          <div className="relative w-full">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Cari judul artikel ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
+              className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
             />
           </div>
 

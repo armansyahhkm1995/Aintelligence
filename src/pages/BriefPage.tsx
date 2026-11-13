@@ -322,31 +322,31 @@ export const BriefPage: React.FC = () => {
 
         {/* 4. Table Container matching Image 9 */}
         <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
-          {/* Search & Filter Header Row */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:w-[320px]">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          {/* Search & Filter Header Row: Search bar stretches to status filter */}
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="relative flex-1 w-full">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Cari judul artikel ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
+                className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
               />
             </div>
 
-            <div className="relative w-full sm:w-auto">
+            <div className="relative w-full sm:w-[180px] shrink-0">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
+                className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
               >
-                <option value="Semua">Status</option>
+                <option value="Semua">Pilih: Semua Status</option>
                 <option value="Disetujui">Disetujui</option>
                 <option value="Draf">Draf</option>
                 <option value="Ditolak">Ditolak</option>
               </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
