@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import { ClusterItem } from '../types'
-import { Search, ChevronDown, X } from 'lucide-react'
+import { Search, ChevronDown, Sparkles, X } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
@@ -23,35 +23,10 @@ export const ClusterPage: React.FC = () => {
   const [filterTopic, setFilterTopic] = useState('')
 
   // Supporting keywords state for Card 2 with separation mode
-  const [isSeparatingKeywords, setIsSeparatingKeywords] = useState(false)
   const [card2Supporting, setCard2Supporting] = useState([
     'belajar reksadana online (Vol 22.000) (KD 28%)',
     'cara mulai reksadana bibit (Vol 22.000) (KD 28%)',
   ])
-
-  const handleRemoveSupportingCard2 = (kw: string) => {
-    setCard2Supporting((prev) => prev.filter((k) => k !== kw))
-    showSuccess('Cluster Topik', `Kata kunci '${kw.split('(')[0].trim()}' berhasil dipisahkan dari cluster.`)
-  }
-
-  const handleOpenDrawer = (cl: ClusterItem) => {
-    setActiveCluster(cl)
-    setIsEditClusterDrawerOpen(true)
-  }
-
-  const handleOpenConflictModal = (cl: ClusterItem) => {
-    setActiveCluster(cl)
-    setIsResolusiBentrokOpen(true)
-  }
-
-  const handleOpenRejectModal = (cl: ClusterItem) => {
-    setActiveCluster(cl)
-    setIsTolakClusterOpen(true)
-  }
-
-  const handleCreateBrief = () => {
-    setCurrentPage('brief')
-  }
 
   const handleClearFilters = () => {
     setSearchQuery('')
@@ -60,472 +35,350 @@ export const ClusterPage: React.FC = () => {
     setFilterTopic('')
   }
 
-  // Filter checks for each card
-  const q = searchQuery.toLowerCase().trim()
-  const matchCard1 =
-    (!q || 'cara investasi reksadana pemula'.includes(q) || 'reksadana pemula'.includes(q)) &&
-    (!filterStatus || filterStatus === 'Aman') &&
-    (!filterIntent || filterIntent === 'Informasional') &&
-    (!filterTopic || filterTopic === 'Finansial')
+  const handleOpenEditDrawer = (name: string) => {
+    const found = clusters.find((c) => c.name.toLowerCase().includes(name.toLowerCase())) || clusters[0]
+    if (found) {
+      setActiveCluster(found)
+      setIsEditClusterDrawerOpen(true)
+    }
+  }
 
-  const matchCard2 =
-    (!q || 'panduan reksadana 2026'.includes(q) || 'belajar reksadana'.includes(q)) &&
-    (!filterStatus || filterStatus === 'Butuh Resolusi') &&
-    (!filterIntent || filterIntent === 'Informasional') &&
-    (!filterTopic || filterTopic === 'Finansial')
+  const handleOpenConflictModal = (name: string) => {
+    const found = clusters.find((c) => c.name.toLowerCase().includes(name.toLowerCase())) || clusters[1] || clusters[0]
+    if (found) {
+      setActiveCluster(found)
+      setIsResolusiBentrokOpen(true)
+    }
+  }
 
-  const matchCard3 =
-    (!q || 'strategi investasi reksadana saham'.includes(q) || 'reksadana saham'.includes(q)) &&
-    (!filterStatus || filterStatus === 'Bentrok CMS RRI') &&
-    (!filterIntent || filterIntent === 'Komersial') &&
-    (!filterTopic || filterTopic === 'Finansial')
+  const handleOpenRejectModal = (name: string) => {
+    const found = clusters.find((c) => c.name.toLowerCase().includes(name.toLowerCase())) || clusters[0]
+    if (found) {
+      setActiveCluster(found)
+      setIsTolakClusterOpen(true)
+    }
+  }
 
-  const hasAnyMatch = matchCard1 || matchCard2 || matchCard3
+  const handleCreateBrief = () => {
+    setCurrentPage('brief')
+  }
+
+  const handleGenerateClustersWithAI = () => {
+    showSuccess('AI Assistant', 'AI sedang menganalisis dan mengelompokkan kata kunci baru ke dalam cluster...')
+  }
+
+  const handleIgnoreConflict = () => {
+    showSuccess('Resolusi Konflik', 'Peringatan kanibalisasi diabaikan sesuai keputusan redaksi.')
+  }
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
+      {/* Breadcrumb matching Image 2 */}
       <div className="text-xs text-slate-400">
         <span>Riset & Produksi Berita</span>
         <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Kelompok Kata Kunci</span>
+        <span className="text-[#1866EF] font-semibold">Cluster Topik</span>
       </div>
 
       {/* 1. Milestone Stepper: Step 3 Active */}
       <MilestoneStepper currentStep={3} />
 
-      {/* Title and description */}
-      <div>
-        <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
-          3 Cluster Siap Ditinjau
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
-          Kelola klasterisasi topik liputan, tinjau keyword pilar vs pendukung, dan selesaikan konflik kanibalisasi konten.
-        </p>
+      {/* 2. Page Title and Description with AI Action Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
+            50 Daftar Kelompok Kata Kunci
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            Satu kelompok mewakili satu calon artikel dengan intent yang konsisten dan risiko artikel saling tumpang tindih yang rendah.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGenerateClustersWithAI}
+          className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Buat Kelompok dengan AI</span>
+        </button>
       </div>
 
-      {/* 2. Next Step Banner */}
+      {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={3} />
 
-      {/* COMP-TodoList-Editor: 949px Standard Container */}
-      <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-5">
-        {/* url-input-wrapper (Search box) */}
-        <div className="relative w-full h-[44px]">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-            <Search className="w-4 h-4 text-slate-400" />
-          </div>
+      {/* 4. Filter Container matching Image 2 */}
+      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
+        {/* Full width Search Box */}
+        <div className="relative w-full">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari nama cluster ..."
-            className="w-full h-[44px] pl-10 pr-4 text-sm bg-white border border-[#DBEAFE] rounded-[6px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
           />
         </div>
 
-        {/* Frame 427318715: Filter Dropdowns + Hug Content Clear Filter */}
+        {/* 3 Filter Dropdowns + Bersihkan Filter Button */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3">
-          {/* Filter Status */}
+          {/* Status Dropdown */}
           <div className="relative flex-1 min-w-[160px] w-full sm:w-auto">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className={`w-full h-[44px] px-3 pr-8 text-sm bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
-                filterStatus ? 'text-[#020617] font-medium' : 'text-slate-500'
-              }`}
+              className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
             >
-              <option value="" disabled hidden>Pilih: Semua Status</option>
+              <option value="">Pilih: Semua Status</option>
+              <option value="Baru">Baru</option>
               <option value="Aman">Aman (Siap Brief)</option>
-              <option value="Butuh Resolusi">Butuh Resolusi</option>
-              <option value="Bentrok CMS RRI">Bentrok CMS RRI</option>
+              <option value="Konflik">Butuh Resolusi</option>
             </select>
-            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          {/* Filter Intensi */}
+          {/* Intensi Dropdown */}
           <div className="relative flex-1 min-w-[160px] w-full sm:w-auto">
             <select
               value={filterIntent}
               onChange={(e) => setFilterIntent(e.target.value)}
-              className={`w-full h-[44px] px-3 pr-8 text-sm bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
-                filterIntent ? 'text-[#020617] font-medium' : 'text-slate-500'
-              }`}
+              className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
             >
-              <option value="" disabled hidden>Pilih: Semua Intensi</option>
+              <option value="">Pilih: Semua Intensi</option>
               <option value="Informasional">Informasional</option>
-              <option value="Komersial">Komersial</option>
               <option value="Transaksional">Transaksional</option>
+              <option value="Komersial">Komersial</option>
             </select>
-            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          {/* Filter Topik */}
+          {/* Topik Dropdown */}
           <div className="relative flex-1 min-w-[160px] w-full sm:w-auto">
             <select
               value={filterTopic}
               onChange={(e) => setFilterTopic(e.target.value)}
-              className={`w-full h-[44px] px-3 pr-8 text-sm bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
-                filterTopic ? 'text-[#020617] font-medium' : 'text-slate-500'
-              }`}
+              className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
             >
-              <option value="" disabled hidden>Pilih: Semua Topik</option>
-              <option value="Finansial">Finansial & Investasi</option>
-              <option value="Sosial">Bansos & Sosial</option>
+              <option value="">Pilih: Semua Topik</option>
+              <option value="Investasi">Investasi & Pasar Modal</option>
+              <option value="Bansos">Bansos & Sosial</option>
+              <option value="Ketenagakerjaan">Ketenagakerjaan</option>
             </select>
-            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          {/* Bersihkan Filter Button (Hug Content) */}
+          {/* Bersihkan Filter Button */}
           <button
             type="button"
             onClick={handleClearFilters}
-            className="w-auto h-[44px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-sm font-semibold rounded-[6px] transition-colors flex items-center justify-center shrink-0 whitespace-nowrap cursor-pointer self-start sm:self-auto"
+            className="w-full sm:w-auto h-10 px-4 border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0"
           >
             Bersihkan Filter
           </button>
         </div>
 
-        {/* Frame 427318723: 4 Summary Pills */}
-        <div className="flex flex-wrap items-center gap-2.5 pt-1">
-          <div className="h-[26px] px-3.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1D4ED8] flex items-center">
-            45 Cluster Total
+        {/* 4 Stat Summary Badges */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+          <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg py-2.5 px-3 text-center">
+            <span className="text-xs font-bold text-[#1D4ED8]">45 Cluster Total</span>
           </div>
-          <div className="h-[26px] px-3.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-xs font-semibold text-[#15803D] flex items-center">
-            38 Aman (Siap Brief)
+          <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-lg py-2.5 px-3 text-center">
+            <span className="text-xs font-bold text-[#15803D]">38 Aman (Siap Brief)</span>
           </div>
-          <div className="h-[26px] px-3.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-xs font-semibold text-[#B45309] flex items-center">
-            4 Kanibalisasi Internal
+          <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-lg py-2.5 px-3 text-center">
+            <span className="text-xs font-bold text-[#B45309]">4 Kanibalisasi Internal</span>
           </div>
-          <div className="h-[26px] px-3.5 rounded-full bg-[#FEF2F2] border border-[#FECACA] text-xs font-semibold text-[#B91C1C] flex items-center">
-            3 Bentrok Artikel Lama
+          <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-lg py-2.5 px-3 text-center">
+            <span className="text-xs font-bold text-[#B91C1C]">3 Bentrok Artikel Lama</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Cluster Cards matching Image 2 */}
+      <div className="space-y-5">
+        {/* Card 1: Cara Investasi Reksadana Pemula */}
+        <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-4">
+          {/* Header Row: Badges & Right Meta */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
+                Baru
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
+                Informasional
+              </span>
+            </div>
+
+            <div className="text-xs text-slate-500 font-medium">
+              <span className="font-bold text-slate-800">Total Vol: 45.000 / bln</span>
+              <span className="mx-2 text-slate-300">|</span>
+              <span>Rata-rata KD: 32% • (4 Keyword)</span>
+            </div>
+          </div>
+
+          {/* Cluster Title */}
+          <div>
+            <h2 className="text-lg font-bold text-[#1866EF] leading-snug">
+              Cara Investasi Reksadana Pemula
+            </h2>
+          </div>
+
+          {/* Content Box with Pilar & Supporting Keywords */}
+          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/40 space-y-3">
+            {/* Kata Kunci Pilar */}
+            <div>
+              <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
+                Kata Kunci Pilar:
+              </div>
+              <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
+                cara investasi reksadana (Vol 22.000) (KD 28%)
+              </span>
+            </div>
+
+            {/* Kata Kunci Pendukung */}
+            <div>
+              <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
+                Kata Kunci Pendukung:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'reksadana pemula (Vol 22.000) (KD 28%)',
+                  'modal kecil (Vol 22.000) (KD 28%)',
+                  'keuntungan reksadana (Vol 22.000) (KD 28%)',
+                ].map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs"
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons Row */}
+          <div className="flex items-center justify-end gap-2.5 pt-1">
+            <button
+              type="button"
+              onClick={() => handleOpenRejectModal('Cara Investasi Reksadana Pemula')}
+              className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            >
+              Tolak
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOpenEditDrawer('Cara Investasi Reksadana Pemula')}
+              className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+            >
+              Perbarui Cluster
+            </button>
+            <button
+              type="button"
+              onClick={handleCreateBrief}
+              className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+            >
+              Buat Brief
+            </button>
           </div>
         </div>
 
-        {/* CONTAINER-Cluster-List */}
-        <div className="space-y-4 pt-2">
-          {/* CARD 1: Cara Investasi Reksadana Pemula (Blue Border) */}
-          {matchCard1 && (
-            <div className="bg-white border border-[#93C5FD] rounded-[6px] p-5 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base font-bold text-[#1866EF] leading-snug">
-                    Cara Investasi Reksadana Pemula
-                  </h2>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1D4ED8] flex items-center">
-                    Baru
-                  </span>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-xs font-semibold text-[#6D28D9] flex items-center">
-                    Informasional
-                  </span>
-                </div>
-                <div className="text-xs flex items-center gap-2">
-                  <span className="font-semibold text-slate-900">Total Vol: 45.000 / bln</span>
-                  <span className="text-slate-300">|</span>
-                  <span className="text-slate-400">Rata-rata KD: 32% · (4 Keyword)</span>
-                </div>
+        {/* Card 2: Panduan Reksadana 2026 (Kanibalisasi Terdeteksi) */}
+        <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-4">
+          {/* Header Row: Badges & Right Meta */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
+                Brief Dibuat
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-xs font-semibold">
+                Butuh Resolusi
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
+                Informasional
+              </span>
+            </div>
+
+            <div className="text-xs text-slate-500 font-medium">
+              <span className="font-bold text-slate-800">Total Vol: 45.000 / bln</span>
+              <span className="mx-2 text-slate-300">|</span>
+              <span>Rata-rata KD: 32% • (3 Keyword)</span>
+            </div>
+          </div>
+
+          {/* Cluster Title */}
+          <div>
+            <h2 className="text-lg font-bold text-[#92400E] leading-snug">
+              Panduan Reksadana 2026
+            </h2>
+          </div>
+
+          {/* Yellow Warning Callout matching Image 2 */}
+          <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-xl p-3.5 text-xs font-medium text-[#B45309]">
+            Kanibalisasi Terdeteksi: Cluster ini bersaing di maksud pencarian yang sama dengan cluster 'Cara Investasi Reksadana Pemula'.
+          </div>
+
+          {/* Content Box with Pilar & Supporting Keywords */}
+          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/40 space-y-3">
+            {/* Kata Kunci Pilar */}
+            <div>
+              <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
+                Kata Kunci Pilar:
               </div>
+              <span className="inline-block px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-xs font-medium">
+                panduan reksadana 2026 (Vol 22.000) (KD 28%)
+              </span>
+            </div>
 
-              <div className="bg-[#F8FAFC] border border-[#DBEAFE] rounded-[6px] p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px]">
-                    Kata Kunci Pilar:
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1D4ED8]">
-                    cara investasi reksadana (Vol 22.000) (KD 28%)
-                  </span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-start gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px] pt-1">
-                    Kata Kunci Pendukung:
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]">
-                      reksadana pemula (Vol 22.000) (KD 28%)
-                    </span>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]">
-                      modal kecil (Vol 22.000) (KD 28%)
-                    </span>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]">
-                      keuntungan reksadana (Vol 22.000) (KD 28%)
-                    </span>
-                  </div>
-                </div>
+            {/* Kata Kunci Pendukung */}
+            <div>
+              <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
+                Kata Kunci Pendukung:
               </div>
-
-              <div className="flex flex-wrap items-center justify-end gap-2.5 pt-1">
-                <button
-                  onClick={() =>
-                    handleOpenRejectModal({
-                      id: 'cl-1',
-                      name: 'Cara Investasi Reksadana Pemula',
-                      status: 'Aman',
-                      intent: 'Informational',
-                      totalVol: 45000,
-                      avgKd: 32,
-                      keywordCount: 4,
-                      pillarKeyword: { text: 'cara investasi reksadana', vol: 22000, kd: 28 },
-                      supportingKeywords: [],
-                    })
-                  }
-                  className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
-                >
-                  Tolak
-                </button>
-                <button
-                  onClick={() =>
-                    handleOpenDrawer({
-                      id: 'cl-1',
-                      name: 'Cara Investasi Reksadana Pemula',
-                      status: 'Aman',
-                      intent: 'Informational',
-                      totalVol: 45000,
-                      avgKd: 32,
-                      keywordCount: 4,
-                      pillarKeyword: { text: 'cara investasi reksadana', vol: 22000, kd: 28 },
-                      supportingKeywords: [],
-                    })
-                  }
-                  className="flex-1 sm:flex-initial h-[36px] px-4 bg-white border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-medium rounded-[6px] transition-colors"
-                >
-                  Perbarui Cluster
-                </button>
-                <button
-                  onClick={handleCreateBrief}
-                  className="w-full sm:w-auto h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-                >
-                  Buat Brief
-                </button>
+              <div className="flex flex-wrap gap-2">
+                {card2Supporting.map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs"
+                  >
+                    {kw}
+                  </span>
+                ))}
               </div>
             </div>
-          )}
+          </div>
 
-          {/* CARD 2: Panduan Reksadana 2026 (Yellow Border) */}
-          {matchCard2 && (
-            <div className="bg-white border border-[#FDE68A] rounded-[6px] p-5 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base font-bold text-[#B45309] leading-snug">
-                    Panduan Reksadana 2026
-                  </h2>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1D4ED8] flex items-center">
-                    Brief Dibuat
-                  </span>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-xs font-semibold text-[#B45309] flex items-center">
-                    Butuh Resolusi
-                  </span>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-xs font-semibold text-[#6D28D9] flex items-center">
-                    Informasional
-                  </span>
-                </div>
-                <div className="text-xs flex items-center gap-2">
-                  <span className="font-semibold text-slate-900">Total Vol: 45.000 / bln</span>
-                  <span className="text-slate-300">|</span>
-                  <span className="text-slate-400">Rata-rata KD: 32% · (3 Keyword)</span>
-                </div>
-              </div>
+          {/* Bottom Alert & Action Buttons matching Image 2 */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <span className="text-xs text-[#92400E] font-normal leading-relaxed">
+              Tindakan diperlukan agar tidak membuat dua artikel yang bersaing di mesin pencari.
+            </span>
 
-              {/* Alert Box */}
-              <div className="p-3 rounded-[6px] bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#B45309] font-medium leading-relaxed">
-                Kanibalisasi Terdeteksi: Cluster ini bersaing di maksud pencarian yang sama dengan cluster 'Cara Investasi Reksadana Pemula'.
-              </div>
-
-              <div className="bg-[#FFFDF5] border border-[#FDE68A] rounded-[6px] p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px]">
-                    Kata Kunci Pilar:
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-xs font-semibold text-[#B45309]">
-                    panduan reksadana 2026 (Vol 22.000) (KD 28%)
-                  </span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-start gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px] pt-1">
-                    Kata Kunci Pendukung:
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {card2Supporting.map((kw, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]"
-                      >
-                        <span>{kw}</span>
-                        {isSeparatingKeywords && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveSupportingCard2(kw)}
-                            className="hover:text-rose-600 focus:outline-none p-0.5 rounded-full hover:bg-rose-50 text-slate-400"
-                            title="Hapus kata kunci dari cluster"
-                          >
-                            <X className="w-3.5 h-3.5 text-[#B91C1C]" />
-                          </button>
-                        )}
-                      </span>
-                    ))}
-                    {card2Supporting.length === 0 && (
-                      <span className="text-xs text-slate-400 italic py-1">
-                        Semua kata kunci pendukung telah dipisahkan.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                <span className="text-xs font-medium text-[#B45309]">
-                  Tindakan diperlukan agar tidak membuat dua artikel yang bersaing di mesin pencari.
-                </span>
-
-                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
-                  <button
-                    onClick={() =>
-                      handleOpenRejectModal({
-                        id: 'cl-2',
-                        name: 'Panduan Reksadana 2026',
-                        status: 'Butuh Resolusi',
-                        intent: 'Informational',
-                        totalVol: 45000,
-                        avgKd: 32,
-                        keywordCount: 3,
-                        pillarKeyword: { text: 'panduan reksadana 2026', vol: 22000, kd: 28 },
-                        supportingKeywords: [],
-                      })
-                    }
-                    className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
-                  >
-                    Tolak
-                  </button>
-                  <button
-                    onClick={() => setIsSeparatingKeywords(!isSeparatingKeywords)}
-                    className={`flex-1 sm:flex-initial h-[36px] px-4 border rounded-[6px] text-xs font-medium transition-colors ${
-                      isSeparatingKeywords
-                        ? 'bg-amber-50 border-amber-300 text-amber-800 font-semibold'
-                        : 'bg-white border-[#DBEAFE] hover:bg-slate-50 text-slate-800'
-                    }`}
-                  >
-                    {isSeparatingKeywords ? 'Selesai Memisahkan' : 'Pisahkan Kata Kunci'}
-                  </button>
-                  <button
-                    onClick={() => {}}
-                    className="w-full sm:w-auto h-[36px] px-4 bg-[#9A3412] hover:bg-[#7C2D12] text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-                  >
-                    Abaikan
-                  </button>
-                </div>
-              </div>
+            <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+              <button
+                type="button"
+                onClick={() => handleOpenRejectModal('Panduan Reksadana 2026')}
+                className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              >
+                Tolak
+              </button>
+              <button
+                type="button"
+                onClick={() => handleOpenConflictModal('Panduan Reksadana 2026')}
+                className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+              >
+                Pisahkan Kata Kunci
+              </button>
+              <button
+                type="button"
+                onClick={handleIgnoreConflict}
+                className="h-9 px-5 bg-[#B45309] hover:bg-amber-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+              >
+                Abaikan
+              </button>
             </div>
-          )}
-
-          {/* CARD 3: Strategi Investasi Reksadana Saham (Red Border) */}
-          {matchCard3 && (
-            <div className="bg-white border border-[#FECACA] rounded-[6px] p-5 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base font-bold text-[#B91C1C] leading-snug">
-                    Strategi Investasi Reksadana Saham
-                  </h2>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1D4ED8] flex items-center">
-                    Draft Dibuat
-                  </span>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#FEF2F2] border border-[#FECACA] text-xs font-semibold text-[#B91C1C] flex items-center">
-                    Bentrok CMS RRI
-                  </span>
-                  <span className="h-[22px] px-2.5 rounded-full bg-[#FDF4FF] border border-[#F5D0FE] text-xs font-semibold text-[#A21CAF] flex items-center">
-                    Komersial
-                  </span>
-                </div>
-                <div className="text-xs flex items-center gap-2">
-                  <span className="font-semibold text-slate-900">Total Vol: 29.500 / bln</span>
-                  <span className="text-slate-300">|</span>
-                  <span className="text-slate-400">Rata-rata KD: 32% · (4 Keyword)</span>
-                </div>
-              </div>
-
-              {/* Alert Box */}
-              <div className="p-3 rounded-[6px] bg-[#FEE2E2] border border-[#FECACA] text-xs text-[#B91C1C] font-medium leading-relaxed">
-                Topik Sudah Terbit: Keyword pilar di cluster ini sudah tertutup oleh artikel 'Mulai Investasi Reksadana' yang terbit pada 12 Jan 2026 di CMS.
-              </div>
-
-              <div className="bg-[#FFF8F8] border border-[#FECACA] rounded-[6px] p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px]">
-                    Kata Kunci  Pilar:
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#FEF2F2] border border-[#FECACA] text-xs font-semibold text-[#B91C1C]">
-                    investasi reksadana saham tips (Vol 22.000) (KD 28%)
-                  </span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-start gap-2 text-xs">
-                  <span className="text-[#64748B] font-medium shrink-0 min-w-[140px] pt-1">
-                    Kata Kunci Pendukung:
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]">
-                      risiko reksadana saham (Vol 22.000) (KD 28%)
-                    </span>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E2E8F0] text-xs font-medium text-[#334155]">
-                      top reksadana (Vol 22.000) (KD 28%)
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                <span className="text-xs font-medium text-[#B91C1C]">
-                  Saran AI: Tolak cluster ini atau perbarui artikel lama di CMS RRI.
-                </span>
-
-                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
-                  <button
-                    onClick={() =>
-                      handleOpenRejectModal({
-                        id: 'cl-3',
-                        name: 'Strategi Investasi Reksadana Saham',
-                        status: 'Bentrok CMS RRI',
-                        intent: 'Commercial',
-                        totalVol: 29500,
-                        avgKd: 32,
-                        keywordCount: 4,
-                        pillarKeyword: { text: 'investasi reksadana saham tips', vol: 22000, kd: 28 },
-                        supportingKeywords: [],
-                      })
-                    }
-                    className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
-                  >
-                    Tolak
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleOpenConflictModal({
-                        id: 'cl-3',
-                        name: 'Strategi Investasi Reksadana Saham',
-                        status: 'Bentrok CMS RRI',
-                        intent: 'Commercial',
-                        totalVol: 29500,
-                        avgKd: 32,
-                        keywordCount: 4,
-                        pillarKeyword: { text: 'investasi reksadana saham tips', vol: 22000, kd: 28 },
-                        supportingKeywords: [],
-                        cmsArticleTitle: 'Mulai Investasi Reksadana',
-                        cmsPublishDate: '12 Jan 2026',
-                      })
-                    }
-                    className="flex-1 sm:flex-initial h-[36px] px-4 bg-[#B91C1C] hover:bg-rose-800 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-                  >
-                    Tetap Lanjutkan
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!hasAnyMatch && (
-            <div className="py-12 text-center text-xs text-slate-400 bg-white border border-[#DBEAFE] rounded-[6px]">
-              Tidak ada cluster topik yang cocok dengan kata kunci pencarian atau filter yang dipilih.
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

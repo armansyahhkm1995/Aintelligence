@@ -1,13 +1,97 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
-import { KeywordItem } from '../types'
+import { useToast } from '../context/ToastContext'
 import {
   Search,
   ChevronDown,
-  Edit3,
+  Sparkles,
+  Edit,
+  ChevronUp,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
+
+interface KeywordRow {
+  id: string
+  keywordName: string
+  vol: string
+  kd: number
+  intent: 'Informasional' | 'Transaksional' | 'Komersial'
+  topic: string
+  contentType: string
+  evergreenScore: number
+  overlapScore: number
+  decision: 'Layak' | 'Tidak Layak' | 'Perlu Ditinjau'
+  decisionReason: string
+}
+
+const INITIAL_KEYWORDS: KeywordRow[] = [
+  {
+    id: 'KWD-01',
+    keywordName: 'Kata kunci tentang judi',
+    vol: '8.100',
+    kd: 32,
+    intent: 'Informasional',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    evergreenScore: 92,
+    overlapScore: 92,
+    decision: 'Layak',
+    decisionReason: 'intent stabil',
+  },
+  {
+    id: 'KWD-02',
+    keywordName: 'Kata kunci tentang judi',
+    vol: '8.100',
+    kd: 32,
+    intent: 'Transaksional',
+    topic: 'Ketenagakerjaan',
+    contentType: 'Panduan layanan',
+    evergreenScore: 65,
+    overlapScore: 65,
+    decision: 'Tidak Layak',
+    decisionReason: 'topik perlu tinjauan',
+  },
+  {
+    id: 'KWD-03',
+    keywordName: 'Kata kunci tentang judi',
+    vol: '8.100',
+    kd: 32,
+    intent: 'Komersial',
+    topic: 'Perbankan & Fintech',
+    contentType: 'Panduan layanan',
+    evergreenScore: 25,
+    overlapScore: 25,
+    decision: 'Perlu Ditinjau',
+    decisionReason: 'layak evergreen',
+  },
+  {
+    id: 'KWD-04',
+    keywordName: 'cara daftar bansos kemensos online 2027',
+    vol: '33.100',
+    kd: 48,
+    intent: 'Informasional',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    evergreenScore: 94,
+    overlapScore: 12,
+    decision: 'Layak',
+    decisionReason: 'intent stabil',
+  },
+  {
+    id: 'KWD-05',
+    keywordName: 'cek desil bansos dtks jateng online',
+    vol: '14.200',
+    kd: 42,
+    intent: 'Komersial',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    evergreenScore: 40,
+    overlapScore: 68,
+    decision: 'Perlu Ditinjau',
+    decisionReason: 'topik perlu tinjauan',
+  },
+]
 
 export const KeywordPage: React.FC = () => {
   const {
@@ -15,435 +99,343 @@ export const KeywordPage: React.FC = () => {
     toggleKeywordSelect,
     selectAllKeywords,
     clearKeywordSelect,
-    setIsBulkOverrideOpen,
     setIsSingleOverrideOpen,
     setTargetKeywordForOverride,
   } = useApp()
+  const { showSuccess } = useToast()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterUnggahan, setFilterUnggahan] = useState('')
-  const [filterIntensi, setFilterIntensi] = useState('')
-  const [filterAturan, setFilterAturan] = useState('')
-  const [filterKelayakan, setFilterKelayakan] = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
+  const [filterStatus, setFilterStatus] = useState<'Semua' | 'Layak' | 'Tidak Layak' | 'Perlu Ditinjau'>('Semua')
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [activePage, setActivePage] = useState<number>(1)
 
-  // Dummy items exactly as shown in user screenshot
-  const displayKeywords: KeywordItem[] = [
-    {
-      id: 'KWD-101',
-      keyword: 'cara daftar bansos kemensos online 2027',
-      aturan: 'Kata kunci tentang judi',
-      sourceFile: 'semrush_export_nov.csv',
-      volume: 18200,
-      kd: 35,
-      intent: 'Informational' as const,
-      aiTopic: 'Bansos & Sosial',
-      evergreenScore: 92,
-      kelayakanAI: 'Layak' as const,
-      aiReason: 'Alasan AI: Terkena aturan filter risiko penghentian program',
-      status: 'Dikelompokkan' as const,
-    },
-    {
-      id: 'KWD-102',
-      keyword: 'bantuan subsidi upah pekerja kemnaker',
-      aturan: 'Kata kunci tentang judi',
-      sourceFile: 'semrush_export_nov.csv',
-      volume: 18200,
-      kd: 35,
-      intent: 'Transactional' as const,
-      aiTopic: 'Ketenagakerjaan',
-      evergreenScore: 65,
-      kelayakanAI: 'Tidak Layak' as const,
-      aiReason: 'Alasan AI: Terkena aturan filter risiko penghentian program',
-      status: 'Baru' as const,
-    },
-    {
-      id: 'KWD-103',
-      keyword: 'cek desil bansos dtks jateng online',
-      aturan: 'Kata kunci tentang judi',
-      sourceFile: 'semrush_export_nov.csv',
-      volume: 22800,
-      kd: 58,
-      intent: 'Commercial' as const,
-      aiTopic: 'Perbankan & Fintech',
-      evergreenScore: 25,
-      kelayakanAI: 'Tidak Layak' as const,
-      aiReason: 'Alasan AI: Terkena aturan filter risiko penghentian program',
-      status: 'Baru' as const,
-    },
-  ]
-
-  const filteredKeywords = displayKeywords.filter((kw) => {
-    if (searchQuery.trim() && !kw.keyword.toLowerCase().includes(searchQuery.toLowerCase().trim())) {
-      return false
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === filteredKeywords.length) {
+      setSelectedIds([])
+    } else {
+      setSelectedIds(filteredKeywords.map((k) => k.id))
     }
-    if (filterUnggahan && kw.sourceFile !== filterUnggahan) return false
-    if (filterIntensi && kw.intent !== filterIntensi) return false
-    if (filterAturan && !kw.aturan.toLowerCase().includes(filterAturan.toLowerCase())) return false
-    if (filterKelayakan && kw.kelayakanAI !== filterKelayakan) return false
-    if (filterStatus && kw.status !== filterStatus) return false
-    return true
-  })
-
-  const isAllSelected =
-    filteredKeywords.length > 0 &&
-    filteredKeywords.every((k) => (selectedKeywordIds || []).includes(k.id))
-
-  const handleClearFilters = () => {
-    setSearchQuery('')
-    setFilterUnggahan('')
-    setFilterIntensi('')
-    setFilterAturan('')
-    setFilterKelayakan('')
-    setFilterStatus('')
   }
 
-  const handleOpenSingleOverride = (kw: KeywordItem) => {
-    setTargetKeywordForOverride(kw)
+  const handleToggleSelectRow = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    )
+  }
+
+  const handleClassifyWithAI = () => {
+    showSuccess('AI Assistant', 'AI sedang mengklasifikasikan 50 kata kunci berdasarkan intent & kelayakan...')
+  }
+
+  const handleOpenEdit = (kw: KeywordRow) => {
+    // Adapter for AppContext modal
+    setTargetKeywordForOverride({
+      id: kw.id,
+      keyword: kw.keywordName,
+      aturan: 'Kata kunci tentang judi',
+      sourceFile: 'semrush_export_nov.csv',
+      volume: parseInt(kw.vol.replace('.', '')) || 8100,
+      kd: kw.kd,
+      intent: kw.intent === 'Informasional' ? 'Informational' : kw.intent === 'Transaksional' ? 'Transactional' : 'Commercial',
+      aiTopic: kw.topic,
+      evergreenScore: kw.evergreenScore,
+      kelayakanAI: kw.decision === 'Layak' ? 'Layak' : 'Tidak Layak',
+      aiReason: kw.decisionReason,
+      status: 'Baru',
+    })
     setIsSingleOverrideOpen(true)
   }
 
+  const filteredKeywords = INITIAL_KEYWORDS.filter((row) => {
+    const matchSearch =
+      row.keywordName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.topic.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchStatus =
+      filterStatus === 'Semua' ? true : row.decision === filterStatus
+    return matchSearch && matchStatus
+  })
+
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
+      {/* Breadcrumb matching Image 1 */}
       <div className="text-xs text-slate-400">
         <span>Riset & Produksi Berita</span>
         <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Saring Kata Kunci</span>
+        <span className="text-[#1866EF] font-semibold">Manajemen Keyword</span>
       </div>
 
       {/* 1. Milestone Stepper: Step 2 Active */}
       <MilestoneStepper currentStep={2} />
 
-      {/* Title and description */}
-      <div>
-        <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
-          50 Daftar Keyword & Klasifikasi
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
-          Tinjau kelayakan kata kunci dari Semrush, filter topik liputan, dan lakukan koreksi manual (override) redaksional.
-        </p>
+      {/* 2. Page Title and Description with AI Action Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
+            50 Daftar Kata Kunci
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            Tinjau kelayakan kata kunci dari Semrush, filter topik liputan, dan lakukan koreksi manual (override) redaksional.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleClassifyWithAI}
+          className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Klasifikasikan Kata Kunci dengan AI</span>
+        </button>
       </div>
 
-      {/* 2. Next Step Banner */}
+      {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={2} />
 
-      {/* COMP-TodoList-Editor: 949px Standard Container */}
-      <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4">
-        {/* Bulk Actions Banner if selected */}
-        {(selectedKeywordIds || []).length > 0 && (
-          <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-[#1D4ED8] font-semibold">
-              <span>{(selectedKeywordIds || []).length} Kata Kunci Dipilih</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsBulkOverrideOpen(true)}
-                className="h-[32px] px-3.5 bg-[#1866EF] hover:bg-blue-600 text-white font-semibold rounded-[4px] transition-colors shadow-xs"
-              >
-                Koreksi Massal (Bulk Override)
-              </button>
-              <button
-                onClick={clearKeywordSelect}
-                className="h-[32px] px-3 border border-[#DBEAFE] hover:bg-white text-slate-600 rounded-[4px] transition-colors"
-              >
-                Batalkan
-              </button>
-            </div>
-          </div>
-        )}
+      {/* 4. Three Summary Stat Cards matching Image 1 */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Layak Card */}
+        <div className="bg-[#ECFDF5]/50 border border-[#A7F3D0] rounded-xl p-4 flex items-center justify-between shadow-2xs">
+          <span className="text-xs font-bold text-[#15803D]">Layak</span>
+          <span className="text-2xl font-extrabold text-[#15803D]">486</span>
+        </div>
 
-        {/* Filter Controls matching screenshot: Search + 2 rows of 3 columns */}
-        <div className="space-y-3">
-          {/* Search Box */}
-          <div className="relative w-full">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
+        {/* Perlu Ditinjau Card */}
+        <div className="bg-[#FFFBEB]/50 border border-[#FDE68A] rounded-xl p-4 flex items-center justify-between shadow-2xs">
+          <span className="text-xs font-bold text-[#B45309]">Perlu Ditinjau</span>
+          <span className="text-2xl font-extrabold text-[#B45309]">486</span>
+        </div>
+
+        {/* Tidak Layak Card */}
+        <div className="bg-[#FEF2F2]/50 border border-[#FECACA] rounded-xl p-4 flex items-center justify-between shadow-2xs">
+          <span className="text-xs font-bold text-[#B91C1C]">Tidak Layak</span>
+          <span className="text-2xl font-extrabold text-[#B91C1C]">486</span>
+        </div>
+      </div>
+
+      {/* 5. Main Table Container matching Image 1 */}
+      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
+        {/* Search & Filter Header Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-[380px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
+              placeholder="Cari kata kunci ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari kata kunci ..."
-              className="w-full h-[40px] pl-10 pr-3 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
             />
           </div>
 
-          {/* Row 1: 3 Dropdowns */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Dropdown 1: Unggahan Asal */}
-            <div className="relative">
-              <select
-                value={filterUnggahan}
-                onChange={(e) => setFilterUnggahan(e.target.value)}
-                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
-                  filterUnggahan ? 'text-slate-900 font-medium' : 'text-slate-500'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih: Unggahan Asal</option>
-                <option value="semrush_export_nov.csv">semrush_export_nov.csv</option>
-                <option value="semrush_finansial_q4.csv">semrush_finansial_q4.csv</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Dropdown 2: Intensi */}
-            <div className="relative">
-              <select
-                value={filterIntensi}
-                onChange={(e) => setFilterIntensi(e.target.value)}
-                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
-                  filterIntensi ? 'text-slate-900 font-medium' : 'text-slate-500'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih: Intensi</option>
-                <option value="Informational">Informasional</option>
-                <option value="Commercial">Komersial</option>
-                <option value="Transactional">Transaksional</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Dropdown 3: Aturan Filter */}
-            <div className="relative">
-              <select
-                value={filterAturan}
-                onChange={(e) => setFilterAturan(e.target.value)}
-                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
-                  filterAturan ? 'text-slate-900 font-medium' : 'text-slate-500'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih: Aturan Filter</option>
-                <option value="Judi">Kata kunci tentang judi</option>
-                <option value="Musiman">Filter Musiman</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-          </div>
-
-          {/* Row 2: 2 Dropdowns + Hug Content Bersihkan Filter Button */}
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            {/* Dropdown 4: Kelayakan */}
-            <div className="relative flex-1 w-full">
-              <select
-                value={filterKelayakan}
-                onChange={(e) => setFilterKelayakan(e.target.value)}
-                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
-                  filterKelayakan ? 'text-slate-900 font-medium' : 'text-slate-500'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih: Kelayakan</option>
-                <option value="Layak">Layak</option>
-                <option value="Tidak Layak">Tidak Layak</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Dropdown 5: Status */}
-            <div className="relative flex-1 w-full">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className={`w-full h-[40px] px-3 pr-7 text-xs bg-white border border-[#DBEAFE] rounded-[6px] appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer truncate ${
-                  filterStatus ? 'text-slate-900 font-medium' : 'text-slate-500'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih: Status</option>
-                <option value="Dikelompokkan">Dikelompokkan</option>
-                <option value="Baru">Baru</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Bersihkan Filter Button (Hug Content) */}
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="w-auto h-[40px] px-4 border border-[#FEE2E2] hover:bg-rose-50 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors flex items-center justify-center shrink-0 whitespace-nowrap cursor-pointer self-start sm:self-auto"
+          <div className="relative w-full sm:w-auto">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as any)}
+              className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
             >
-              Bersihkan Filter
-            </button>
+              <option value="Semua">Status</option>
+              <option value="Layak">Layak</option>
+              <option value="Tidak Layak">Tidak Layak</option>
+              <option value="Perlu Ditinjau">Perlu Ditinjau</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
 
-        {/* Keywords Table matching user screenshot */}
-        <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
+        {/* Table */}
+        <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[950px]">
+            <table className="w-full text-left text-xs min-w-[850px]">
               <thead>
-                <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
-                  <th className="py-3 px-3 w-8">
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      onChange={(e) => selectAllKeywords(e.target.checked)}
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                    />
+                <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
+                  <th className="py-3 px-4 font-semibold w-[28%]">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={
+                          filteredKeywords.length > 0 &&
+                          selectedIds.length === filteredKeywords.length
+                        }
+                        onChange={handleToggleSelectAll}
+                        className="rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
+                      />
+                      <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Kata Kunci</span>
+                    </div>
                   </th>
-                  <th className="py-3 px-3 font-semibold">^ Kata Kunci</th>
-                  <th className="py-3 px-3 font-semibold">Aturan</th>
-                  <th className="py-3 px-3 font-semibold">Unggahan Asal</th>
-                  <th className="py-3 px-3 font-semibold">Volume | KD</th>
-                  <th className="py-3 px-3 font-semibold">Intensi</th>
-                  <th className="py-3 px-3 font-semibold">Topik AI</th>
-                  <th className="py-3 px-3 font-semibold">Evergreen</th>
-                  <th className="py-3 px-3 font-semibold">Kelayakan AI</th>
-                  <th className="py-3 px-3 font-semibold">Status</th>
-                  <th className="py-3 px-3 font-semibold text-center">Aksi</th>
+                  <th className="py-3 px-4 font-semibold w-[16%]">Topik</th>
+                  <th className="py-3 px-4 font-semibold w-[14%]">Jenis Konten</th>
+                  <th className="py-3 px-4 font-semibold w-[10%]">Evergreen</th>
+                  <th className="py-3 px-4 font-semibold w-[10%]">Tumpang Tindih</th>
+                  <th className="py-3 px-4 font-semibold w-[10%]">Keputusan</th>
+                  <th className="py-3 px-4 font-semibold w-[12%]">Keputusan</th>
+                  <th className="py-3 px-4 font-semibold text-center w-[6%]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
-                {filteredKeywords.map((kw, idx) => {
-                  const isSelected = (selectedKeywordIds || []).includes(kw.id)
-                  const isLayak = kw.kelayakanAI === 'Layak'
-
-                  // Intent pill colors
-                  const intentClass =
-                    kw.intent === 'Informational'
-                      ? 'bg-[#F5F3FF] text-[#6D28D9] border-[#DDD6FE]'
-                      : kw.intent === 'Transactional'
-                      ? 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]'
-                      : 'bg-[#FDF4FF] text-[#A21CAF] border-[#F5D0FE]'
-
-                  // Evergreen color
-                  const evergreenColor =
-                    kw.evergreenScore >= 80
-                      ? 'text-[#15803D]'
-                      : kw.evergreenScore >= 50
-                      ? 'text-[#B45309]'
-                      : 'text-[#B91C1C]'
-
-                  return (
-                    <tr
-                      key={kw.id || idx}
-                      className={`hover:bg-slate-50/70 transition-colors ${
-                        isSelected ? 'bg-blue-50/40' : ''
-                      }`}
-                    >
-                      <td className="py-3.5 px-3">
+                {filteredKeywords.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-slate-50/70 transition-colors"
+                  >
+                    {/* Kata Kunci with sub-meta */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-start gap-2.5">
                         <input
                           type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleKeywordSelect(kw.id)}
-                          className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                          checked={selectedIds.includes(item.id)}
+                          onChange={() => handleToggleSelectRow(item.id)}
+                          className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
                         />
-                      </td>
-                      <td className="py-3.5 px-3 space-y-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                            judi
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                            slot gacor
-                          </span>
+                        <div>
+                          <div className="font-bold text-slate-900 leading-snug">
+                            {item.keywordName}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5 font-normal">
+                            Vol: {item.vol} | KD: {item.kd} | {item.intent}
+                          </div>
                         </div>
-                        <div className="text-[11px] font-medium text-[#B91C1C] leading-snug">
-                          {kw.aiReason}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-3 font-medium text-slate-900 text-xs">
-                        {kw.aturan}
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-500 text-xs font-mono">
-                        {kw.sourceFile}
-                      </td>
-                      <td className="py-3.5 px-3">
-                        <div className="font-bold text-slate-900">
-                          {(kw.volume || 0).toLocaleString('id-ID')}
-                        </div>
-                        <div className="text-[11px] text-slate-400">KD: {kw.kd}%</div>
-                      </td>
-                      <td className="py-3.5 px-3">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium border ${intentClass}`}
-                        >
-                          {kw.intent === 'Informational'
-                            ? 'Informasional'
-                            : kw.intent === 'Transactional'
-                            ? 'Transaksional'
-                            : 'Komersial'}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-700 text-xs font-medium">
-                        {kw.aiTopic}
-                      </td>
-                      <td className="py-3.5 px-3">
-                        <span className={`font-bold text-xs ${evergreenColor}`}>
-                          {kw.evergreenScore}%
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-3">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-                            isLayak
-                              ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
-                              : 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
-                          }`}
-                        >
-                          {kw.kelayakanAI}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-3">
-                        <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                          {kw.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-3 text-center">
-                        <button
-                          onClick={() => handleOpenSingleOverride(kw)}
-                          className="p-1.5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-700 rounded transition-colors"
-                          title="Koreksi"
-                        >
-                          <Edit3 className="w-3.5 h-3.5 text-slate-600" />
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })}
+                      </div>
+                    </td>
+
+                    {/* Topik */}
+                    <td className="py-3.5 px-4 text-slate-800 font-medium">
+                      {item.topic}
+                    </td>
+
+                    {/* Jenis Konten */}
+                    <td className="py-3.5 px-4 text-slate-700">
+                      {item.contentType}
+                    </td>
+
+                    {/* Evergreen (green score) */}
+                    <td className="py-3.5 px-4 font-bold text-[#15803D]">
+                      {item.evergreenScore}
+                    </td>
+
+                    {/* Tumpang Tindih (red score) */}
+                    <td className="py-3.5 px-4 font-bold text-[#EF4444]">
+                      {item.overlapScore}
+                    </td>
+
+                    {/* Keputusan Badge */}
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                          item.decision === 'Layak'
+                            ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
+                            : item.decision === 'Tidak Layak'
+                            ? 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
+                            : 'bg-[#FFFBEB] text-[#B45309] border-[#FDE68A]'
+                        }`}
+                      >
+                        {item.decision}
+                      </span>
+                    </td>
+
+                    {/* Keputusan Reason / Alasan */}
+                    <td className="py-3.5 px-4 text-slate-700 font-normal">
+                      {item.decisionReason}
+                    </td>
+
+                    {/* Aksi Pencil Button */}
+                    <td className="py-3.5 px-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEdit(item)}
+                        className="p-1.5 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
+                        title="Koreksi Redaksional (Override)"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
                 {filteredKeywords.length === 0 && (
                   <tr>
-                    <td colSpan={11} className="py-8 text-center text-xs text-slate-400">
-                      Tidak ada kata kunci yang cocok dengan pencarian atau filter yang dipilih.
+                    <td colSpan={8} className="py-8 text-center text-slate-400">
+                      Tidak ada kata kunci yang cocok dengan kriteria pencarian.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+        </div>
 
-          {/* Pagination Bar */}
-          <div className="p-3.5 bg-white border-t border-[#DBEAFE] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-            <div className="flex items-center justify-between w-full sm:w-auto gap-2">
-              <span>Menampilkan 1-5 dari 42 data</span>
-              <div className="relative">
-                <select className="h-[28px] pl-2 pr-6 bg-white border border-[#DBEAFE] rounded text-xs text-slate-700 appearance-none cursor-pointer">
-                  <option>10</option>
-                  <option>25</option>
-                  <option>50</option>
-                </select>
-                <ChevronDown className="absolute right-1.5 top-2 w-3 h-3 text-slate-400 pointer-events-none" />
-              </div>
+        {/* 6. Pagination Footer matching Image 1 */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <span>Menampilkan 1-5 dari 42 data</span>
+            <div className="relative inline-block">
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="appearance-none bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg px-2.5 py-1 pr-6 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
+          </div>
 
-            <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-0.5">
-              <button className="h-[28px] px-2.5 sm:px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs shrink-0">
-                Sebelumnya
-              </button>
-              <button className="h-[28px] w-[28px] rounded bg-[#1866EF] text-white font-bold text-xs flex items-center justify-center shrink-0">
-                1
-              </button>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
-                2
-              </button>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
-                3
-              </button>
-              <span className="px-1 text-slate-400 shrink-0">...</span>
-              <button className="h-[28px] w-[28px] rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs flex items-center justify-center shrink-0">
-                10
-              </button>
-              <button className="h-[28px] px-2.5 sm:px-3 rounded border border-[#DBEAFE] text-slate-700 hover:bg-slate-50 text-xs shrink-0">
-                Selanjutnya
-              </button>
-            </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setActivePage(Math.max(1, activePage - 1))}
+              className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors cursor-pointer"
+            >
+              Sebelumnya
+            </button>
+            <button
+              onClick={() => setActivePage(1)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 1
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              1
+            </button>
+            <button
+              onClick={() => setActivePage(2)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 2
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              2
+            </button>
+            <button
+              onClick={() => setActivePage(3)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 3
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              3
+            </button>
+            <span className="px-1 text-slate-400">...</span>
+            <button
+              onClick={() => setActivePage(10)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 10
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              10
+            </button>
+            <button
+              onClick={() => setActivePage(Math.min(10, activePage + 1))}
+              className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors cursor-pointer"
+            >
+              Selanjutnya
+            </button>
           </div>
         </div>
       </div>

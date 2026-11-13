@@ -404,7 +404,38 @@ export const BriefPage: React.FC = () => {
             />
           </div>
 
-          {/* Card 2: Sudut Pandang Jurnalistik (Angle) */}
+          {/* Card 2: Sasaran Pembaca (Dipindahkan ke bawah Judul Usulan Artikel) */}
+          <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-2">
+            <label className="text-xs font-bold text-slate-900 block">
+              Sasaran Pembaca
+            </label>
+            <div className="p-3 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-800 font-medium">
+              Masyarakat yang mengurus dokumen kependudukan
+            </div>
+          </div>
+
+          {/* Card 3: Pertanyaan Utama (Sebelumnya: Pertanyaan Pembaca Terjawab, dipindahkan ke bawah Sasaran Pembaca) */}
+          <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
+            <label className="text-xs font-bold text-slate-900 block">
+              Pertanyaan Utama
+            </label>
+            <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-700 space-y-2">
+              <div className="flex items-start gap-2">
+                <span className="text-slate-400">•</span>
+                <span>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-slate-400">•</span>
+                <span>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-slate-400">•</span>
+                <span>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Sudut Pandang Jurnalistik (Angle) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-2">
             <label className="text-xs font-bold text-slate-900 block">
               Sudut Pandang Jurnalistik (Angle)
@@ -417,7 +448,7 @@ export const BriefPage: React.FC = () => {
             />
           </div>
 
-          {/* Card 3: Kerangka Naskah (Heading H2 & H3) */}
+          {/* Card 5: Kerangka Naskah (Heading H2 & H3) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-900 block">
@@ -534,26 +565,6 @@ export const BriefPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 5: Pertanyaan Pembaca Terjawab (Intensi Pembaca) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
-            <label className="text-xs font-bold text-slate-900 block">
-              Pertanyaan Pembaca Terjawab (Intensi Pembaca)
-            </label>
-            <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-700 space-y-2">
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</span>
-              </div>
-            </div>
-          </div>
 
           {/* Card 6: Rekomendasi Tautan Internal Portal RRI */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
