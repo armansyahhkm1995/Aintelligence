@@ -93,6 +93,34 @@ export const DraftPage: React.FC = () => {
     fileName: 'layanan-pengurusan-kartu-keluarga.jpg',
   }
 
+  // Copy dropdown menu state & handlers
+  const [isCopyDropdownOpen, setIsCopyDropdownOpen] = useState(false)
+  const articleHeadline = 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
+  const articleBodyText = `JAKARTA — Menghadapi dinamika ekonomi digital dan tekanan inflasi, minat generasi muda terhadap instrumen investasi legal kian meningkat. Reksadana kini menjadi salah satu pintu masuk paling diminati bagi kalangan pemula karena modal awal yang sangat terjangkau serta dikelola langsung oleh manajer investasi berizin resmi.\n\nApa Itu Reksadana dan Mengapa Ramah Pemula?\nBerdasarkan rilis statistik Otoritas Jasa Keuangan (OJK), akumulasi dana kelolaan reksadana nasional tercatat menembus angka pertumbuhan signifikan di kuartal kedua. Fleksibilitas serta transparansi laporan bulanan manajer investasi menjadi daya tarik utama bagi investor pemula berpenghasilan pertama.\n\nLangkah Praktis Memilih Agen Penjual (APERD) Resmi\nCalon investor wajib memastikan platform Agen Penjual Efek Reksa Dana (APERD) telah terdaftar di OJK. Jangan tergiur promosi return tidak wajar yang menjanjikan keuntungan pasti di media sosial tanpa memahami profil risiko.\n\nDengan pemahaman risiko yang baik dan kedisiplinan alokasi dana darurat, generasi muda dapat mengoptimalkan reksadana sebagai benteng ketahanan finansial masa depan tanpa terjebak investasi bodong.`
+
+  const handleCopyOption = (option: 1 | 2 | 3 | 4 | 5) => {
+    setIsCopyDropdownOpen(false)
+    if (option === 1) {
+      // 1. Salin semua
+      const allText = `JUDUL ARTIKEL:\n${articleHeadline}\n\nISI ARTIKEL:\n${articleBodyText}\n\nPAKET METADATA SEO:\nJudul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}\n\nREKOMENDASI GAMBAR DARI AI:\nSubjek: ${aiImageRec.subject}\nFormat: ${aiImageRec.format}\nAlt text: ${aiImageRec.altText}\nCaption: ${aiImageRec.caption}\nNama file saran: ${aiImageRec.fileName}`
+      handleCopyText(allText, 'Semua Konten (Judul, Isi, SEO, & Rekomendasi Gambar)')
+    } else if (option === 2) {
+      // 2. Salin judul artikel
+      handleCopyText(articleHeadline, 'Judul Artikel')
+    } else if (option === 3) {
+      // 3. Salin isi artikel
+      handleCopyText(articleBodyText, 'Isi Artikel')
+    } else if (option === 4) {
+      // 4. Salin paket metadata SEO
+      const seoText = `Judul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}`
+      handleCopyText(seoText, 'Paket Metadata SEO')
+    } else if (option === 5) {
+      // 5. Salin rekomendasi gambar dari AI
+      const imgText = `Subjek: ${aiImageRec.subject}\nFormat: ${aiImageRec.format}\nAlt text: ${aiImageRec.altText}\nCaption: ${aiImageRec.caption}\nNama file saran: ${aiImageRec.fileName}`
+      handleCopyText(imgText, 'Rekomendasi Gambar dari AI')
+    }
+  }
+
   const handleCopyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     showSuccess('Salin Berhasil', `${label} telah disalin ke clipboard.`)
@@ -290,12 +318,74 @@ export const DraftPage: React.FC = () => {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => handleCopyText(activeItemTitle, 'Naskah Artikel')}
-                  className="h-8 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                  onClick={() => setIsCopyDropdownOpen(!isCopyDropdownOpen)}
+                  className="h-8 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
                 >
                   <span>Salin</span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </button>
+
+                {/* Dropdown Menu: 5 Options per user request */}
+                {isCopyDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-20"
+                      onClick={() => setIsCopyDropdownOpen(false)}
+                    />
+                    <div className="absolute right-0 top-full mt-1.5 w-64 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-30 divide-y divide-slate-100 text-xs animate-in fade-in zoom-in-95 duration-100">
+                      {/* Option 1: Salin semua */}
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyOption(1)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-[#1866EF] font-bold flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <Copy className="w-3.5 h-3.5 shrink-0" />
+                          <span>1. Salin semua</span>
+                        </button>
+                      </div>
+
+                      {/* Options 2-5 */}
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyOption(2)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">2</span>
+                          <span>Salin judul artikel</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyOption(3)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">3</span>
+                          <span>Salin isi artikel</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyOption(4)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">4</span>
+                          <span>Salin paket metadata SEO</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyOption(5)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
+                        >
+                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">5</span>
+                          <span>Salin rekomendasi gambar dari AI</span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
