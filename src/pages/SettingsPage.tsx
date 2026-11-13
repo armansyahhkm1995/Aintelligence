@@ -85,6 +85,8 @@ export const SettingsPage: React.FC = () => {
   }
 
   const handleRemoveHeading = (id: string) => {
+    const item = headingTemplates.find((h) => h.id === id)
+    if (item?.level === 'H1') return
     setHeadingTemplates((prev) => prev.filter((h) => h.id !== id))
   }
 
@@ -582,14 +584,16 @@ export const SettingsPage: React.FC = () => {
                       )}
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveHeading(h.id)}
-                      className="p-1 rounded border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] transition-colors"
-                      title="Hapus"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
-                    </button>
+                    {h.level !== 'H1' && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveHeading(h.id)}
+                        className="p-1 rounded border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] transition-colors cursor-pointer"
+                        title="Hapus"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
