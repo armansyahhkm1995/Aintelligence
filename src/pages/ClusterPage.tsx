@@ -291,7 +291,7 @@ export const ClusterPage: React.FC = () => {
               onClick={handleCreateBrief}
               className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
-              Buat Brief
+              Buat Arahan
             </button>
           </div>
         </div>
@@ -431,7 +431,7 @@ export const ClusterPage: React.FC = () => {
                 onClick={handleCreateBrief}
                 className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
               >
-                Buat Brief
+                Buat Arahan
               </button>
             </div>
           )}

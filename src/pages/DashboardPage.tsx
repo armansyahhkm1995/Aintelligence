@@ -232,7 +232,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('draft')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Sunting Draf
+                Tinjau Draft
               </button>
             </div>
 
@@ -256,7 +256,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('draft')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Sunting Draf
+                Tinjau Draft
               </button>
             </div>
 
@@ -280,7 +280,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('draft')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Sunting Draf
+                Tinjau Draft
               </button>
             </div>
           </div>
