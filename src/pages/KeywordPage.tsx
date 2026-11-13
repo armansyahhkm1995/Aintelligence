@@ -180,6 +180,10 @@ export const KeywordPage: React.FC = () => {
     return matchSearch && matchStatus && matchRule
   })
 
+  const isHeaderChecked =
+    filteredKeywords.length > 0 && selectedIds.length === filteredKeywords.length
+  const showBulkAction = selectedIds.length > 1 || isHeaderChecked
+
   return (
     <div className="space-y-6">
       {/* Breadcrumb matching Image 1 */}
@@ -293,20 +297,16 @@ export const KeywordPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Action Row: Koreksi Massal (Tepat di atas tabel, di bawah filter) */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-          <div className="text-xs text-slate-500 font-medium">
-            {selectedIds.length > 0 ? (
+        {/* Action Row: Koreksi Massal (Hanya muncul jika diceklis > 1 item atau ceklis induk) */}
+        {showBulkAction && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 animate-in fade-in">
+            <div className="text-xs text-slate-500 font-medium">
               <span className="text-[#1866EF] font-semibold bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-md inline-block">
                 {selectedIds.length} kata kunci dipilih
               </span>
-            ) : (
-              <span>Pilih kotak centang pada tabel untuk melakukan koreksi status secara serentak</span>
-            )}
-          </div>
+            </div>
 
-          <div className="flex items-center gap-2">
-            {selectedIds.length > 0 && (
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -317,17 +317,17 @@ export const KeywordPage: React.FC = () => {
               >
                 Batal Pilih
               </button>
-            )}
-            <button
-              type="button"
-              onClick={handleOpenBulkOverride}
-              className="h-9 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
-            >
-              <Edit className="w-3.5 h-3.5" />
-              <span>Koreksi Massal</span>
-            </button>
+              <button
+                type="button"
+                onClick={handleOpenBulkOverride}
+                className="h-9 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              >
+                <Edit className="w-3.5 h-3.5" />
+                <span>Koreksi Massal</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Table */}
         <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
