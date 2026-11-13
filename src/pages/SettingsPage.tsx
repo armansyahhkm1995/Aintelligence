@@ -23,7 +23,7 @@ export const SettingsPage: React.FC = () => {
   } = useApp()
   const { showSuccess } = useToast()
 
-  const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya' | 'api'>('filter')
+  const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya'>('filter')
 
   // Search & Filters for Tab 1
   const [searchRule, setSearchRule] = useState('')
@@ -157,12 +157,12 @@ export const SettingsPage: React.FC = () => {
 
       {/* COMP-TodoList-Editor: 949px Standard Container */}
       <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-5">
-        {/* Segmented Pill Tab Navigation exactly matching Figma */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-3 gap-1 bg-white select-none overflow-x-auto max-w-full">
+        {/* Segmented Pill Tab Navigation: Aturan Filter Keyword & Buku Gaya */}
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-2 gap-1 bg-white select-none overflow-x-auto max-w-full">
           <button
             type="button"
             onClick={() => setActiveTab('filter')}
-            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
+            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
               activeTab === 'filter'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -174,25 +174,13 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('bukugaya')}
-            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
+            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
               activeTab === 'bukugaya'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             Buku Gaya
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('api')}
-            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap ${
-              activeTab === 'api'
-                ? 'bg-[#1866EF] text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            Konfigurasi API & AI
           </button>
         </div>
 
@@ -627,103 +615,7 @@ export const SettingsPage: React.FC = () => {
           </div>
         )}
 
-        {/* ======================================================== */}
-        {/* TAB 3: Konfigurasi API & AI (matches media_1794227195531_81f71f93.jpg) */}
-        {/* ======================================================== */}
-        {activeTab === 'api' && (
-          <div className="space-y-5">
-            {/* Header with Title and Active Badge */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-bold text-slate-900 leading-snug">
-                  Konfigurasi API & Batasan AI
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Kredensial enkripsi pihak ketiga, limitasi token bulanan, dan batas skor kelayakan evergreen.
-                </p>
-              </div>
-
-              <span className="h-[26px] px-3 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-xs font-semibold text-[#15803D] flex items-center">
-                AKTIF (Claude 3.5 Sonnet)
-              </span>
-            </div>
-
-            {/* Section 1: Anthropic Claude API Key */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-900 block">
-                Anthropic Claude API Key
-              </label>
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <input
-                  type="text"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full h-[40px] px-3.5 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => showSuccess('Model AI', 'Model Claude 3.5 Sonnet berhasil terhubung.')}
-                  className="h-[40px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs shrink-0 whitespace-nowrap w-full sm:w-auto"
-                >
-                  Hubungkan Model
-                </button>
-              </div>
-            </div>
-
-            {/* Section 2: Ambang Batas Skor Evergreen */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-900 block">
-                Ambang Batas Skor Evergreen (Min: 60%)
-              </label>
-              <p className="text-xs text-slate-400">
-                Keyword skor &lt; 60% otomatis dialihkan ke status Review Manual.
-              </p>
-              <div className="relative w-28">
-                <input
-                  type="number"
-                  value={evergreenThreshold}
-                  onChange={(e) => setEvergreenThreshold(e.target.value)}
-                  className="w-full h-[40px] px-3.5 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
-                />
-                <span className="absolute right-3 top-2.5 text-xs font-semibold text-slate-500 pointer-events-none">
-                  %
-                </span>
-              </div>
-            </div>
-
-            {/* Section 3: Limit Pemakaian AI Bulanan */}
-            <div className="space-y-2 pt-1">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-900">
-                <span>Limit Pemakaian AI Bulanan (Token/Bulan)</span>
-                <span>86%</span>
-              </div>
-              <div className="w-full bg-[#E2E8F0] rounded-full h-[7px] overflow-hidden">
-                <div className="bg-[#1866EF] h-[7px] rounded-full" style={{ width: '86%' }} />
-              </div>
-              <div className="text-xs text-slate-500">
-                14.250.000 / 20.000.000 Token
-              </div>
-            </div>
-
-            {/* Bottom Card Footer */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => {}}
-                className="h-[36px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveApi}
-                className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-              >
-                Simpan Perubahan
-              </button>
-            </div>
-          </div>
-        )}
+        {/* TAB 3 (Konfigurasi API & AI) di-hide sementara sesuai permintaan */}
       </div>
     </div>
   )
