@@ -341,7 +341,7 @@ export const DraftPage: React.FC = () => {
                           className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-[#1866EF] font-bold flex items-center gap-2 cursor-pointer transition-colors"
                         >
                           <Copy className="w-3.5 h-3.5 shrink-0" />
-                          <span>1. Salin semua</span>
+                          <span>Salin semua</span>
                         </button>
                       </div>
 
@@ -352,7 +352,7 @@ export const DraftPage: React.FC = () => {
                           onClick={() => handleCopyOption(2)}
                           className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
                         >
-                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">2</span>
+                          <Copy className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>Salin judul artikel</span>
                         </button>
 
@@ -361,7 +361,7 @@ export const DraftPage: React.FC = () => {
                           onClick={() => handleCopyOption(3)}
                           className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
                         >
-                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">3</span>
+                          <Copy className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>Salin isi artikel</span>
                         </button>
 
@@ -370,7 +370,7 @@ export const DraftPage: React.FC = () => {
                           onClick={() => handleCopyOption(4)}
                           className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
                         >
-                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">4</span>
+                          <Copy className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>Salin paket metadata SEO</span>
                         </button>
 
@@ -379,7 +379,7 @@ export const DraftPage: React.FC = () => {
                           onClick={() => handleCopyOption(5)}
                           className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
                         >
-                          <span className="w-3.5 text-slate-400 font-mono text-[11px] text-center shrink-0">5</span>
+                          <Copy className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>Salin rekomendasi gambar dari AI</span>
                         </button>
                       </div>
