@@ -94,6 +94,7 @@ export const BriefPage: React.FC = () => {
   )
 
   const [headings, setHeadings] = useState([
+    { id: 'bh-0', level: 'H1', text: 'Panduan Lengkap Memulai Investasi Reksadana bagi Pemula' },
     { id: 'bh-1', level: 'H2', text: 'Apa Itu Reksadana dan Mengapa Cocok untuk Pemula?' },
     { id: 'bh-2', level: 'H3', text: 'Mekanisme Kerja Manajer Investasi (MI) Berizin OJK' },
     { id: 'bh-3', level: 'H3', text: 'Modal Minimal: Mulai dari Rp10.000 Lewat Aplikasi Resmi' },
@@ -109,14 +110,17 @@ export const BriefPage: React.FC = () => {
   const [selectedVersion, setSelectedVersion] = useState<'v2' | 'v1'>('v2')
 
   const handleDragStart = (idx: number) => {
+    if (headings[idx]?.level === 'H1') return
     setDraggedIdx(idx)
   }
 
   const handleDragOver = (e: React.DragEvent, idx: number) => {
     e.preventDefault()
     if (draggedIdx === null || draggedIdx === idx) return
+    if (idx === 0) return // Posisi H1 permanen paling atas
     const updated = [...headings]
     const item = updated[draggedIdx]
+    if (item?.level === 'H1') return
     updated.splice(draggedIdx, 1)
     updated.splice(idx, 0, item)
     setDraggedIdx(idx)
@@ -141,6 +145,7 @@ export const BriefPage: React.FC = () => {
   }
 
   const handleDeleteHeading = (id: string) => {
+    if (id === 'bh-0') return
     setHeadings((prev) => prev.filter((h) => h.id !== id))
   }
 
@@ -470,7 +475,7 @@ export const BriefPage: React.FC = () => {
               onClick={handleCancelApproval}
               className="h-10 px-4 bg-[#EF4444] hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
-              Batalkan Persetujuan
+              Tolak Arahan Artikel
             </button>
             <button
               type="button"
@@ -491,10 +496,10 @@ export const BriefPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column (lg:col-span-8): Content Editor */}
         <div className="lg:col-span-8 space-y-5">
-          {/* Card 1: Judul Usulan Artikel (H2/H3) */}
+          {/* Card 1: Judul Usulan Artikel */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-2">
             <label className="text-xs font-bold text-slate-900 block">
-              Judul Usulan Artikel (H2/H3)
+              Judul Usulan Artikel
             </label>
             <input
               type="text"
@@ -548,11 +553,11 @@ export const BriefPage: React.FC = () => {
             />
           </div>
 
-          {/* Card 5: Kerangka Naskah (Heading H2 & H3) */}
+          {/* Card 5: Kerangka Naskah (Heading H1 Baku di atas, H2 & H3) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-900 block">
-                Kerangka Naskah (Heading H2 & H3)
+                Kerangka Naskah
               </label>
               <button
                 type="button"
@@ -568,21 +573,31 @@ export const BriefPage: React.FC = () => {
               {headings.map((item, idx) => (
                 <div
                   key={item.id}
-                  draggable
+                  draggable={item.level !== 'H1'}
                   onDragStart={() => handleDragStart(idx)}
                   onDragOver={(e) => handleDragOver(e, idx)}
                   onDragEnd={handleDragEnd}
-                  className="flex items-center gap-2 p-2 bg-slate-50/70 hover:bg-slate-50 border border-slate-200/80 rounded-lg transition-colors group"
+                  className={`flex items-center gap-2 p-2 border rounded-lg transition-colors group ${
+                    item.level === 'H1'
+                      ? 'bg-blue-50/50 border-blue-200/90'
+                      : 'bg-slate-50/70 hover:bg-slate-50 border-slate-200/80'
+                  }`}
                 >
-                  {/* Drag Handle */}
-                  <div className="cursor-grab text-slate-400 hover:text-slate-600 px-1">
-                    <GripVertical className="w-4 h-4" />
-                  </div>
+                  {/* Drag Handle: Hidden for H1 */}
+                  {item.level !== 'H1' ? (
+                    <div className="cursor-grab text-slate-400 hover:text-slate-600 px-1">
+                      <GripVertical className="w-4 h-4" />
+                    </div>
+                  ) : (
+                    <div className="w-6 px-1" title="H1 Baku Permanen" />
+                  )}
 
                   {/* Level Pill */}
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      item.level === 'H2'
+                      item.level === 'H1'
+                        ? 'bg-[#1866EF] text-white'
+                        : item.level === 'H2'
                         ? 'bg-blue-100 text-[#1866EF]'
                         : 'bg-slate-200 text-slate-700'
                     }`}
@@ -599,54 +614,59 @@ export const BriefPage: React.FC = () => {
                   />
 
                   {/* Level Dropdown Toggle */}
-                  <div className="relative">
+                  {item.level !== 'H1' && (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenLevelId(openLevelId === item.id ? null : item.id)
+                        }
+                        className="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 rounded hover:bg-slate-100 cursor-pointer"
+                      >
+                        {item.level}
+                      </button>
+
+                      {openLevelId === item.id && (
+                        <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
+                          <button
+                            type="button"
+                            onClick={() => handleLevelChange(item.id, 'H2')}
+                            className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
+                          >
+                            H2
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleLevelChange(item.id, 'H3')}
+                            className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
+                          >
+                            H3
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Delete Button: Hidden for H1 */}
+                  {item.level !== 'H1' && (
                     <button
                       type="button"
-                      onClick={() =>
-                        setOpenLevelId(openLevelId === item.id ? null : item.id)
-                      }
-                      className="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 rounded hover:bg-slate-100 cursor-pointer"
+                      onClick={() => handleDeleteHeading(item.id)}
+                      className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer"
+                      title="Hapus heading"
                     >
-                      {item.level}
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
-
-                    {openLevelId === item.id && (
-                      <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
-                        <button
-                          type="button"
-                          onClick={() => handleLevelChange(item.id, 'H2')}
-                          className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
-                        >
-                          H2
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleLevelChange(item.id, 'H3')}
-                          className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
-                        >
-                          H3
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Delete Button */}
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteHeading(item.id)}
-                    className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Card 4: Data & Entitas Wajib Dikutip (Entity Anchors) */}
+          {/* Card 6: Daftar URL/penerbit/sumber pendukung */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
             <label className="text-xs font-bold text-slate-900 block">
-              Data & Entitas Wajib Dikutip (Entity Anchors)
+              Daftar URL/penerbit/sumber pendukung
             </label>
             <div className="flex flex-wrap gap-2">
               {[

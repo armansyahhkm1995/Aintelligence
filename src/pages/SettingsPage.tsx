@@ -63,14 +63,17 @@ export const SettingsPage: React.FC = () => {
   const [draggedHeadingIdx, setDraggedHeadingIdx] = useState<number | null>(null)
 
   const handleDragStart = (idx: number) => {
+    if (headingTemplates[idx]?.level === 'H1') return
     setDraggedHeadingIdx(idx)
   }
 
   const handleDragOver = (e: React.DragEvent, idx: number) => {
     e.preventDefault()
     if (draggedHeadingIdx === null || draggedHeadingIdx === idx) return
+    if (idx === 0) return // Posisi H1 permanen di index 0
     const newItems = [...headingTemplates]
     const draggedItem = newItems[draggedHeadingIdx]
+    if (draggedItem?.level === 'H1') return
     newItems.splice(draggedHeadingIdx, 1)
     newItems.splice(idx, 0, draggedItem)
     setDraggedHeadingIdx(idx)
@@ -516,22 +519,15 @@ export const SettingsPage: React.FC = () => {
                   >
                     Tambah Heading
                   </button>
-                  <div className="relative">
-                    <select className="h-[32px] pl-3 pr-8 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-700 appearance-none cursor-pointer font-medium">
-                      <option>Versi aktif: Versi 1</option>
-                      <option>Versi 2</option>
-                    </select>
-                    <ChevronDown className="absolute right-2.5 top-2.5 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
-                  </div>
                 </div>
               </div>
 
-              {/* Headings List with Drag-and-Drop and H1-H6 selection */}
+              {/* Headings List with Drag-and-Drop (H1 locked without drag icon) */}
               <div className="space-y-2">
                 {headingTemplates.map((h, idx) => (
                   <div
                     key={h.id}
-                    draggable
+                    draggable={h.level !== 'H1'}
                     onDragStart={() => handleDragStart(idx)}
                     onDragOver={(e) => handleDragOver(e, idx)}
                     onDragEnd={handleDragEnd}
@@ -539,9 +535,13 @@ export const SettingsPage: React.FC = () => {
                       draggedHeadingIdx === idx ? 'opacity-50 border-blue-400 shadow-md' : ''
                     }`}
                   >
-                    <div className="cursor-grab p-1 text-slate-300 hover:text-slate-500">
-                      <GripVertical className="w-4 h-4" />
-                    </div>
+                    {h.level !== 'H1' ? (
+                      <div className="cursor-grab p-1 text-slate-300 hover:text-slate-500">
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+                    ) : (
+                      <div className="w-6 p-1 text-slate-300" title="H1 Baku Permanen" />
+                    )}
 
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#1866EF] text-white">
                       {h.level}

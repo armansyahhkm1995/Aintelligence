@@ -101,13 +101,13 @@ export const EditClusterDrawer: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs select-none">
-      <div className="w-full max-w-md bg-white h-screen shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none">
+      <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header Panel */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <h2 className="text-sm font-bold text-slate-900">
-              Edit Struktur Cluster
+              Perbarui Struktur Topik
             </h2>
             <span
               className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -121,7 +121,7 @@ export const EditClusterDrawer: React.FC = () => {
           </div>
           <button
             onClick={() => setIsEditClusterDrawerOpen(false)}
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-md"
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>

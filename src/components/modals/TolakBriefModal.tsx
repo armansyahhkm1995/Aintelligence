@@ -15,11 +15,11 @@ export const TolakBriefModal: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
               <AlertTriangle className="w-4 h-4" />
             </div>
-            <h2 className="text-base font-bold text-slate-900">Tolak Brief</h2>
+            <h2 className="text-base font-bold text-slate-900">Tolak Arahan Artikel</h2>
           </div>
           <button
             onClick={() => setIsTolakBriefOpen(false)}
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-md"
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -27,24 +27,24 @@ export const TolakBriefModal: React.FC = () => {
 
         <div className="p-6 space-y-4">
           <p className="text-xs text-slate-600 leading-relaxed">
-            Apakah Anda yakin ingin menolak brief{' '}
-            <strong className="text-slate-900">{brief.title}</strong> ini? Proses tidak dapat dibatalkan dan Anda akan dikembalikan ke laman Cluster topik
+            Apakah Anda yakin ingin menolak arahan artikel{' '}
+            <strong className="text-slate-900">{brief.title}</strong> ini? Proses tidak dapat dibatalkan dan Anda akan dikembalikan ke laman Kelompok Topik.
           </p>
 
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setIsTolakBriefOpen(false)}
-              className="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium rounded-lg transition-colors"
+              className="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium rounded-lg transition-colors cursor-pointer"
             >
               Batal
             </button>
             <button
               type="button"
               onClick={() => rejectBrief()}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer"
             >
-              Ya, Tolak Brief
+              Ya, Tolak Arahan Artikel
             </button>
           </div>
         </div>

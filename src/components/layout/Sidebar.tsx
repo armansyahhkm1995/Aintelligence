@@ -35,7 +35,7 @@ export const Sidebar: React.FC = () => {
     { id: 'dashboard', label: 'Ringkasan', icon: LayoutDashboard },
     { id: 'impor', label: 'Impor CSV Semrush', icon: UploadCloud },
     { id: 'keyword', label: 'Kata Kunci', icon: Search },
-    { id: 'cluster', label: 'Kelompok Kata Kunci', icon: Network },
+    { id: 'cluster', label: 'Kelompok Topik', icon: Network },
     { id: 'brief', label: 'Arahan Artikel', icon: FileCheck2 },
     { id: 'draft', label: 'Draf Artikel', icon: FileEdit },
   ]

@@ -6,7 +6,7 @@ const PAGE_NAMES: Record<AppPage, string> = {
   dashboard: 'Ringkasan',
   impor: 'Impor CSV Semrush',
   keyword: 'Kata Kunci',
-  cluster: 'Kelompok Kata Kunci',
+  cluster: 'Kelompok Topik',
   brief: 'Arahan Artikel',
   draft: 'Draf Artikel',
   settings: 'Pengaturan Redaksi',
