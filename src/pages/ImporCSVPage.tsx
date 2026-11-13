@@ -303,80 +303,80 @@ export const ImporCSVPage: React.FC = () => {
             </table>
           </div>
         </div>
-      </div>
 
-      {/* 7. Bottom Pagination matching Image 8 */}
-      <div className="bg-white border border-[#DBEAFE] rounded-xl p-3.5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-        <div className="flex items-center gap-2">
-          <span>Menampilkan 1-5 dari 42 data</span>
-          <div className="relative inline-block">
-            <select
-              value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
-              className="appearance-none bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg px-2.5 py-1 pr-6 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        {/* Pagination Footer inside Riwayat Impor Data */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <span>Menampilkan 1-5 dari 42 data</span>
+            <div className="relative inline-block">
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="appearance-none bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg px-2.5 py-1 pr-6 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setActivePage(Math.max(1, activePage - 1))}
-            className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors"
-          >
-            Sebelumnya
-          </button>
-          <button
-            onClick={() => setActivePage(1)}
-            className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors ${
-              activePage === 1
-                ? 'bg-[#1866EF] text-white shadow-2xs'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            1
-          </button>
-          <button
-            onClick={() => setActivePage(2)}
-            className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors ${
-              activePage === 2
-                ? 'bg-[#1866EF] text-white shadow-2xs'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            2
-          </button>
-          <button
-            onClick={() => setActivePage(3)}
-            className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors ${
-              activePage === 3
-                ? 'bg-[#1866EF] text-white shadow-2xs'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            3
-          </button>
-          <span className="px-1 text-slate-400">...</span>
-          <button
-            onClick={() => setActivePage(10)}
-            className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors ${
-              activePage === 10
-                ? 'bg-[#1866EF] text-white shadow-2xs'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            10
-          </button>
-          <button
-            onClick={() => setActivePage(Math.min(10, activePage + 1))}
-            className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors"
-          >
-            Selanjutnya
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setActivePage(Math.max(1, activePage - 1))}
+              className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors cursor-pointer"
+            >
+              Sebelumnya
+            </button>
+            <button
+              onClick={() => setActivePage(1)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 1
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              1
+            </button>
+            <button
+              onClick={() => setActivePage(2)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 2
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              2
+            </button>
+            <button
+              onClick={() => setActivePage(3)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 3
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              3
+            </button>
+            <span className="px-1 text-slate-400">...</span>
+            <button
+              onClick={() => setActivePage(10)}
+              className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                activePage === 10
+                  ? 'bg-[#1866EF] text-white shadow-2xs'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              10
+            </button>
+            <button
+              onClick={() => setActivePage(Math.min(10, activePage + 1))}
+              className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-700 font-medium transition-colors cursor-pointer"
+            >
+              Berikutnya
+            </button>
+          </div>
         </div>
       </div>
     </div>
