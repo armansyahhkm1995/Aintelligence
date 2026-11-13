@@ -8,7 +8,59 @@ import {
   X,
   ExternalLink,
   ChevronDown,
+  Search,
+  ArrowRight,
+  ArrowLeft,
+  Eye,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react'
+
+interface BriefTableRow {
+  id: string
+  title: string
+  mainKeyword: string
+  supportingKeywords: string[]
+  status: 'Disetujui' | 'Menunggu' | 'Ditolak'
+}
+
+const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
+  {
+    id: 'BRF-001',
+    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
+    mainKeyword: 'cara investasi reksadana',
+    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+    status: 'Disetujui',
+  },
+  {
+    id: 'BRF-002',
+    title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
+    mainKeyword: 'cara investasi reksadana',
+    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+    status: 'Menunggu',
+  },
+  {
+    id: 'BRF-003',
+    title: 'Strategi Investasi Reksadana Saham bagi Pemula',
+    mainKeyword: 'reksadana saham tips',
+    supportingKeywords: ['risiko reksadana saham', 'top reksadana', 'investasi saham'],
+    status: 'Disetujui',
+  },
+  {
+    id: 'BRF-004',
+    title: 'Langkah Praktis Cek APERD Berizin OJK',
+    mainKeyword: 'cek izin aperd ojk',
+    supportingKeywords: ['reksadana legal', 'portal sipena', 'daftar aperd'],
+    status: 'Ditolak',
+  },
+  {
+    id: 'BRF-005',
+    title: 'Perbedaan Reksadana Pasar Uang dan Reksadana Pendapatan Tetap',
+    mainKeyword: 'reksadana pasar uang vs pendapatan tetap',
+    supportingKeywords: ['dana darurat likuid', 'bunga deposito', 'obligasi ritel'],
+    status: 'Menunggu',
+  },
+]
 
 export const BriefPage: React.FC = () => {
   const {
@@ -16,9 +68,19 @@ export const BriefPage: React.FC = () => {
     updateBrief,
     approveBrief,
     setIsTolakBriefOpen,
+    setCurrentPage,
   } = useApp()
   const { showSuccess } = useToast()
 
+  // View Mode: 'table' (Daftar Arahan Artikel) vs 'detail' (Detail Brief Berita)
+  const [viewMode, setViewMode] = useState<'table' | 'detail'>('table')
+
+  // Table filters & search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'Semua' | 'Disetujui' | 'Menunggu' | 'Ditolak'>('Semua')
+  const [briefList, setBriefList] = useState<BriefTableRow[]>(INITIAL_BRIEF_TABLE)
+
+  // Detail view states
   const [briefTitle, setBriefTitle] = useState(
     brief?.title || 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
   )
@@ -100,7 +162,20 @@ export const BriefPage: React.FC = () => {
     setDraggedIdx(null)
   }
 
-  const handleRemoveHeading = (id: string) => {
+  const handleLevelChange = (id: string, newLevel: string) => {
+    setHeadings((prev) =>
+      prev.map((h) => (h.id === id ? { ...h, level: newLevel } : h))
+    )
+    setOpenLevelId(null)
+  }
+
+  const handleTextChange = (id: string, newText: string) => {
+    setHeadings((prev) =>
+      prev.map((h) => (h.id === id ? { ...h, text: newText } : h))
+    )
+  }
+
+  const handleDeleteHeading = (id: string) => {
     setHeadings((prev) => prev.filter((h) => h.id !== id))
   }
 
@@ -108,395 +183,512 @@ export const BriefPage: React.FC = () => {
     const newId = `bh-${Date.now()}`
     setHeadings((prev) => [
       ...prev,
-      { id: newId, level: 'H2', text: 'Subtopik Baru Pembahasan' },
+      { id: newId, level: 'H2', text: 'Subtopik Baru' },
     ])
-    setOpenLevelId(newId)
   }
-
-  const handleSelectLevel = (id: string, lvl: string) => {
-    setHeadings((prev) =>
-      prev.map((h) => (h.id === id ? { ...h, level: lvl } : h))
-    )
-    setOpenLevelId(null)
-  }
-
-  const entityAnchors = [
-    'OJK (Otoritas Jasa Keuangan)',
-    'Inflasi Tahunan BI',
-    'Bursa Efek Indonesia (BEI)',
-    'UU P2SK No. 4/2023',
-  ]
 
   const handleCopyBrief = () => {
-    navigator.clipboard.writeText(JSON.stringify(brief || {}, null, 2))
-    showSuccess('Tinjauan Brief', 'Brief berhasil disalin ke clipboard.')
+    const textToCopy = `${briefTitle}\n\nAngle:\n${angle}\n\nOutline:\n${headings
+      .map((h) => `${h.level} - ${h.text}`)
+      .join('\n')}`
+    navigator.clipboard.writeText(textToCopy)
+    showSuccess('Arahan Artikel', 'Konten brief berhasil disalin ke clipboard.')
   }
 
   const handleExportMd = () => {
-    const headingsText = headings.map((h) => `${h.level === 'H2' ? '##' : '###'} ${h.text}`).join('\n')
-    const mdContent = `# ${briefTitle}\n\n**Sudut Pandang:** ${angle}\n\n## Struktur Heading\n${headingsText}`
-    const blob = new Blob([mdContent], { type: 'text/markdown' })
+    const md = `# ${briefTitle}\n\n**Angle Liputan:**\n${angle}\n\n## Struktur Outline:\n${headings
+      .map((h) => `${h.level === 'H2' ? '##' : '###'} ${h.text}`)
+      .join('\n')}\n\n## Catatan AI:\n${aiNotes}`
+    const blob = new Blob([md], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `brief-${brief?.id || 'rri'}.md`
+    a.download = `brief-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
     a.click()
-    showSuccess('Tinjauan Brief', 'Brief berhasil diekspor ke file Markdown (.md)')
+    showSuccess('Arahan Artikel', 'Brief berhasil diekspor ke format Markdown (.md)')
   }
 
+  // Filtered rows for table view
+  const filteredBriefs = briefList.filter((row) => {
+    const matchSearch =
+      row.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.mainKeyword.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchStatus =
+      statusFilter === 'Semua' ? true : row.status === statusFilter
+    return matchSearch && matchStatus
+  })
+
+  // Milestone Progress bar component
+  const renderMilestone = () => (
+    <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto text-xs">
+        {[
+          { num: '1', title: 'Impor CSV Semrush', active: false, done: true },
+          { num: '2', title: 'Kata Kunci', active: false, done: true },
+          { num: '3', title: 'Kelompok Kata Kunci', active: false, done: true },
+          { num: '4', title: 'Arahan Artikel', active: true, done: false },
+          { num: '5', title: 'Draf Artikel', active: false, done: false },
+        ].map((st, i) => (
+          <div key={i} className="flex items-center gap-2 shrink-0">
+            <span
+              className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold ${
+                st.active
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : st.done
+                  ? 'bg-blue-50 text-[#1866EF] border border-[#BFDBFE]'
+                  : 'bg-slate-100 text-slate-400'
+              }`}
+            >
+              {st.num}
+            </span>
+            <span
+              className={`font-semibold ${
+                st.active
+                  ? 'text-[#1866EF]'
+                  : st.done
+                  ? 'text-slate-800'
+                  : 'text-slate-400'
+              }`}
+            >
+              {st.title}
+            </span>
+            {i < 4 && <span className="text-slate-300 ml-2">→</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  // 1. TABLE VIEW: DAFTAR ARAHAN ARTIKEL (Figma 1221:36876)
+  if (viewMode === 'table') {
+    return (
+      <div className="space-y-6">
+        {/* Milestone Indicator */}
+        {renderMilestone()}
+
+        {/* Title and description */}
+        <div className="max-w-[500px]">
+          <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
+            Tinjauan Arahan Artikel
+          </h1>
+          <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+            Tinjau dan kelola arahan artikel sebelum dialirkan ke penulisan draf otomatis oleh AI.
+          </p>
+        </div>
+
+        {/* StatCard & CTA */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <span className="text-xs text-slate-500 font-medium">Total Arahan Artikel</span>
+            <div className="text-2xl font-bold text-slate-900 tracking-tight">
+              24 <span className="text-xs font-normal text-slate-500">Arahan</span>
+            </div>
+            <p className="text-xs text-slate-400">
+              Semua arahan siap diproses ke antrean penulisan draf AI.
+            </p>
+          </div>
+          <button
+            onClick={() => setCurrentPage('draft')}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors cursor-pointer shrink-0 shadow-xs"
+          >
+            <span>Lanjut ke Draft Artikel</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Search & Filter Bar */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-3.5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-[380px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Cari judul artikel ..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-[6px] focus:outline-none focus:border-[#1866EF] text-slate-800"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <span className="text-xs text-slate-500 font-medium shrink-0">Filter Status:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="px-3 py-2 text-xs border border-slate-200 rounded-[6px] focus:outline-none focus:border-[#1866EF] text-slate-800 bg-white cursor-pointer"
+            >
+              <option value="Semua">Semua Status</option>
+              <option value="Disetujui">Disetujui</option>
+              <option value="Menunggu">Menunggu Persetujuan</option>
+              <option value="Ditolak">Ditolak</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th className="py-3.5 px-4 w-[280px]">Judul Artikel</th>
+                  <th className="py-3.5 px-4 w-[200px]">Kata Kunci Utama</th>
+                  <th className="py-3.5 px-4">Kata Kunci Pendukung</th>
+                  <th className="py-3.5 px-4 w-[120px]">Status</th>
+                  <th className="py-3.5 px-4 text-right w-[140px]">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredBriefs.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-blue-50/40 transition-colors group cursor-pointer"
+                    onClick={() => {
+                      setBriefTitle(item.title)
+                      setViewMode('detail')
+                    }}
+                  >
+                    <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
+                      {item.title}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-700 font-medium">
+                      <span className="inline-block px-2.5 py-1 rounded-md bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-[11px]">
+                        {item.mainKeyword}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.supportingKeywords.map((kw, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px]"
+                          >
+                            {kw}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          item.status === 'Disetujui'
+                            ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
+                            : item.status === 'Menunggu'
+                            ? 'bg-[#FFFBEB] text-[#B45309] border-amber-200'
+                            : 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div
+                        className="flex items-center justify-end gap-1.5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => {
+                            setBriefTitle(item.title)
+                            setViewMode('detail')
+                          }}
+                          className="px-2.5 py-1 text-[11px] font-semibold bg-white border border-[#DBEAFE] hover:bg-blue-50 text-[#1866EF] rounded-[4px] transition-colors cursor-pointer inline-flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Detail</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setBriefList((prev) =>
+                              prev.map((b) => (b.id === item.id ? { ...b, status: 'Disetujui' } : b))
+                            )
+                            showSuccess('Arahan Artikel', `Brief '${item.title}' disetujui.`)
+                          }}
+                          className="p-1 text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
+                          title="Setujui"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setIsTolakBriefOpen(true)}
+                          className="p-1 text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                          title="Tolak"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredBriefs.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400">
+                      Tidak ada arahan artikel yang sesuai dengan filter pencarian.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 2. DETAIL VIEW: EDITORIAL BRIEF DETAIL (Figma 1221:36584)
   return (
     <div className="space-y-6">
+      {/* Back button to Table view */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setViewMode('table')}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer bg-white border border-[#DBEAFE] px-3 py-1.5 rounded-[6px] shadow-2xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>← Kembali ke Daftar Arahan Artikel</span>
+        </button>
+
+        <span className="text-xs text-slate-400 font-medium">
+          Mode Detail Editorial Brief
+        </span>
+      </div>
+
+      {/* Milestone Indicator */}
+      {renderMilestone()}
+
       {/* Title and description */}
       <div className="max-w-[500px]">
         <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
-          Tinjauan Brief Artikel
+          Detail Arahan Artikel
         </h1>
         <p className="text-sm text-slate-400 mt-1 leading-relaxed">
-          Tinjau sudut pandang liputan, struktur heading H2/H3, entitas wajib, dan setujui brief sebelum diteruskan ke penulisan draf AI.
+          Tinjau sudut pandang editorial, sesuaikan struktur outline H2/H3, dan tambahkan kata kunci pendukung sebelum draf ditulis AI.
         </p>
       </div>
 
-      {/* Frame 427318766: 2-Column Split matching user screenshot */}
+      {/* 2-Column Split matching user screenshot */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* Left Column (lg:col-span-7 or 8) */}
+        {/* Left Column (lg:col-span-7) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Card 1: Judul Usulan Artikel (H2/H3) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2">
-            <label className="text-xs font-semibold text-slate-900 block">
-              Judul Usulan Artikel (H2/H3)
-            </label>
-            <input
-              type="text"
-              value={briefTitle}
-              onChange={(e) => setBriefTitle(e.target.value)}
-              className="w-full h-[40px] px-3.5 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
-            />
+          {/* Card: Judul Rencana Artikel & Angle Liputan */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4">
+            {/* Input: Judul Rencana Artikel */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-900 block">
+                Judul Rencana Artikel
+              </label>
+              <input
+                type="text"
+                value={briefTitle}
+                onChange={(e) => setBriefTitle(e.target.value)}
+                className="w-full text-xs font-medium text-slate-900 bg-white border border-[#DBEAFE] rounded-[6px] px-3.5 py-2.5 focus:outline-none focus:border-[#1866EF] transition-colors"
+              />
+            </div>
+
+            {/* Textarea: Angle Liputan & Fokus Pembaca */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-900 block">
+                Angle Liputan & Fokus Pembaca
+              </label>
+              <textarea
+                rows={3}
+                value={angle}
+                onChange={(e) => setAngle(e.target.value)}
+                className="w-full text-xs font-normal text-slate-800 bg-white border border-[#DBEAFE] rounded-[6px] p-3 focus:outline-none focus:border-[#1866EF] transition-colors resize-none leading-relaxed"
+              />
+            </div>
           </div>
 
-          {/* Card 2: Sudut Pandang Jurnalistik (Angle) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2">
-            <label className="text-xs font-semibold text-slate-900 block">
-              Sudut Pandang Jurnalistik (Angle)
-            </label>
-            <textarea
-              value={angle}
-              onChange={(e) => setAngle(e.target.value)}
-              rows={3}
-              className="w-full p-3 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-800 leading-relaxed focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Card 3: Kerangka Naskah (Heading H2 & H3) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-3">
+          {/* Card: Struktur Outline Artikel (Heading Tree) */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-1">
-              <h2 className="text-xs font-semibold text-slate-900">
-                Kerangka Naskah (Heading H2 & H3)
-              </h2>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Struktur Outline Artikel
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Tarik baris untuk mengatur urutan. Klik label H2/H3 untuk mengganti level.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={handleAddHeading}
-                className="h-[32px] px-3 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs text-[#1866EF] hover:underline font-semibold cursor-pointer"
               >
-                Tambah Heading
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Subtopik</span>
               </button>
             </div>
 
+            {/* List of headings with Drag-and-Drop */}
             <div className="space-y-2">
-              {headings.map((h, i) => {
-                const isH2 = h.level === 'H2'
-                const isH1 = h.level === 'H1'
-                return (
-                  <div
-                    key={h.id}
-                    draggable
-                    onDragStart={() => handleDragStart(i)}
-                    onDragOver={(e) => handleDragOver(e, i)}
-                    onDragEnd={handleDragEnd}
-                    className={`flex items-center gap-2 p-2 rounded-[6px] border border-[#DBEAFE] bg-white text-xs transition-shadow ${
-                      draggedIdx === i ? 'opacity-50 border-blue-400 shadow-md' : ''
-                    }`}
-                  >
-                    <div className="cursor-grab p-1 text-slate-300 hover:text-slate-500">
-                      <GripVertical className="w-4 h-4" />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setOpenLevelId(openLevelId === h.id ? null : h.id)}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold shrink-0 hover:ring-1 hover:ring-blue-400 transition-all ${
-                        isH1
-                          ? 'bg-[#1866EF] text-white'
-                          : isH2
-                          ? 'bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {h.level}
-                    </button>
-
-                    <span className="flex-1 font-medium text-slate-800 leading-snug">
-                      {h.text}
-                    </span>
-
-                    {/* Level Selector Dropdown */}
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setOpenLevelId(openLevelId === h.id ? null : h.id)}
-                        className="h-[28px] px-2.5 bg-white border border-[#DBEAFE] rounded text-xs font-medium text-slate-700 flex items-center gap-1 hover:bg-slate-50 shrink-0"
-                      >
-                        <span>{h.level}</span>
-                        <ChevronDown className="w-3 h-3 text-slate-400" />
-                      </button>
-
-                      {openLevelId === h.id && (
-                        <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg z-20 py-1">
-                          {['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
-                            <button
-                              key={lvl}
-                              type="button"
-                              onClick={() => handleSelectLevel(h.id, lvl)}
-                              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 transition-colors ${
-                                h.level === lvl ? 'text-[#1866EF] font-bold bg-blue-50/50' : 'text-slate-700'
-                              }`}
-                            >
-                              {lvl}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveHeading(h.id)}
-                      className="p-1 rounded border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] transition-colors shrink-0"
-                      title="Hapus heading"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Card 4: Data & Entitas Wajib Dikutip (Entity Anchors) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2.5">
-            <h2 className="text-xs font-semibold text-slate-900">
-              Data & Entitas Wajib Dikutip (Entity Anchors)
-            </h2>
-            <div className="flex flex-wrap gap-2 pt-0.5">
-              {entityAnchors.map((ea, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]"
+              {headings.map((item, idx) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDragEnd={handleDragEnd}
+                  className={`flex items-center gap-2 p-2 rounded-[6px] border transition-colors bg-white ${
+                    draggedIdx === idx
+                      ? 'border-[#1866EF] bg-blue-50/40 opacity-70'
+                      : 'border-slate-200 hover:border-[#BFDBFE]'
+                  } ${item.level === 'H3' ? 'ml-6' : ''}`}
                 >
-                  {ea}
-                </span>
+                  {/* Grip Handle */}
+                  <div className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 px-1">
+                    <GripVertical className="w-4 h-4" />
+                  </div>
+
+                  {/* Level Pill Dropdown */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenLevelId(openLevelId === item.id ? null : item.id)
+                      }
+                      className="px-2 py-1 rounded bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] font-bold text-[11px] flex items-center gap-1 hover:bg-blue-100 transition-colors"
+                    >
+                      <span>{item.level}</span>
+                      <ChevronDown className="w-3 h-3 text-[#1D4ED8]" />
+                    </button>
+
+                    {openLevelId === item.id && (
+                      <div className="absolute left-0 top-[28px] w-20 bg-white border border-slate-200 rounded-[6px] shadow-lg py-1 z-30">
+                        {['H2', 'H3'].map((lvl) => (
+                          <button
+                            key={lvl}
+                            type="button"
+                            onClick={() => handleLevelChange(item.id, lvl)}
+                            className="w-full text-left px-3 py-1 text-xs hover:bg-blue-50 text-slate-700 font-semibold"
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Heading Text Input */}
+                  <input
+                    type="text"
+                    value={item.text}
+                    onChange={(e) => handleTextChange(item.id, e.target.value)}
+                    className="flex-1 text-xs text-slate-800 bg-transparent border-0 focus:outline-none focus:ring-0 p-0 font-medium"
+                  />
+
+                  {/* Delete Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteHeading(item.id)}
+                    className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors"
+                    title="Hapus subtopik"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Card 5: Pertanyaan Pembaca Terjawab (Search Intent Coverage) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2.5">
-            <h2 className="text-xs font-semibold text-slate-900">
-              Pertanyaan Pembaca Terjawab (Search Intent Coverage)
-            </h2>
-            <div className="p-3 bg-white border border-[#DBEAFE] rounded-[6px] text-xs text-slate-800 space-y-1.5">
-              <div className="flex items-start gap-2">
-                <span>•</span>
-                <span>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span>•</span>
-                <span>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span>•</span>
-                <span>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 6: Rekomendasi Tautan Internal Portal RRI */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2.5">
-            <h2 className="text-xs font-semibold text-slate-900">
-              Rekomendasi Tautan Internal Portal RRI
-            </h2>
-            <div className="space-y-2 pt-0.5">
-              <a
-                href="https://rri.co.id/bisnis/512"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] hover:underline"
-              >
-                <span>Mengenal Perbedaan Saham dan ORI025 (rri.co.id/bisnis/512)</span>
-                <ExternalLink className="w-3 h-3 text-[#1866EF]" />
-              </a>
-              <br />
-              <a
-                href="https://rri.co.id/lifestyle/481"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] hover:underline"
-              >
-                <span>Tips Alokasi Gaji 50/30/20 (rri.co.id/lifestyle/481)</span>
-                <ExternalLink className="w-3 h-3 text-[#1866EF]" />
-              </a>
-            </div>
-          </div>
-
-          {/* Card 7: Beri Arahan Tambahan ke AI (Iterasi Brief) */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xs font-semibold text-slate-900">
-                  Beri Arahan Tambahan ke AI (Iterasi Brief)
-                </h2>
-                <div className="text-[11px] text-slate-400 mt-0.5">Worker Claude 3.5 Sonnet</div>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                Aktif Normal
-              </span>
-            </div>
+          {/* Card: Catatan Tambahan untuk AI */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2">
+            <label className="text-xs font-bold text-slate-900 block">
+              Catatan Tambahan untuk AI
+            </label>
             <textarea
+              rows={3}
               value={aiNotes}
               onChange={(e) => setAiNotes(e.target.value)}
-              rows={3}
-              placeholder="Ubah gaya bahasa agar lebih santai dan tambahkan H2 tentang risiko psikologis FOMO..."
-              className="w-full p-3 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full text-xs text-slate-800 bg-white border border-[#DBEAFE] rounded-[6px] p-3 focus:outline-none focus:border-[#1866EF] transition-colors resize-none leading-relaxed"
             />
-            <div className="flex justify-end">
-              <button
-                onClick={() => {
-                  updateBrief({ aiNotes })
-                  showSuccess('Tinjauan Brief', 'Permintaan iterasi brief dikirim ke AI.')
-                }}
-                className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-              >
-                Buat Ulang Brief
-              </button>
-            </div>
           </div>
         </div>
 
         {/* Right Column (lg:col-span-5) */}
         <div className="lg:col-span-5 space-y-4">
-          {/* Card 1: Status Brief Saat Ini */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">
-              Status Brief Saat Ini
+          {/* Card 1: Parameter & Target Artikel */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4 text-xs">
+            <h3 className="text-sm font-bold text-slate-900 pb-1">
+              Parameter & Target Artikel
             </h3>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                <span className="text-[#64748B]">Perkiraan Panjang Naskah:</span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                  600 - 800 kata
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-50 gap-2">
-                <span className="text-[#64748B] shrink-0">Cluster Asal:</span>
-                <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  {clustersList.map((cl, idx) => (
-                    <span
-                      key={cl}
-                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]"
-                    >
-                      <span>{cl}</span>
-                      {idx > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCluster(cl)}
-                          className="hover:text-red-600 transition-colors ml-0.5"
-                          title="Hapus Cluster"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </span>
-                  ))}
-
-                  {/* Autocomplete Input or Plus Pill Button */}
-                  {isAddingCluster ? (
-                    <div className="relative inline-block">
-                      <input
-                        type="text"
-                        autoFocus
-                        value={clusterInput}
-                        onChange={(e) => setClusterInput(e.target.value)}
-                        placeholder="Ketik cluster..."
-                        className="h-[24px] px-2.5 text-xs bg-white border border-[#1866EF] rounded-full text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 w-[140px]"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            if (filteredClusterSuggestions.length > 0) {
-                              handleAddCluster(filteredClusterSuggestions[0])
-                            } else if (clusterInput.trim()) {
-                              handleAddCluster(clusterInput.trim())
-                            }
-                          } else if (e.key === 'Escape') {
-                            setIsAddingCluster(false)
-                          }
-                        }}
-                        onBlur={() => {
-                          setTimeout(() => setIsAddingCluster(false), 200)
-                        }}
-                      />
-                      {/* Autocomplete Dropdown */}
-                      {filteredClusterSuggestions.length > 0 && (
-                        <div className="absolute right-0 top-[28px] w-[210px] bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg py-1 z-30 max-h-[160px] overflow-y-auto">
-                          {filteredClusterSuggestions.map((sug) => (
-                            <button
-                              key={sug}
-                              type="button"
-                              onMouseDown={() => handleAddCluster(sug)}
-                              className="w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 text-slate-800 flex items-center justify-between transition-colors"
-                            >
-                              <span>{sug}</span>
-                              <Plus className="w-3 h-3 text-[#1866EF]" />
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setIsAddingCluster(true)}
-                      className="inline-flex items-center justify-center h-[22px] w-[22px] rounded-full bg-[#EFF6FF] text-[#1866EF] border border-[#BFDBFE] hover:bg-blue-100 transition-colors"
-                      title="Tambah Cluster Lain"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                <span className="text-[#64748B]">Tingkat Kesulitan (KD):</span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                  32% (Mudah Bersaing)
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                <span className="text-[#64748B]">Intensi:</span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
-                  Informasional
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                <span className="text-[#64748B]">Status:</span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                  Menunggu Persetujuan
-                </span>
+            {/* Target Panjang Kata */}
+            <div className="space-y-1">
+              <span className="text-[#64748B]">Target Panjang Kata:</span>
+              <div className="font-semibold text-slate-900">
+                800 - 1.000 kata (Standar Liputan Mendalam)
               </div>
             </div>
 
-            {/* Keyword Meta */}
-            <div className="pt-2 border-t border-slate-100 space-y-2.5 text-xs">
+            {/* Cluster Asal & Tambah Cluster */}
+            <div className="space-y-2">
+              <span className="text-[#64748B] block">Cluster Asal:</span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {clustersList.map((cl, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] font-medium text-[11px]"
+                  >
+                    <span>{cl}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCluster(cl)}
+                      className="hover:text-rose-600 transition-colors"
+                      title="Hapus cluster"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+
+                {!isAddingCluster ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingCluster(true)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-dashed border-[#1866EF] text-[#1866EF] hover:bg-blue-50 font-semibold text-[11px] transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Tambah Cluster</span>
+                  </button>
+                ) : (
+                  <div className="relative flex items-center gap-1 w-full mt-1">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Cari cluster..."
+                      value={clusterInput}
+                      onChange={(e) => setClusterInput(e.target.value)}
+                      className="text-xs px-2.5 py-1 border border-[#1866EF] rounded-md focus:outline-none text-slate-800 flex-1"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingCluster(false)}
+                      className="p-1 text-slate-400 hover:text-slate-600"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+
+                    {filteredClusterSuggestions.length > 0 && (
+                      <div className="absolute left-0 top-[30px] w-full bg-white border border-slate-200 rounded-md shadow-lg py-1 z-30 max-h-36 overflow-y-auto">
+                        {filteredClusterSuggestions.map((sug, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => handleAddCluster(sug)}
+                            className="px-3 py-1.5 text-xs text-slate-700 hover:bg-blue-50 hover:text-[#1866EF] cursor-pointer"
+                          >
+                            {sug}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Keyword Utama & Pendukung */}
+            <div className="space-y-3 pt-1 border-t border-slate-100">
               <div>
-                <span className="text-[#64748B] block mb-1">Kata Kunci Pilar:</span>
+                <span className="text-[#64748B] block mb-1">Kata Kunci Utama:</span>
                 <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] font-medium text-[11px]">
                   cara investasi reksadana (Vol 22.000) (KD 28%)
                 </span>
@@ -531,7 +723,6 @@ export const BriefPage: React.FC = () => {
             </div>
 
             <div className="space-y-2.5 text-xs">
-              {/* Versi 2 (Saat Ini) */}
               <div className="p-3 rounded-[6px] bg-[#ECFDF5] border border-[#A7F3D0] space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -550,7 +741,6 @@ export const BriefPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Versi 1 */}
               <div className="p-3 rounded-[6px] bg-white border border-slate-200 space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full border border-slate-300" />

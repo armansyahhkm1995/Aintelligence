@@ -7,7 +7,68 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Search,
+  ArrowLeft,
+  FileEdit,
+  Copy,
+  Trash2,
+  ExternalLink,
+  Download,
+  CheckCircle2,
+  Sparkles,
 } from 'lucide-react'
+
+interface DraftTableRow {
+  id: string
+  title: string
+  seoScore: number
+  version: string
+  wordCount: string
+  status: 'Siap Review' | 'Telah Terbit' | 'Ditolak'
+}
+
+const INITIAL_DRAFT_TABLE: DraftTableRow[] = [
+  {
+    id: 'DFT-001',
+    title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
+    seoScore: 94,
+    version: 'Versi 2',
+    wordCount: '920 kata',
+    status: 'Siap Review',
+  },
+  {
+    id: 'DFT-002',
+    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
+    seoScore: 94,
+    version: 'Versi 2',
+    wordCount: '850 kata',
+    status: 'Siap Review',
+  },
+  {
+    id: 'DFT-003',
+    title: 'Strategi Investasi Reksadana Saham bagi Pemula',
+    seoScore: 88,
+    version: 'Versi 1',
+    wordCount: '1.100 kata',
+    status: 'Siap Review',
+  },
+  {
+    id: 'DFT-004',
+    title: 'Panduan Lengkap Memilih Reksadana Pasar Uang',
+    seoScore: 91,
+    version: 'Versi 3',
+    wordCount: '980 kata',
+    status: 'Telah Terbit',
+  },
+  {
+    id: 'DFT-005',
+    title: 'Langkah Praktis Cek APERD Berizin OJK',
+    seoScore: 86,
+    version: 'Versi 1',
+    wordCount: '740 kata',
+    status: 'Siap Review',
+  },
+]
 
 export const DraftPage: React.FC = () => {
   const {
@@ -18,38 +79,230 @@ export const DraftPage: React.FC = () => {
   } = useApp()
   const { showSuccess } = useToast()
 
+  // View Mode: 'table' (Daftar Draf Artikel) vs 'detail' (Editor Naskah & SEO Split-View)
+  const [viewMode, setViewMode] = useState<'table' | 'detail'>('table')
+
+  // Table filters & search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [draftList, setDraftList] = useState<DraftTableRow[]>(INITIAL_DRAFT_TABLE)
+  const [activeDraftItem, setActiveDraftItem] = useState<DraftTableRow>(INITIAL_DRAFT_TABLE[0])
+
+  // Detail view states
+  const [content, setContent] = useState(draft?.content || '')
   const [aiRewritePrompt, setAiRewritePrompt] = useState(
     'Ubah gaya bahasa agar lebih santai dan tambahkan H2 tentang risiko psikologis FOMO...'
   )
 
-  // Interactive WYSIWYG Toolbar states (hover & click only, document text unchanged)
+  // Interactive WYSIWYG Toolbar states
   const [selectedHeading, setSelectedHeading] = useState('Heading 1')
   const [isHeadingDropdownOpen, setIsHeadingDropdownOpen] = useState(false)
-  const [isBold, setIsBold] = useState(true) // defaults to active as in Figma
+  const [isBold, setIsBold] = useState(true)
   const [isItalic, setIsItalic] = useState(false)
   const [isUnderline, setIsUnderline] = useState(false)
   const [activeAlign, setActiveAlign] = useState<'left' | 'center' | 'right' | 'justify'>('left')
-  const [activeHLevel, setActiveHLevel] = useState<'H1' | 'H2' | 'H3' | null>(null)
 
   const handleCopyDraft = () => {
-    const textToCopy = `${draft?.title || ''}\n\n${draft?.content || ''}`
+    const textToCopy = `${activeDraftItem.title}\n\n${content}`
     navigator.clipboard.writeText(textToCopy)
     showSuccess('Penyuntingan Draf', 'Naskah draf berhasil disalin ke clipboard.')
   }
 
   const handleExportMd = () => {
-    const md = `# ${draft?.title || 'Draf Artikel'}\n\n${draft?.content || ''}`
+    const md = `# ${activeDraftItem.title}\n\n${content}`
     const blob = new Blob([md], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `draft-${draft?.id || 'rri'}.md`
+    a.download = `draft-${activeDraftItem.title.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
     a.click()
     showSuccess('Penyuntingan Draf', 'Draf berhasil diekspor ke file Markdown (.md)')
   }
 
+  // Filtered rows for table view
+  const filteredDrafts = draftList.filter((row) =>
+    row.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  // Milestone Progress bar component
+  const renderMilestone = () => (
+    <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto text-xs">
+        {[
+          { num: '1', title: 'Impor CSV Semrush', active: false, done: true },
+          { num: '2', title: 'Kata Kunci', active: false, done: true },
+          { num: '3', title: 'Kelompok Kata Kunci', active: false, done: true },
+          { num: '4', title: 'Arahan Artikel', active: false, done: true },
+          { num: '5', title: 'Draf Artikel', active: true, done: false },
+        ].map((st, i) => (
+          <div key={i} className="flex items-center gap-2 shrink-0">
+            <span
+              className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold ${
+                st.active
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : st.done
+                  ? 'bg-blue-50 text-[#1866EF] border border-[#BFDBFE]'
+                  : 'bg-slate-100 text-slate-400'
+              }`}
+            >
+              {st.num}
+            </span>
+            <span
+              className={`font-semibold ${
+                st.active
+                  ? 'text-[#1866EF]'
+                  : st.done
+                  ? 'text-slate-800'
+                  : 'text-slate-400'
+              }`}
+            >
+              {st.title}
+            </span>
+            {i < 4 && <span className="text-slate-300 ml-2">→</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  // 1. TABLE VIEW: DAFTAR DRAF ARTIKEL (Figma 1221:37651)
+  if (viewMode === 'table') {
+    return (
+      <div className="space-y-6">
+        {/* Milestone Indicator */}
+        {renderMilestone()}
+
+        {/* Title and description */}
+        <div className="max-w-[500px]">
+          <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
+            Daftar Draf Artikel
+          </h1>
+          <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+            Kelola naskah artikel berita hasil kecerdasan buatan sebelum diverifikasi dan diterbitkan.
+          </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-3.5 shadow-xs flex items-center justify-between gap-3">
+          <div className="relative w-full">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Cari judul artikel ..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-[6px] focus:outline-none focus:border-[#1866EF] text-slate-800"
+            />
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th className="py-3.5 px-4 w-[420px]">Judul Artikel</th>
+                  <th className="py-3.5 px-4 w-[220px]">Skor SEO</th>
+                  <th className="py-3.5 px-4 w-[160px]">Versi Draft</th>
+                  <th className="py-3.5 px-4 text-right w-[180px]">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredDrafts.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-blue-50/40 transition-colors group cursor-pointer"
+                    onClick={() => {
+                      setActiveDraftItem(item)
+                      setViewMode('detail')
+                    }}
+                  >
+                    <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
+                      {item.title}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] font-bold text-[11px]">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Skor SEO: {item.seoScore}/100</span>
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
+                      <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200">
+                        {item.version}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div
+                        className="flex items-center justify-end gap-1.5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => {
+                            setActiveDraftItem(item)
+                            setViewMode('detail')
+                          }}
+                          className="px-2.5 py-1 text-[11px] font-semibold bg-white border border-[#DBEAFE] hover:bg-blue-50 text-[#1866EF] rounded-[4px] transition-colors cursor-pointer inline-flex items-center gap-1"
+                        >
+                          <FileEdit className="w-3.5 h-3.5" />
+                          <span>Buka Editor</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.title)
+                            showSuccess('Draf Artikel', 'Judul draf disalin.')
+                          }}
+                          className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
+                          title="Salin"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => setIsHapusDraftOpen(true)}
+                          className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition-colors"
+                          title="Hapus"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredDrafts.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-slate-400">
+                      Tidak ada draf artikel yang sesuai dengan pencarian.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 2. DETAIL VIEW: WYSIWYG MARKDOWN EDITOR & SEO PANEL (Figma 1221:37298)
   return (
     <div className="space-y-6">
+      {/* Back button to Table view */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setViewMode('table')}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer bg-white border border-[#DBEAFE] px-3 py-1.5 rounded-[6px] shadow-2xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>← Kembali ke Daftar Draf Artikel</span>
+        </button>
+
+        <span className="text-xs text-slate-400 font-medium">
+          Mode Split-View Editor & Verifikasi SEO
+        </span>
+      </div>
+
+      {/* Milestone Indicator */}
+      {renderMilestone()}
+
       {/* Title and description */}
       <div className="max-w-[500px]">
         <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
@@ -64,7 +317,7 @@ export const DraftPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column (lg:col-span-7) */}
         <div className="lg:col-span-7 space-y-3">
-          {/* Rich Text Toolbar with functional hover and click interactions */}
+          {/* Rich Text Toolbar */}
           <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-2 flex items-center gap-1.5 shadow-xs overflow-x-auto max-w-full">
             {/* Heading Selector */}
             <div className="relative shrink-0">
@@ -100,364 +353,234 @@ export const DraftPage: React.FC = () => {
               )}
             </div>
 
-            {/* B (Bold) button */}
-            <button
-              type="button"
-              onClick={() => setIsBold(!isBold)}
-              className={`h-[32px] w-[32px] rounded font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                isBold
-                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
-                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-              }`}
-              title="Tebal (Bold)"
-            >
-              B
-            </button>
+            <div className="h-5 w-px bg-slate-200 mx-1 shrink-0" />
 
-            {/* I (Italic) button */}
-            <button
-              type="button"
-              onClick={() => setIsItalic(!isItalic)}
-              className={`h-[32px] w-[32px] rounded font-serif italic font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                isItalic
-                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
-                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-              }`}
-              title="Miring (Italic)"
-            >
-              I
-            </button>
+            {/* Formatting B, I, U Buttons */}
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsBold(!isBold)}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center font-bold text-xs transition-colors cursor-pointer ${
+                  isBold
+                    ? 'bg-[#1866EF] text-white shadow-2xs'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Tebal (Bold)"
+              >
+                B
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsItalic(!isItalic)}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center italic font-semibold text-xs transition-colors cursor-pointer ${
+                  isItalic
+                    ? 'bg-[#1866EF] text-white shadow-2xs'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Miring (Italic)"
+              >
+                I
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsUnderline(!isUnderline)}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center underline font-semibold text-xs transition-colors cursor-pointer ${
+                  isUnderline
+                    ? 'bg-[#1866EF] text-white shadow-2xs'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Garis Bawah (Underline)"
+              >
+                U
+              </button>
+            </div>
 
-            {/* U (Underline) button */}
-            <button
-              type="button"
-              onClick={() => setIsUnderline(!isUnderline)}
-              className={`h-[32px] w-[32px] rounded underline font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                isUnderline
-                  ? 'bg-[#1866EF] text-white shadow-xs hover:bg-blue-600'
-                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-              }`}
-              title="Garis Bawah (Underline)"
-            >
-              U
-            </button>
+            <div className="h-5 w-px bg-slate-200 mx-1 shrink-0" />
 
-            {/* Alignments */}
-            <button
-              type="button"
-              onClick={() => setActiveAlign('left')}
-              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                activeAlign === 'left'
-                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
-                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
-              }`}
-              title="Rata Kiri"
-            >
-              <AlignLeft className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveAlign('center')}
-              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                activeAlign === 'center'
-                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
-                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
-              }`}
-              title="Rata Tengah"
-            >
-              <AlignCenter className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveAlign('right')}
-              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                activeAlign === 'right'
-                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
-                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
-              }`}
-              title="Rata Kanan"
-            >
-              <AlignRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveAlign('justify')}
-              className={`h-[32px] w-[32px] rounded flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                activeAlign === 'justify'
-                  ? 'bg-blue-50 text-[#1866EF] border border-blue-200'
-                  : 'bg-white hover:bg-slate-100 text-slate-500 border border-transparent'
-              }`}
-              title="Rata Kanan Kiri"
-            >
-              <AlignJustify className="w-4 h-4" />
-            </button>
-
-            {/* Headings H1, H2, H3 */}
-            <button
-              type="button"
-              onClick={() => setActiveHLevel(activeHLevel === 'H1' ? null : 'H1')}
-              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
-                activeHLevel === 'H1'
-                  ? 'bg-[#1866EF] text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
-              }`}
-            >
-              H1
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveHLevel(activeHLevel === 'H2' ? null : 'H2')}
-              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
-                activeHLevel === 'H2'
-                  ? 'bg-[#1866EF] text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
-              }`}
-            >
-              H2
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveHLevel(activeHLevel === 'H3' ? null : 'H3')}
-              className={`h-[32px] px-2 rounded text-xs font-semibold transition-all cursor-pointer shrink-0 ${
-                activeHLevel === 'H3'
-                  ? 'bg-[#1866EF] text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-transparent'
-              }`}
-            >
-              H3
-            </button>
+            {/* Text Alignment Buttons */}
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveAlign('left')}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center transition-colors cursor-pointer ${
+                  activeAlign === 'left'
+                    ? 'bg-[#1866EF] text-white'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Rata Kiri"
+              >
+                <AlignLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveAlign('center')}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center transition-colors cursor-pointer ${
+                  activeAlign === 'center'
+                    ? 'bg-[#1866EF] text-white'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Rata Tengah"
+              >
+                <AlignCenter className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveAlign('right')}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center transition-colors cursor-pointer ${
+                  activeAlign === 'right'
+                    ? 'bg-[#1866EF] text-white'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Rata Kanan"
+              >
+                <AlignRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveAlign('justify')}
+                className={`w-[32px] h-[32px] rounded flex items-center justify-center transition-colors cursor-pointer ${
+                  activeAlign === 'justify'
+                    ? 'bg-[#1866EF] text-white'
+                    : 'bg-white border border-[#DBEAFE] text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Rata Kiri-Kanan"
+              >
+                <AlignJustify className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
-          {/* Article Document Box */}
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-6 shadow-xs space-y-4">
-            {/* Title */}
-            <h1 className="text-xl font-bold text-slate-900 leading-snug">
-              Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
-            </h1>
+          {/* Markdown Content Area */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-3">
+            <input
+              type="text"
+              value={activeDraftItem.title}
+              onChange={(e) => {
+                setActiveDraftItem({ ...activeDraftItem, title: e.target.value })
+              }}
+              className="w-full text-base font-bold text-slate-900 border-b border-slate-200 pb-2 focus:outline-none focus:border-[#1866EF]"
+            />
+            <textarea
+              rows={16}
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value)
+                updateDraft(e.target.value)
+              }}
+              className="w-full text-xs text-slate-800 bg-white focus:outline-none resize-none leading-relaxed font-sans"
+              placeholder="Tulis atau sunting naskah draf berita di sini..."
+            />
+          </div>
 
-            {/* Lead */}
-            <p className="text-xs text-slate-700 leading-relaxed font-sans">
-              JAKARTA — Menghadapi dinamika ekonomi digital dan tekanan inflasi, minat generasi muda terhadap instrumen investasi legal kian meningkat. Reksadana kini menjadi salah satu pintu masuk paling diminati bagi kalangan pemula karena modal awal yang sangat terjangkau serta dikelola langsung oleh manajer investasi berizin resmi.
-            </p>
-
-            {/* H2 */}
-            <h2 className="text-sm font-bold text-slate-900 pt-1">
-              Apa Itu Reksadana dan Mengapa Ramah Pemula?
-            </h2>
-
-            {/* Fact Check Warning Pill */}
-            <div>
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                Butuh Verifikasi Fakta: Konfirmasi rilis statistik resmi OJK terbaru
-              </span>
+          {/* AI Re-write Assist box */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#1866EF]">
+              <Sparkles className="w-4 h-4 text-[#1866EF]" />
+              <span>Instruksi Revisi Otomatis dengan AI</span>
             </div>
-
-            {/* Paragraph */}
-            <p className="text-xs text-slate-700 leading-relaxed font-sans">
-              Berdasarkan rilis statistik Otoritas Jasa Keuangan (OJK), akumulasi dana kelolaan reksadana nasional tercatat menembus
-            </p>
-
-            {/* Annotation */}
-            <div>
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                Kutipan Narasumber Dibutuhkan
-              </span>
-            </div>
-
-            {/* H2 */}
-            <h2 className="text-sm font-bold text-slate-900 pt-1">
-              Langkah Praktis Memilih Agen Penjual (APERD) Resmi
-            </h2>
-
-            {/* AI Selection Box (Light blue with Blue Border) */}
-            <div className="p-4 bg-[#EFF6FF] border border-[#BFDBFE] rounded-[6px] space-y-3">
-              <p className="text-xs text-[#1D4ED8] font-medium leading-relaxed">
-                Calon investor wajib memastikan platform Agen Penjual Efek Reksa Dana (APERD) telah terdaftar di OJK. Jangan tergiur promosi return tidak wajar yang menjanjikan keuntungan pasti di media sosial tanpa memahami profil risiko.
-              </p>
-              <textarea
+            <div className="flex gap-2">
+              <input
+                type="text"
                 value={aiRewritePrompt}
                 onChange={(e) => setAiRewritePrompt(e.target.value)}
-                rows={2}
-                placeholder="Ubah gaya bahasa agar lebih santai dan tambahkan H2 tentang risiko psikologis FOMO..."
-                className="w-full p-3 text-xs bg-white border border-[#DBEAFE] rounded-[6px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans"
+                className="flex-1 text-xs border border-slate-200 rounded-[6px] px-3 py-2 text-slate-800 focus:outline-none focus:border-[#1866EF]"
+                placeholder="Tulis instruksi revisi..."
               />
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => showSuccess('Penyuntingan Draf', 'Permintaan tulis ulang bagian dikirim ke AI.')}
-                  className="h-[36px] px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
-                >
-                  Tulis Ulang Bagian Ini
-                </button>
-              </div>
+              <button
+                onClick={() => showSuccess('Revisi AI', 'Naskah draf sedang disunting ulang oleh AI.')}
+                className="px-3.5 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors cursor-pointer shrink-0"
+              >
+                Jalankan Revisi AI
+              </button>
             </div>
-
-            {/* Ending Paragraph */}
-            <p className="text-xs text-slate-700 leading-relaxed font-sans pt-1">
-              Dengan pemahaman risiko yang baik dan kedisiplinan alokasi dana darurat, generasi muda dapat mengoptimalkan reksadana sebagai benteng ketahanan finansial masa depan tanpa terjebak investasi bodong.
-            </p>
           </div>
         </div>
 
         {/* Right Column (lg:col-span-5) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4">
-            {/* Status Draf */}
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Status Draf</h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Draf AI dibuat 10:00 WIB · Tersimpan otomatis 10:15 WIB
-              </p>
+          {/* Card 1: Paket Metadata SEO */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-4 text-xs">
+            <div className="flex items-center justify-between pb-1">
+              <h3 className="text-sm font-bold text-slate-900">Paket Metadata SEO</h3>
+              <span className="px-2.5 py-1 rounded-md bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] font-bold text-[11px]">
+                Skor SEO: {activeDraftItem.seoScore}/100
+              </span>
             </div>
 
-            <div className="w-full h-[1px] bg-slate-100" />
-
-            {/* Paket Metadata SEO */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Paket Metadata SEO
-                </h4>
-                <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                  Skor SEO: 94/100
-                </span>
-              </div>
-
-              {/* Meta Title */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-900 block">
-                  Meta Title (Judul Search Engine)
-                </label>
-                <div className="p-3 rounded-[6px] bg-white border border-[#DBEAFE] text-xs text-slate-800">
-                  Panduan Aman Investasi Reksadana Gen-Z: Tips OJK
-                </div>
-              </div>
-
-              {/* Meta Description */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-900 block">
-                  Meta Description
-                </label>
-                <div className="p-3 rounded-[6px] bg-white border border-[#DBEAFE] text-xs text-slate-800 leading-relaxed">
-                  Pelajari cara memulai investasi reksadana aman untuk pemula dan Gen-Z. Panduan legalitas OJK, modal Rp10.000, serta tips pencairan.
-                </div>
-              </div>
-
-              {/* Slug URL */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-900 block">
-                  Slug URL Portal RRI
-                </label>
-                <div className="p-3 rounded-[6px] bg-white border border-[#DBEAFE] text-xs text-slate-500 font-mono">
-                  rri.co.id/bisnis/<span className="font-bold text-[#1866EF]">cara-investasi-reksadana-pemula</span>
-                </div>
-              </div>
-
-              {/* Alternatif Judul AI */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-900 block">
-                  Alternatif Judul AI (Klik untuk Ganti H1):
-                </label>
-                <div className="space-y-1.5">
-                  <div
-                    onClick={() => showSuccess('Penyuntingan Draf', 'Judul berhasil diganti.')}
-                    className="p-3 rounded-[6px] bg-white hover:bg-blue-50/50 border border-[#DBEAFE] text-xs text-slate-800 cursor-pointer transition-colors"
-                  >
-                    5 Langkah Memulai Reksadana Legal Tanpa Takut Rugi
-                  </div>
-                  <div
-                    onClick={() => showSuccess('Penyuntingan Draf', 'Judul berhasil diganti.')}
-                    className="p-3 rounded-[6px] bg-white hover:bg-blue-50/50 border border-[#DBEAFE] text-xs text-slate-800 cursor-pointer transition-colors"
-                  >
-                    Reksadana vs Deposito: Mana Lebih Aman untuk Tabungan Awal?
-                  </div>
-                </div>
+            <div className="space-y-1.5">
+              <span className="text-[#64748B] block font-medium">Meta Title (Judul Search Engine):</span>
+              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[6px] text-slate-800 font-semibold leading-relaxed">
+                Panduan Aman Investasi Reksadana Gen-Z: Tips OJK
               </div>
             </div>
 
-            <div className="w-full h-[1px] bg-slate-100" />
-
-            {/* Riwayat Versi Draft */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-slate-900">Riwayat Versi Draft</h4>
-                <button
-                  type="button"
-                  className="text-xs text-[#1866EF] hover:underline font-semibold"
-                >
-                  Tambah Versi
-                </button>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                {/* Versi 2 */}
-                <div className="p-3 rounded-[6px] bg-[#ECFDF5] border border-[#A7F3D0] space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#15803D]" />
-                      <span className="font-bold text-[#15803D]">Versi 2 (Saat Ini)</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
-                      Aktif
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    Disunting oleh Editor Cameron • Hari ini, 14:15 WIB
-                  </div>
-                </div>
-
-                {/* Versi 1 */}
-                <div className="p-3 rounded-[6px] bg-white border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full border border-slate-300" />
-                    <span className="font-bold text-slate-700">Versi 1</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    Dihasilkan Claude 3.5 Sonnet • Hari ini, 14:10 WIB
-                  </div>
-                </div>
+            <div className="space-y-1.5">
+              <span className="text-[#64748B] block font-medium">Meta Description:</span>
+              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-[6px] text-slate-700 leading-relaxed text-[11px]">
+                Pelajari cara aman investasi reksadana untuk pemula dengan modal Rp10.000. Tips memilih manajer investasi legal berizin OJK terbaru.
               </div>
             </div>
 
-            <div className="w-full h-[1px] bg-slate-100" />
-
-            {/* Finalisasi & Penerbitan */}
-            <div className="space-y-2.5">
-              <h4 className="text-xs font-bold text-slate-900">Finalisasi & Penerbitan</h4>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={handleExportMd}
-                  className="h-[36px] border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
-                >
-                  Ekspor Draft ke MD
-                </button>
-                <button
-                  onClick={handleCopyDraft}
-                  className="h-[36px] border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors"
-                >
-                  Salin Draft
-                </button>
+            <div className="space-y-1.5">
+              <span className="text-[#64748B] block font-medium">Slug URL (Permanen):</span>
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded-[6px] text-[#1866EF] font-mono text-[11px] truncate">
+                https://rri.co.id/ekonomi/panduan-investasi-reksadana-pemula
               </div>
+            </div>
+          </div>
 
+          {/* Card 2: Uji Plagiarisme & Buku Gaya Editools */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-3 text-xs">
+            <h3 className="text-sm font-bold text-slate-900 pb-1">
+              Uji Plagiarisme & Buku Gaya Editools
+            </h3>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2.5 rounded bg-emerald-50/50 border border-emerald-200">
+                <span className="text-slate-700">Kesesuaian EYD & Buku Gaya:</span>
+                <span className="font-bold text-emerald-700">98% Sesuai</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded bg-emerald-50/50 border border-emerald-200">
+                <span className="text-slate-700">Tingkat Kemiripan (Plagiarisme):</span>
+                <span className="font-bold text-emerald-700">2.1% (Sangat Aman)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Aksi & Distribusi */}
+          <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-2.5">
+            <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={publishDraftToEditools}
-                className="w-full h-[40px] bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
+                onClick={handleCopyDraft}
+                className="h-[36px] border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Kirim ke Editools
+                <Copy className="w-3.5 h-3.5" />
+                <span>Salin Naskah</span>
               </button>
-
               <button
-                onClick={() => setIsHapusDraftOpen(true)}
-                className="w-full h-[36px] bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors"
+                onClick={handleExportMd}
+                className="h-[36px] border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Hapus
+                <Download className="w-3.5 h-3.5" />
+                <span>Ekspor .MD</span>
               </button>
-
-              <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">
-                Draf akan otomatis masuk ke antrean uji plagiarisme & buku gaya Editools
-              </p>
             </div>
+
+            <button
+              onClick={publishDraftToEditools}
+              className="w-full h-[40px] bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Teruskan ke Editools</span>
+            </button>
+
+            <button
+              onClick={() => setIsHapusDraftOpen(true)}
+              className="w-full h-[36px] bg-[#FEF2F2] border border-[#FECACA] hover:bg-rose-100 text-[#B91C1C] text-xs font-semibold rounded-[6px] transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Hapus Draf Artikel</span>
+            </button>
           </div>
         </div>
       </div>

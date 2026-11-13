@@ -12,19 +12,19 @@ export const DashboardPage: React.FC = () => {
       page: 'impor' as const,
     },
     {
-      step: 'Step 2: Keyword',
+      step: 'Step 2: Kata Kunci',
       count: '1.250 Layak',
       sub: 'Dari 3.420 total keyword',
       page: 'keyword' as const,
     },
     {
-      step: 'Step 3: Cluster Topik',
+      step: 'Step 3: Kelompok Kata Kunci',
       count: '45 Terbentuk',
       sub: '3 potensi kanibalisasi',
       page: 'cluster' as const,
     },
     {
-      step: 'Step 4: Brief Artikel',
+      step: 'Step 4: Arahan Artikel',
       count: '12 Disetujui',
       sub: '4 menunggu tinjauan',
       page: 'brief' as const,
@@ -32,7 +32,7 @@ export const DashboardPage: React.FC = () => {
     {
       step: 'Step 5: Draf Artikel',
       count: '8 Siap Salin',
-      sub: '',
+      sub: 'Siap verifikasi editor',
       page: 'draft' as const,
     },
   ]

@@ -3,11 +3,11 @@ import { useApp, AppPage } from '../../context/AppContext'
 import { Bell, Menu } from 'lucide-react'
 
 const PAGE_NAMES: Record<AppPage, string> = {
-  dashboard: 'Beranda',
+  dashboard: 'Ringkasan',
   impor: 'Impor CSV Semrush',
-  keyword: 'Manajemen Keyword',
-  cluster: 'Cluster Topik',
-  brief: 'Tinjauan Brief',
+  keyword: 'Kata Kunci',
+  cluster: 'Kelompok Kata Kunci',
+  brief: 'Arahan Artikel',
   draft: 'Draf Artikel',
   settings: 'Pengaturan Redaksi',
   users: 'Manajemen Pengguna',

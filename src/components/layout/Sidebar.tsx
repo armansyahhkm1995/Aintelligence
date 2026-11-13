@@ -32,11 +32,11 @@ export const Sidebar: React.FC = () => {
   }, [isMobileNavOpen])
 
   const pipelineNavItems: { id: AppPage; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: 'dashboard', label: 'Beranda', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Ringkasan', icon: LayoutDashboard },
     { id: 'impor', label: 'Impor CSV Semrush', icon: UploadCloud },
-    { id: 'keyword', label: 'Manajemen Kata Kunci', icon: Search },
-    { id: 'cluster', label: 'Cluster Topik', icon: Network },
-    { id: 'brief', label: 'Brief Berita', icon: FileCheck2 },
+    { id: 'keyword', label: 'Kata Kunci', icon: Search },
+    { id: 'cluster', label: 'Kelompok Kata Kunci', icon: Network },
+    { id: 'brief', label: 'Arahan Artikel', icon: FileCheck2 },
     { id: 'draft', label: 'Draf Artikel', icon: FileEdit },
   ]
 
