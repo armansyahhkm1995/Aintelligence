@@ -105,6 +105,7 @@ export const KeywordPage: React.FC = () => {
     toggleKeywordSelect,
     selectAllKeywords,
     clearKeywordSelect,
+    setIsBulkOverrideOpen,
     setIsSingleOverrideOpen,
     setTargetKeywordForOverride,
   } = useApp()
@@ -126,8 +127,11 @@ export const KeywordPage: React.FC = () => {
   const handleToggleSelectAll = () => {
     if (selectedIds.length === filteredKeywords.length) {
       setSelectedIds([])
+      clearKeywordSelect()
     } else {
-      setSelectedIds(filteredKeywords.map((k) => k.id))
+      const allIds = filteredKeywords.map((k) => k.id)
+      setSelectedIds(allIds)
+      selectAllKeywords(true)
     }
   }
 
@@ -135,6 +139,11 @@ export const KeywordPage: React.FC = () => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     )
+    toggleKeywordSelect(id)
+  }
+
+  const handleOpenBulkOverride = () => {
+    setIsBulkOverrideOpen(true)
   }
 
   const handleClassifyWithAI = () => {
@@ -282,6 +291,42 @@ export const KeywordPage: React.FC = () => {
           >
             Bersihkan Filter
           </button>
+        </div>
+
+        {/* Action Row: Koreksi Massal (Tepat di atas tabel, di bawah filter) */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+          <div className="text-xs text-slate-500 font-medium">
+            {selectedIds.length > 0 ? (
+              <span className="text-[#1866EF] font-semibold bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-md inline-block">
+                {selectedIds.length} kata kunci dipilih
+              </span>
+            ) : (
+              <span>Pilih kotak centang pada tabel untuk melakukan koreksi status secara serentak</span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {selectedIds.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedIds([])
+                  clearKeywordSelect()
+                }}
+                className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              >
+                Batal Pilih
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleOpenBulkOverride}
+              className="h-9 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span>Koreksi Massal</span>
+            </button>
+          </div>
         </div>
 
         {/* Table */}
