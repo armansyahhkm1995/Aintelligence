@@ -8,6 +8,8 @@ import {
   Copy,
   Sparkles,
   Edit,
+  FileText,
+  Download,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -115,11 +117,13 @@ export const DraftPage: React.FC = () => {
       const seoText = `Judul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}`
       handleCopyText(seoText, 'Paket Metadata SEO')
     } else if (option === 5) {
-      // 5. Salin rekomendasi gambar dari AI
+      // 5. Salin rekomendasi prompt gambar dari AI
       const imgText = `Subjek: ${aiImageRec.subject}\nFormat: ${aiImageRec.format}\nAlt text: ${aiImageRec.altText}\nCaption: ${aiImageRec.caption}\nNama file saran: ${aiImageRec.fileName}`
-      handleCopyText(imgText, 'Rekomendasi Gambar dari AI')
+      handleCopyText(imgText, 'Rekomendasi Prompt Gambar dari AI')
     }
   }
+
+  const [isExportDraftDropdownOpen, setIsExportDraftDropdownOpen] = useState(false)
 
   const handleCopyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -130,15 +134,105 @@ export const DraftPage: React.FC = () => {
     showSuccess('Draf Artikel', 'Perubahan naskah dan paket metadata SEO berhasil disimpan.')
   }
 
-  const handleExportDraft = () => {
-    const fullText = `# ${activeItemTitle}\n\n${seoTitle}\n\n${metaDesc}`
-    const blob = new Blob([fullText], { type: 'text/markdown' })
+  const handleExportDraftDocs = () => {
+    setIsExportDraftDropdownOpen(false)
+    const contentHtml = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${articleHeadline}</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b; padding: 24px; }
+        h1 { color: #1866EF; }
+        h2, h3 { color: #0f172a; margin-top: 18px; }
+        .meta-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; margin: 12px 0; font-size: 13px; }
+      </style>
+      </head>
+      <body>
+        <h1>${articleHeadline}</h1>
+        <p>${articleBodyText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br/>')}</p>
+        <hr/>
+        <h3>Paket Metadata SEO:</h3>
+        <div class="meta-box">
+          <p><strong>Judul SEO:</strong> ${seoTitle}</p>
+          <p><strong>Deskripsi Meta:</strong> ${metaDesc}</p>
+          <p><strong>Slug URL:</strong> rri.co.id/bisnis/${slugUrl}</p>
+          <p><strong>Kategori:</strong> ${category}</p>
+          <p><strong>Tag:</strong> ${tags.join(', ')}</p>
+        </div>
+        <h3>Rekomendasi Prompt Gambar Dari AI:</h3>
+        <div class="meta-box">
+          <p><strong>Subjek:</strong> ${aiImageRec.subject}</p>
+          <p><strong>Format:</strong> ${aiImageRec.format}</p>
+          <p><strong>Alt text:</strong> ${aiImageRec.altText}</p>
+          <p><strong>Caption:</strong> ${aiImageRec.caption}</p>
+          <p><strong>Nama file saran:</strong> ${aiImageRec.fileName}</p>
+        </div>
+      </body>
+      </html>
+    `
+    const blob = new Blob(['\ufeff' + contentHtml], { type: 'application/msword' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `draft-${activeItemTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.doc`
+    a.click()
+    showSuccess('Ekspor Docs', 'Draf artikel berhasil diekspor sebagai dokumen Docs (.doc)')
+  }
+
+  const handleExportDraftMD = () => {
+    setIsExportDraftDropdownOpen(false)
+    const md = `# ${articleHeadline}\n\n${articleBodyText}\n\n---\n\n## Paket Metadata SEO:\n- **Judul SEO:** ${seoTitle}\n- **Deskripsi Meta:** ${metaDesc}\n- **Slug URL:** rri.co.id/bisnis/${slugUrl}\n- **Kategori:** ${category}\n- **Tag:** ${tags.join(', ')}\n\n## Rekomendasi Prompt Gambar Dari AI:\n- **Subjek:** ${aiImageRec.subject}\n- **Format:** ${aiImageRec.format}\n- **Alt text:** ${aiImageRec.altText}\n- **Caption:** ${aiImageRec.caption}\n- **Nama file saran:** ${aiImageRec.fileName}`
+    const blob = new Blob([md], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = `draft-${activeItemTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
     a.click()
-    showSuccess('Ekspor Draf', 'Draf artikel berhasil diekspor ke file Markdown (.md)')
+    showSuccess('Ekspor MD', 'Draf artikel berhasil diekspor ke file Markdown (.md)')
+  }
+
+  const handleExportDraftPDF = () => {
+    setIsExportDraftDropdownOpen(false)
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>${articleHeadline} - Draf Berita</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+            h1 { color: #1866EF; margin-bottom: 12px; font-size: 24px; }
+            h2, h3 { color: #0f172a; margin-top: 20px; }
+            p { font-size: 13px; line-height: 1.7; }
+            .box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-top: 16px; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <h1>${articleHeadline}</h1>
+          <p>${articleBodyText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br/>')}</p>
+          <div class="box">
+            <h3 style="margin-top:0;">Paket Metadata SEO</h3>
+            <p><strong>Judul SEO:</strong> ${seoTitle}<br/>
+            <strong>Deskripsi Meta:</strong> ${metaDesc}<br/>
+            <strong>Slug:</strong> rri.co.id/bisnis/${slugUrl}<br/>
+            <strong>Kategori:</strong> ${category} | <strong>Tag:</strong> ${tags.join(', ')}</p>
+          </div>
+          <div class="box">
+            <h3 style="margin-top:0;">Rekomendasi Prompt Gambar Dari AI</h3>
+            <p><strong>Subjek:</strong> ${aiImageRec.subject}<br/>
+            <strong>Format:</strong> ${aiImageRec.format}<br/>
+            <strong>Alt text:</strong> ${aiImageRec.altText}<br/>
+            <strong>Caption:</strong> ${aiImageRec.caption}</p>
+          </div>
+        </body>
+        </html>
+      `)
+      printWindow.document.close()
+      printWindow.focus()
+      setTimeout(() => {
+        printWindow.print()
+      }, 300)
+    }
+    showSuccess('Ekspor PDF', 'Membuka jendela cetak untuk menyimpan Draf Artikel sebagai PDF.')
   }
 
   const handleRegenerateWithAI = () => {
@@ -380,7 +474,7 @@ export const DraftPage: React.FC = () => {
                           className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-2 cursor-pointer transition-colors"
                         >
                           <Copy className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span>Salin rekomendasi gambar dari AI</span>
+                          <span>Salin rekomendasi prompt gambar dari AI</span>
                         </button>
                       </div>
                     </div>
@@ -455,15 +549,63 @@ export const DraftPage: React.FC = () => {
               Draf AI dibuat 14:10 WIB • Terakhir diperbarui 14:15 WIB
             </p>
 
-            {/* Dropdown Ekspor */}
-            <button
-              type="button"
-              onClick={handleExportDraft}
-              className="w-full h-10 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-lg flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <span>Ekspor Draft</span>
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            </button>
+            {/* Dropdown Ekspor Draft (Docs, MD, PDF) */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsExportDraftDropdownOpen(!isExportDraftDropdownOpen)}
+                className="w-full h-10 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-lg flex items-center justify-between transition-colors cursor-pointer shadow-2xs"
+              >
+                <span>Ekspor Draft</span>
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              </button>
+
+              {isExportDraftDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-20"
+                    onClick={() => setIsExportDraftDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 left-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-30 divide-y divide-slate-100 text-xs animate-in fade-in zoom-in-95 duration-100">
+                    <button
+                      type="button"
+                      onClick={handleExportDraftDocs}
+                      className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-[#1866EF]" />
+                        <span>Ekspor sebagai Docs (.doc)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">Word</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleExportDraftMD}
+                      className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Download className="w-4 h-4 text-slate-500" />
+                        <span>Ekspor sebagai MD (.md)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">Markdown</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleExportDraftPDF}
+                      className="w-full text-left px-3.5 py-2 hover:bg-rose-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-rose-600" />
+                        <span>Ekspor sebagai PDF (.pdf)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">PDF</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Simpan Button */}
             <button
@@ -499,17 +641,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Judul SEO */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Judul SEO</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(seoTitle, 'Judul SEO')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Judul SEO</label>
               <input
                 type="text"
                 value={seoTitle}
@@ -520,17 +652,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Deskripsi Meta */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Deskripsi Meta</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(metaDesc, 'Deskripsi Meta')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Deskripsi Meta</label>
               <textarea
                 rows={3}
                 value={metaDesc}
@@ -541,19 +663,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Slug URL */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Slug URL</label>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCopyText(`rri.co.id/bisnis/${slugUrl}`, 'Slug URL')
-                  }
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Slug URL</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-600 font-mono">
                 <span>rri.co.id/bisnis/</span>
                 <span className="text-[#1866EF] font-bold">{slugUrl}</span>
@@ -562,17 +672,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Kategori */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Kategori</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(category, 'Kategori')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Kategori</label>
               <input
                 type="text"
                 value={category}
@@ -583,17 +683,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Tag */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Tag</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(tags.join(', '), 'Tag')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Tag</label>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {tags.map((tag, i) => (
                   <span
@@ -607,11 +697,11 @@ export const DraftPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 3: Rekomendasi Gambar Dari AI */}
+          {/* Card 3: Rekomendasi Prompt Gambar Dari AI */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3.5">
             <div>
               <h3 className="text-xs font-bold text-slate-900">
-                Rekomendasi Gambar Dari AI
+                Rekomendasi Prompt Gambar Dari AI
               </h3>
               <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
                 Editor memilih atau mencari gambar final. AI hanya memberi arahan visual dan metadata.
@@ -620,17 +710,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Subjek */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Subjek</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(aiImageRec.subject, 'Subjek Gambar')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Subjek</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-800 leading-relaxed">
                 {aiImageRec.subject}
               </div>
@@ -638,17 +718,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Format */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Format</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(aiImageRec.format, 'Format Gambar')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Format</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-800 leading-relaxed">
                 {aiImageRec.format}
               </div>
@@ -656,17 +726,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Alt text */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Alt text</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(aiImageRec.altText, 'Alt Text')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Alt text</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-800 leading-relaxed">
                 {aiImageRec.altText}
               </div>
@@ -674,17 +734,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Caption */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Caption</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(aiImageRec.caption, 'Caption')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Caption</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-800 leading-relaxed">
                 {aiImageRec.caption}
               </div>
@@ -692,17 +742,7 @@ export const DraftPage: React.FC = () => {
 
             {/* Nama file saran */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-slate-700">Nama file saran</label>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(aiImageRec.fileName, 'Nama File Saran')}
-                  className="text-slate-400 hover:text-slate-700 p-0.5"
-                  title="Salin"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <label className="text-[11px] font-semibold text-slate-700 block">Nama file saran</label>
               <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-800 font-mono">
                 {aiImageRec.fileName}
               </div>

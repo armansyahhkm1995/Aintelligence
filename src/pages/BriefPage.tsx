@@ -12,6 +12,8 @@ import {
   Sparkles,
   Edit,
   CheckCircle2,
+  FileText,
+  Download,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -163,17 +165,115 @@ export const BriefPage: React.FC = () => {
     showSuccess('AI Assistant', 'AI sedang menyusun ulang arahan artikel...')
   }
 
-  const handleExportBrief = () => {
-    const md = `# ${briefTitle}\n\n**Sudut Pandang Jurnalistik:**\n${angle}\n\n## Struktur Outline:\n${headings
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
+
+  const handleExportDocs = () => {
+    setIsExportDropdownOpen(false)
+    const contentHtml = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${briefTitle}</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b; padding: 24px; }
+        h1 { color: #1866EF; }
+        h2, h3 { color: #0f172a; }
+        .meta-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; margin: 12px 0; }
+      </style>
+      </head>
+      <body>
+        <h1>${briefTitle}</h1>
+        <div class="meta-box">
+          <p><strong>Sasaran Pembaca:</strong> Masyarakat yang mengurus dokumen kependudukan</p>
+        </div>
+        <div class="meta-box">
+          <p><strong>Pertanyaan Utama:</strong></p>
+          <ul>
+            <li>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</li>
+            <li>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</li>
+            <li>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</li>
+          </ul>
+        </div>
+        <p><strong>Sudut Pandang Jurnalistik (Angle):</strong></p>
+        <p>${angle}</p>
+        <h3>Kerangka Naskah (Heading H2 & H3):</h3>
+        <ul>
+          ${headings.map(h => `<li><strong>${h.level}:</strong> ${h.text}</li>`).join('')}
+        </ul>
+        <h3>Data & Entitas Wajib Dikutip:</h3>
+        <p>OJK (Otoritas Jasa Keuangan), Inflasi Tahunan BI, Bursa Efek Indonesia (BEI), UU P2SK No. 4/2023</p>
+      </body>
+      </html>
+    `
+    const blob = new Blob(['\ufeff' + contentHtml], { type: 'application/msword' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `arahan-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.doc`
+    a.click()
+    showSuccess('Ekspor Docs', 'Arahan artikel berhasil diekspor sebagai dokumen Docs (.doc)')
+  }
+
+  const handleExportMD = () => {
+    setIsExportDropdownOpen(false)
+    const md = `# ${briefTitle}\n\n**Sasaran Pembaca:**\nMasyarakat yang mengurus dokumen kependudukan\n\n**Pertanyaan Utama:**\n- Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?\n- Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?\n- Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?\n\n**Sudut Pandang Jurnalistik (Angle):**\n${angle}\n\n## Struktur Kerangka Naskah:\n${headings
       .map((h) => `${h.level === 'H2' ? '##' : '###'} ${h.text}`)
-      .join('\n')}`
+      .join('\n')}\n\n## Data & Entitas Wajib Dikutip:\n- OJK (Otoritas Jasa Keuangan)\n- Inflasi Tahunan BI\n- Bursa Efek Indonesia (BEI)\n- UU P2SK No. 4/2023`
     const blob = new Blob([md], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `brief-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
+    a.download = `arahan-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
     a.click()
-    showSuccess('Arahan Artikel', 'Brief berhasil diekspor ke file Markdown (.md)')
+    showSuccess('Ekspor MD', 'Arahan artikel berhasil diekspor ke file Markdown (.md)')
+  }
+
+  const handleExportPDF = () => {
+    setIsExportDropdownOpen(false)
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>${briefTitle} - Arahan Artikel</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+            h1 { color: #1866EF; margin-bottom: 8px; font-size: 24px; }
+            h2, h3 { color: #0f172a; margin-top: 20px; }
+            .box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+            ul { margin-top: 6px; padding-left: 20px; }
+            li { margin-bottom: 4px; }
+          </style>
+        </head>
+        <body>
+          <h1>${briefTitle}</h1>
+          <div class="box">
+            <strong>Sasaran Pembaca:</strong> Masyarakat yang mengurus dokumen kependudukan
+          </div>
+          <div class="box">
+            <strong>Pertanyaan Utama:</strong>
+            <ul>
+              <li>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</li>
+              <li>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</li>
+              <li>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</li>
+            </ul>
+          </div>
+          <h3>Sudut Pandang Jurnalistik (Angle):</h3>
+          <p style="font-size: 13px;">${angle}</p>
+          <h3>Kerangka Naskah:</h3>
+          <ul style="font-size: 13px;">
+            ${headings.map(h => `<li><strong>${h.level}:</strong> ${h.text}</li>`).join('')}
+          </ul>
+          <h3>Data & Entitas Wajib Dikutip:</h3>
+          <p style="font-size: 13px;">OJK (Otoritas Jasa Keuangan), Inflasi Tahunan BI, Bursa Efek Indonesia (BEI), UU P2SK No. 4/2023</p>
+        </body>
+        </html>
+      `)
+      printWindow.document.close()
+      printWindow.focus()
+      setTimeout(() => {
+        printWindow.print()
+      }, 300)
+    }
+    showSuccess('Ekspor PDF', 'Membuka jendela cetak untuk menyimpan Arahan Artikel sebagai PDF.')
   }
 
   // Filtered rows for table view
@@ -598,15 +698,63 @@ export const BriefPage: React.FC = () => {
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
             <h3 className="text-xs font-bold text-slate-900">Keputusan Redaksi</h3>
 
-            {/* Dropdown Ekspor */}
-            <button
-              type="button"
-              onClick={handleExportBrief}
-              className="w-full h-10 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-lg flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <span>Ekspor Arahan</span>
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            </button>
+            {/* Dropdown Ekspor Arahan (Docs, MD, PDF) */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+                className="w-full h-10 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-lg flex items-center justify-between transition-colors cursor-pointer shadow-2xs"
+              >
+                <span>Ekspor Arahan</span>
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              </button>
+
+              {isExportDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-20"
+                    onClick={() => setIsExportDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 left-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-30 divide-y divide-slate-100 text-xs animate-in fade-in zoom-in-95 duration-100">
+                    <button
+                      type="button"
+                      onClick={handleExportDocs}
+                      className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-[#1866EF]" />
+                        <span>Ekspor sebagai Docs (.doc)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">Word</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleExportMD}
+                      className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Download className="w-4 h-4 text-slate-500" />
+                        <span>Ekspor sebagai MD (.md)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">Markdown</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleExportPDF}
+                      className="w-full text-left px-3.5 py-2 hover:bg-rose-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-rose-600" />
+                        <span>Ekspor sebagai PDF (.pdf)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">PDF</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Setujui Button */}
             <button
