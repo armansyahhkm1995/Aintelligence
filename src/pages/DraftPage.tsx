@@ -262,13 +262,6 @@ export const DraftPage: React.FC = () => {
   if (viewMode === 'table') {
     return (
       <div className="space-y-6">
-        {/* Breadcrumb */}
-        <div className="text-xs text-slate-400">
-          <span>Riset & Produksi Berita</span>
-          <span className="mx-1.5 text-slate-300">/</span>
-          <span className="text-[#1866EF] font-semibold">Draf Artikel</span>
-        </div>
-
         {/* 1. Milestone Stepper: Step 5 Active */}
         <MilestoneStepper currentStep={5} />
 
@@ -444,13 +437,6 @@ export const DraftPage: React.FC = () => {
   // =========================================================================
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <div className="text-xs text-slate-400">
-        <span>Riset & Produksi Berita</span>
-        <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Draf Artikel</span>
-      </div>
-
       {/* 1. Milestone Stepper: Step 5 Active */}
       <MilestoneStepper currentStep={5} />
 

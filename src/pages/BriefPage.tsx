@@ -299,13 +299,6 @@ export const BriefPage: React.FC = () => {
   if (viewMode === 'table') {
     return (
       <div className="space-y-6">
-        {/* Breadcrumb */}
-        <div className="text-xs text-slate-400">
-          <span>Riset & Produksi Berita</span>
-          <span className="mx-1.5 text-slate-300">/</span>
-          <span className="text-[#1866EF] font-semibold">Tinjauan Brief</span>
-        </div>
-
         {/* 1. Milestone Stepper: Step 4 Active */}
         <MilestoneStepper currentStep={4} />
 
@@ -520,13 +513,6 @@ export const BriefPage: React.FC = () => {
   // =========================================================================
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <div className="text-xs text-slate-400">
-        <span>Riset & Produksi Berita</span>
-        <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Tinjauan Brief</span>
-      </div>
-
       {/* 1. Milestone Stepper: Step 4 Active */}
       <MilestoneStepper currentStep={4} />
 

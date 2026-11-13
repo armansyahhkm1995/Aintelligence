@@ -147,13 +147,6 @@ export const ClusterPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb matching Image 2 */}
-      <div className="text-xs text-slate-400">
-        <span>Riset & Produksi Berita</span>
-        <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Kelompok Topik</span>
-      </div>
-
       {/* 1. Milestone Stepper: Step 3 Active */}
       <MilestoneStepper currentStep={3} />
 

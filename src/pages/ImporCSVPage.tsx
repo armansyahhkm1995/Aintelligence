@@ -117,13 +117,6 @@ export const ImporCSVPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb matching Figma */}
-      <div className="text-xs text-slate-400">
-        <span>Riset & Produksi Berita</span>
-        <span className="mx-1.5 text-slate-300">/</span>
-        <span className="text-[#1866EF] font-semibold">Impor CSV Semrush</span>
-      </div>
-
       {/* 1. Milestone Stepper: Step 1 Active */}
       <MilestoneStepper currentStep={1} />
 
