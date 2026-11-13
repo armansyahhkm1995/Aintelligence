@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import { ClusterItem } from '../types'
-import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge, Scissors } from 'lucide-react'
+import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
@@ -122,9 +122,27 @@ export const ClusterPage: React.FC = () => {
   }
 
   const handleToggleSplitKeyword = (kw: string) => {
-    setSelectedSplitKeywords((prev) =>
-      prev.includes(kw) ? prev.filter((item) => item !== kw) : [...prev, kw]
-    )
+    let next: string[]
+    if (selectedSplitKeywords.includes(kw)) {
+      next = selectedSplitKeywords.filter((item) => item !== kw)
+    } else {
+      next = [...selectedSplitKeywords, kw]
+    }
+    setSelectedSplitKeywords(next)
+
+    // AI generate new topic title dynamically based on selected keywords
+    if (next.length === 0) {
+      setNewSplitTopicTitle('')
+    } else if (next.some((k) => k.toLowerCase().includes('bibit'))) {
+      setNewSplitTopicTitle('Panduan Memulai Reksadana di Aplikasi Bibit')
+    } else if (next.some((k) => k.toLowerCase().includes('online'))) {
+      setNewSplitTopicTitle('Cara Mudah Belajar Reksadana Online Terpercaya')
+    } else if (next.some((k) => k.toLowerCase().includes('2026'))) {
+      setNewSplitTopicTitle('Strategi Investasi Reksadana Regulasi 2026')
+    } else {
+      const base = next[0].split('(')[0].trim()
+      setNewSplitTopicTitle(`Panduan Lengkap: ${base.charAt(0).toUpperCase() + base.slice(1)}`)
+    }
   }
 
   return (
@@ -255,8 +273,14 @@ export const ClusterPage: React.FC = () => {
           {/* Header Row: Badges & Right Meta */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
-                {isMerged ? 'Topik Pilar (Digabungkan)' : 'Baru'}
+              <span
+                className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                  isMerged
+                    ? 'bg-[#EFF6FF] border-[#BFDBFE] text-[#1D4ED8]'
+                    : 'bg-[#ECFDF5] border-[#A7F3D0] text-[#15803D]'
+                }`}
+              >
+                {isMerged ? 'Topik Pilar (Digabungkan)' : 'Aman'}
               </span>
               <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
                 Informasional
@@ -356,9 +380,11 @@ export const ClusterPage: React.FC = () => {
           {/* Header Row: Badges & Right Meta */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
-                {isMerged ? 'Telah Digabung' : 'Brief Dibuat'}
-              </span>
+              {isMerged && (
+                <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
+                  Telah Digabung
+                </span>
+              )}
               {!isMerged && (
                 !isCard2Ignored ? (
                   <span className="px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-xs font-semibold">
@@ -471,18 +497,16 @@ export const ClusterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsSplitModalOpen(true)}
-                  className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                  className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
                 >
-                  <Scissors className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Pecahkan Topik</span>
+                  Pecahkan Topik
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsMergeModalOpen(true)}
-                  className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                  className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
                 >
-                  <GitMerge className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Gabungkan Topik</span>
+                  Gabungkan Topik
                 </button>
                 <button
                   type="button"
@@ -522,14 +546,14 @@ export const ClusterPage: React.FC = () => {
 
         {/* Card 3: Kelompok Topik Baru Hasil Pemecahan (Split Result) */}
         {isSplitted && (
-          <div className="bg-white border border-[#DDD6FE] rounded-xl p-6 shadow-xs space-y-4 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-4 animate-in fade-in slide-in-from-top-2">
             {/* Header Row: Badges & Right Meta */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
                   Hasil Pemecahan Topik
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
                   Transaksional
                 </span>
               </div>
@@ -537,26 +561,33 @@ export const ClusterPage: React.FC = () => {
               <div className="text-xs text-slate-500 font-medium">
                 <span className="font-bold text-slate-800">Total Vol: 22.000 / bln</span>
                 <span className="mx-2 text-slate-300">|</span>
-                <span>Rata-rata KD: 28% • (1 Keyword)</span>
+                <span>Rata-rata KD: 28% • ({selectedSplitKeywords.length} Keyword)</span>
               </div>
             </div>
 
             {/* Cluster Title */}
             <div>
-              <h2 className="text-lg font-bold text-[#6D28D9] leading-snug">
+              <h2 className="text-lg font-bold text-[#1866EF] leading-snug">
                 {newSplitTopicTitle}
               </h2>
             </div>
 
             {/* Content Box with Pilar Keyword */}
-            <div className="border border-purple-100 rounded-xl p-4 bg-purple-50/20 space-y-3">
+            <div className="border border-blue-100 rounded-xl p-4 bg-blue-50/20 space-y-3">
               <div>
                 <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
-                  Kata Kunci Pilar (Dipisahkan dari Panduan Reksadana 2026):
+                  Kata Kunci Dipisahkan dari Panduan Reksadana 2026:
                 </div>
-                <span className="inline-block px-3 py-1 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-medium">
-                  cara mulai reksadana bibit (Vol 22.000) (KD 28%)
-                </span>
+                <div className="flex flex-wrap gap-2">
+                  {selectedSplitKeywords.map((kw, i) => (
+                    <span
+                      key={i}
+                      className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -651,14 +682,9 @@ export const ClusterPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none">
           <div className="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <GitMerge className="w-4 h-4 text-[#1866EF]" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-slate-900">Gabungkan Kelompok Topik</h2>
-                  <p className="text-[11px] text-slate-400">Satukan kelompok topik untuk eliminasi kanibalisasi internal</p>
-                </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">Gabungkan Kelompok Topik</h2>
+                <p className="text-[11px] text-slate-400">Satukan kelompok topik untuk eliminasi kanibalisasi internal</p>
               </div>
               <button
                 onClick={() => setIsMergeModalOpen(false)}
@@ -729,10 +755,9 @@ export const ClusterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleConfirmMerge}
-                  className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer"
                 >
-                  <GitMerge className="w-3.5 h-3.5" />
-                  <span>Konfirmasi Penggabungan</span>
+                  Konfirmasi Penggabungan
                 </button>
               </div>
             </div>
@@ -745,14 +770,9 @@ export const ClusterPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none">
           <div className="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Scissors className="w-4 h-4 text-[#6D28D9]" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-slate-900">Pemecahan Kelompok Topik</h2>
-                  <p className="text-[11px] text-slate-400">Pecah kata kunci dengan intent berbeda menjadi calon artikel mandiri</p>
-                </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">Pemecahan Kelompok Topik</h2>
+                <p className="text-[11px] text-slate-400">Pecah kata kunci dengan intent berbeda menjadi calon artikel mandiri</p>
               </div>
               <button
                 onClick={() => setIsSplitModalOpen(false)}
@@ -770,36 +790,66 @@ export const ClusterPage: React.FC = () => {
               {/* Checklist Keyword */}
               <div className="space-y-2 border border-slate-200 rounded-lg p-3 bg-slate-50/50">
                 <span className="text-[11px] font-semibold text-slate-500 block uppercase">
-                  Pilih Kata Kunci yang Dipisahkan:
+                  Daftar Kata Kunci Topik:
                 </span>
+                
+                {/* Pilar Keyword */}
+                <label className="flex items-center justify-between text-xs text-slate-800 bg-white p-2.5 rounded-md border border-slate-200 cursor-pointer hover:bg-blue-50/40 transition-colors">
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedSplitKeywords.includes('panduan reksadana 2026 (Vol 22.000) (KD 28%)')}
+                      onChange={() => handleToggleSplitKeyword('panduan reksadana 2026 (Vol 22.000) (KD 28%)')}
+                      className="rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF] cursor-pointer"
+                    />
+                    <span className="font-medium">panduan reksadana 2026 (Vol 22.000) (KD 28%)</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] shrink-0">
+                    Kata Kunci Pilar
+                  </span>
+                </label>
+
+                {/* Supporting Keywords */}
                 {card2Supporting.map((kw, i) => (
                   <label
                     key={i}
-                    className="flex items-center gap-2.5 text-xs text-slate-800 bg-white p-2.5 rounded-md border border-slate-200 cursor-pointer hover:bg-purple-50/50 transition-colors"
+                    className="flex items-center justify-between text-xs text-slate-800 bg-white p-2.5 rounded-md border border-slate-200 cursor-pointer hover:bg-blue-50/40 transition-colors"
                   >
-                    <input
-                      type="checkbox"
-                      checked={selectedSplitKeywords.includes(kw)}
-                      onChange={() => handleToggleSplitKeyword(kw)}
-                      className="rounded border-slate-300 text-[#6D28D9] focus:ring-purple-500"
-                    />
-                    <span className="font-medium">{kw}</span>
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="checkbox"
+                        checked={selectedSplitKeywords.includes(kw)}
+                        onChange={() => handleToggleSplitKeyword(kw)}
+                        className="rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF] cursor-pointer"
+                      />
+                      <span className="font-medium">{kw}</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 border border-slate-200 text-slate-600 shrink-0">
+                      Kata Kunci Pendukung
+                    </span>
                   </label>
                 ))}
               </div>
 
-              {/* Judul Topik Baru */}
+              {/* Judul Topik Baru (Digenerate AI) */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700 block">
-                  Judul Kelompok Topik Baru <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={newSplitTopicTitle}
-                  onChange={(e) => setNewSplitTopicTitle(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg text-slate-800 bg-white focus:outline-none focus:border-[#1866EF]"
-                  placeholder="Contoh: Panduan Memulai Reksadana di Aplikasi Bibit"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    Judul Kelompok Topik Baru (Rekomendasi AI)
+                  </label>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1866EF] font-semibold border border-[#BFDBFE]">
+                    Digenerate Otomatis
+                  </span>
+                </div>
+                <div className="w-full px-3.5 py-2.5 text-xs font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg leading-relaxed min-h-[40px] flex items-center">
+                  {newSplitTopicTitle ? (
+                    <span>{newSplitTopicTitle}</span>
+                  ) : (
+                    <span className="text-slate-400 font-normal italic">
+                      Pilih minimal satu kata kunci di atas untuk menghasilkan judul topik baru otomatis...
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Alasan Pemecahan */}
@@ -828,10 +878,9 @@ export const ClusterPage: React.FC = () => {
                   type="button"
                   onClick={handleConfirmSplit}
                   disabled={selectedSplitKeywords.length === 0}
-                  className="px-4 py-2 bg-[#6D28D9] hover:bg-purple-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer"
                 >
-                  <Scissors className="w-3.5 h-3.5" />
-                  <span>Pecahkan Menjadi Topik Baru</span>
+                  Pecahkan Menjadi Topik Baru
                 </button>
               </div>
             </div>
