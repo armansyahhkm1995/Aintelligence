@@ -78,6 +78,12 @@ export const DraftPage: React.FC = () => {
   const [selectedVersion, setSelectedVersion] = useState<'v2' | 'v1'>('v2')
 
   // Metadata SEO states
+  const [primaryKeyword, setPrimaryKeyword] = useState('cara investasi reksadana')
+  const [secondaryKeywords, setSecondaryKeywords] = useState([
+    'reksadana pemula',
+    'modal kecil',
+    'keuntungan reksadana',
+  ])
   const [seoTitle, setSeoTitle] = useState('Panduan Aman Investasi Reksadana Gen-Z: Tips OJK')
   const [metaDesc, setMetaDesc] = useState(
     'Pelajari cara memulai investasi reksadana aman untuk pemula dan Gen-Z. Panduan legalitas OJK, modal Rp10.000, serta tips pencairan.'
@@ -104,7 +110,7 @@ export const DraftPage: React.FC = () => {
     setIsCopyDropdownOpen(false)
     if (option === 1) {
       // 1. Salin semua
-      const allText = `JUDUL ARTIKEL:\n${articleHeadline}\n\nISI ARTIKEL:\n${articleBodyText}\n\nPAKET METADATA SEO:\nJudul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}\n\nREKOMENDASI GAMBAR DARI AI:\nSubjek: ${aiImageRec.subject}\nFormat: ${aiImageRec.format}\nAlt text: ${aiImageRec.altText}\nCaption: ${aiImageRec.caption}\nNama file saran: ${aiImageRec.fileName}`
+      const allText = `JUDUL ARTIKEL:\n${articleHeadline}\n\nISI ARTIKEL:\n${articleBodyText}\n\nPAKET METADATA SEO:\nFokus Kata Kunci:\n- Utama: ${primaryKeyword}\n- Pendukung: ${secondaryKeywords.join(', ')}\nJudul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}\n\nREKOMENDASI PROMPT GAMBAR DARI AI:\nSubjek: ${aiImageRec.subject}\nFormat: ${aiImageRec.format}\nAlt text: ${aiImageRec.altText}\nCaption: ${aiImageRec.caption}\nNama file saran: ${aiImageRec.fileName}`
       handleCopyText(allText, 'Semua Konten (Judul, Isi, SEO, & Rekomendasi Gambar)')
     } else if (option === 2) {
       // 2. Salin judul artikel
@@ -114,7 +120,7 @@ export const DraftPage: React.FC = () => {
       handleCopyText(articleBodyText, 'Isi Artikel')
     } else if (option === 4) {
       // 4. Salin paket metadata SEO
-      const seoText = `Judul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}`
+      const seoText = `Fokus Kata Kunci:\n- Utama: ${primaryKeyword}\n- Pendukung: ${secondaryKeywords.join(', ')}\nJudul SEO: ${seoTitle}\nDeskripsi Meta: ${metaDesc}\nSlug URL: rri.co.id/bisnis/${slugUrl}\nKategori: ${category}\nTag: ${tags.join(', ')}`
       handleCopyText(seoText, 'Paket Metadata SEO')
     } else if (option === 5) {
       // 5. Salin rekomendasi prompt gambar dari AI
@@ -152,6 +158,9 @@ export const DraftPage: React.FC = () => {
         <hr/>
         <h3>Paket Metadata SEO:</h3>
         <div class="meta-box">
+          <p><strong>Fokus Kata Kunci:</strong><br/>
+          - <strong>Utama:</strong> ${primaryKeyword}<br/>
+          - <strong>Pendukung:</strong> ${secondaryKeywords.join(', ')}</p>
           <p><strong>Judul SEO:</strong> ${seoTitle}</p>
           <p><strong>Deskripsi Meta:</strong> ${metaDesc}</p>
           <p><strong>Slug URL:</strong> rri.co.id/bisnis/${slugUrl}</p>
@@ -180,7 +189,7 @@ export const DraftPage: React.FC = () => {
 
   const handleExportDraftMD = () => {
     setIsExportDraftDropdownOpen(false)
-    const md = `# ${articleHeadline}\n\n${articleBodyText}\n\n---\n\n## Paket Metadata SEO:\n- **Judul SEO:** ${seoTitle}\n- **Deskripsi Meta:** ${metaDesc}\n- **Slug URL:** rri.co.id/bisnis/${slugUrl}\n- **Kategori:** ${category}\n- **Tag:** ${tags.join(', ')}\n\n## Rekomendasi Prompt Gambar Dari AI:\n- **Subjek:** ${aiImageRec.subject}\n- **Format:** ${aiImageRec.format}\n- **Alt text:** ${aiImageRec.altText}\n- **Caption:** ${aiImageRec.caption}\n- **Nama file saran:** ${aiImageRec.fileName}`
+    const md = `# ${articleHeadline}\n\n${articleBodyText}\n\n---\n\n## Paket Metadata SEO:\n- **Fokus Kata Kunci (Utama):** ${primaryKeyword}\n- **Fokus Kata Kunci (Pendukung):** ${secondaryKeywords.join(', ')}\n- **Judul SEO:** ${seoTitle}\n- **Deskripsi Meta:** ${metaDesc}\n- **Slug URL:** rri.co.id/bisnis/${slugUrl}\n- **Kategori:** ${category}\n- **Tag:** ${tags.join(', ')}\n\n## Rekomendasi Prompt Gambar Dari AI:\n- **Subjek:** ${aiImageRec.subject}\n- **Format:** ${aiImageRec.format}\n- **Alt text:** ${aiImageRec.altText}\n- **Caption:** ${aiImageRec.caption}\n- **Nama file saran:** ${aiImageRec.fileName}`
     const blob = new Blob([md], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -211,7 +220,9 @@ export const DraftPage: React.FC = () => {
           <p>${articleBodyText.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br/>')}</p>
           <div class="box">
             <h3 style="margin-top:0;">Paket Metadata SEO</h3>
-            <p><strong>Judul SEO:</strong> ${seoTitle}<br/>
+            <p><strong>Fokus Kata Kunci Utama:</strong> ${primaryKeyword}<br/>
+            <strong>Fokus Kata Kunci Pendukung:</strong> ${secondaryKeywords.join(', ')}<br/>
+            <strong>Judul SEO:</strong> ${seoTitle}<br/>
             <strong>Deskripsi Meta:</strong> ${metaDesc}<br/>
             <strong>Slug:</strong> rri.co.id/bisnis/${slugUrl}<br/>
             <strong>Kategori:</strong> ${category} | <strong>Tag:</strong> ${tags.join(', ')}</p>
@@ -639,26 +650,46 @@ export const DraftPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Judul SEO */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-slate-700 block">Judul SEO</label>
-              <input
-                type="text"
-                value={seoTitle}
-                onChange={(e) => setSeoTitle(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg text-slate-800 bg-white focus:outline-none focus:border-[#1866EF]"
-              />
+            {/* Fokus Kata Kunci */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-slate-700 block">Fokus Kata Kunci</label>
+              <div className="p-3 border border-slate-200 rounded-lg bg-slate-50/70 space-y-2.5">
+                <div>
+                  <div className="text-[10px] font-semibold text-slate-500 mb-1">Kata Kunci Utama:</div>
+                  <span className="inline-block px-2.5 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
+                    {primaryKeyword}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-[10px] font-semibold text-slate-500 mb-1">Kata Kunci Pendukung:</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {secondaryKeywords.map((kw, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs"
+                      >
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Deskripsi Meta */}
+            {/* Judul SEO (Disabled / Non-editable) */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-semibold text-slate-700 block">Judul SEO</label>
+              <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-700 leading-relaxed">
+                {seoTitle}
+              </div>
+            </div>
+
+            {/* Deskripsi Meta (Disabled / Non-editable) */}
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-700 block">Deskripsi Meta</label>
-              <textarea
-                rows={3}
-                value={metaDesc}
-                onChange={(e) => setMetaDesc(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg text-slate-800 bg-white focus:outline-none focus:border-[#1866EF] leading-relaxed resize-y"
-              />
+              <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-700 leading-relaxed">
+                {metaDesc}
+              </div>
             </div>
 
             {/* Slug URL */}
@@ -670,15 +701,12 @@ export const DraftPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Kategori */}
+            {/* Kategori (Disabled / Non-editable) */}
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-700 block">Kategori</label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg text-slate-800 bg-white focus:outline-none focus:border-[#1866EF]"
-              />
+              <div className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50/70 text-slate-700">
+                {category}
+              </div>
             </div>
 
             {/* Tag */}

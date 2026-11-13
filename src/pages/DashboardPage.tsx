@@ -87,12 +87,12 @@ export const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Section 1: Brief Menunggu Persetujuan */}
+        {/* Section 1: Arahan Artikel Menunggu Persetujuan */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
             <div className="flex items-center gap-2">
               <span className="text-base font-semibold text-slate-900">
-                1. Brief Menunggu Persetujuan
+                1. Arahan Artikel Menunggu Persetujuan
               </span>
               <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
                 4 Menunggu
@@ -122,7 +122,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('brief')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Tinjau Brief
+                Tinjau Arahan
               </button>
             </div>
 
@@ -145,7 +145,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('brief')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Tinjau Brief
+                Tinjau Arahan
               </button>
             </div>
 
@@ -168,7 +168,7 @@ export const DashboardPage: React.FC = () => {
                 onClick={() => setCurrentPage('brief')}
                 className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
               >
-                Tinjau Brief
+                Tinjau Arahan
               </button>
             </div>
           </div>
@@ -177,12 +177,12 @@ export const DashboardPage: React.FC = () => {
         {/* Section Divider in Figma */}
         <div className="border-t border-[#DBEAFE]" />
 
-        {/* Section 2: Draf Siap Diperiksa */}
+        {/* Section 2: Draft Artikel Siap Diperiksa */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
             <div className="flex items-center gap-2">
               <span className="text-base font-semibold text-slate-900">
-                2. Draf Siap Diperiksa
+                2. Draft Artikel Siap Diperiksa
               </span>
               <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded border border-green-200">
                 3 Siap Salin

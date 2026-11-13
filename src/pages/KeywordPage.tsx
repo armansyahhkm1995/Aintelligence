@@ -19,6 +19,7 @@ interface KeywordRow {
   intent: 'Informasional' | 'Transaksional' | 'Komersial'
   topic: string
   contentType: string
+  keywordRisk: 'Musiman' | 'Berisiko' | 'Non-evergreen'
   evergreenScore: number
   overlapScore: number
   decision: 'Layak' | 'Tidak Layak' | 'Perlu Ditinjau'
@@ -34,6 +35,7 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     intent: 'Informasional',
     topic: 'Bansos & Sosial',
     contentType: 'Panduan layanan',
+    keywordRisk: 'Berisiko',
     evergreenScore: 92,
     overlapScore: 92,
     decision: 'Layak',
@@ -47,6 +49,7 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     intent: 'Transaksional',
     topic: 'Ketenagakerjaan',
     contentType: 'Panduan layanan',
+    keywordRisk: 'Berisiko',
     evergreenScore: 65,
     overlapScore: 65,
     decision: 'Tidak Layak',
@@ -60,6 +63,7 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     intent: 'Komersial',
     topic: 'Perbankan & Fintech',
     contentType: 'Panduan layanan',
+    keywordRisk: 'Non-evergreen',
     evergreenScore: 25,
     overlapScore: 25,
     decision: 'Perlu Ditinjau',
@@ -73,6 +77,7 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     intent: 'Informasional',
     topic: 'Bansos & Sosial',
     contentType: 'Panduan layanan',
+    keywordRisk: 'Musiman',
     evergreenScore: 94,
     overlapScore: 12,
     decision: 'Layak',
@@ -86,6 +91,7 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     intent: 'Komersial',
     topic: 'Bansos & Sosial',
     contentType: 'Panduan layanan',
+    keywordRisk: 'Non-evergreen',
     evergreenScore: 40,
     overlapScore: 68,
     decision: 'Perlu Ditinjau',
@@ -105,6 +111,7 @@ export const KeywordPage: React.FC = () => {
   const { showSuccess } = useToast()
 
   const [searchQuery, setSearchQuery] = useState('')
+  const [filterRule, setFilterRule] = useState<'Semua' | 'Musiman' | 'Berisiko' | 'Non-evergreen'>('Semua')
   const [filterStatus, setFilterStatus] = useState<'Semua' | 'Layak' | 'Tidak Layak' | 'Perlu Ditinjau'>('Semua')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [pageSize, setPageSize] = useState<number>(10)
@@ -153,7 +160,9 @@ export const KeywordPage: React.FC = () => {
       row.topic.toLowerCase().includes(searchQuery.toLowerCase())
     const matchStatus =
       filterStatus === 'Semua' ? true : row.decision === filterStatus
-    return matchSearch && matchStatus
+    const matchRule =
+      filterRule === 'Semua' ? true : row.keywordRisk === filterRule
+    return matchSearch && matchStatus && matchRule
   })
 
   return (
@@ -217,7 +226,7 @@ export const KeywordPage: React.FC = () => {
       <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
         {/* Search & Filter Header Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-[380px]">
+          <div className="relative w-full sm:w-[320px]">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
@@ -228,28 +237,46 @@ export const KeywordPage: React.FC = () => {
             />
           </div>
 
-          <div className="relative w-full sm:w-auto">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
-            >
-              <option value="Semua">Status</option>
-              <option value="Layak">Layak</option>
-              <option value="Tidak Layak">Tidak Layak</option>
-              <option value="Perlu Ditinjau">Perlu Ditinjau</option>
-            </select>
-            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            {/* Filter Aturan Kata Kunci */}
+            <div className="relative flex-1 sm:flex-initial">
+              <select
+                value={filterRule}
+                onChange={(e) => setFilterRule(e.target.value as any)}
+                className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
+              >
+                <option value="Semua">Aturan Kata Kunci</option>
+                <option value="Musiman">Musiman</option>
+                <option value="Berisiko">Berisiko</option>
+                <option value="Non-evergreen">Non-evergreen</option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            {/* Filter Status */}
+            <div className="relative flex-1 sm:flex-initial">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+                className="w-full sm:w-auto px-3.5 py-2 pr-8 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-700 bg-white cursor-pointer appearance-none"
+              >
+                <option value="Semua">Status</option>
+                <option value="Layak">Layak</option>
+                <option value="Tidak Layak">Tidak Layak</option>
+                <option value="Perlu Ditinjau">Perlu Ditinjau</option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
         </div>
 
         {/* Table */}
         <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[850px]">
+            <table className="w-full text-left text-xs min-w-[950px]">
               <thead>
                 <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                  <th className="py-3 px-4 font-semibold w-[28%]">
+                  <th className="py-3 px-4 font-semibold w-[26%]">
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -264,13 +291,14 @@ export const KeywordPage: React.FC = () => {
                       <span>Kata Kunci</span>
                     </div>
                   </th>
-                  <th className="py-3 px-4 font-semibold w-[16%]">Topik</th>
-                  <th className="py-3 px-4 font-semibold w-[14%]">Jenis Konten</th>
-                  <th className="py-3 px-4 font-semibold w-[10%]">Evergreen</th>
-                  <th className="py-3 px-4 font-semibold w-[10%]">Tumpang Tindih</th>
-                  <th className="py-3 px-4 font-semibold w-[10%]">Keputusan</th>
-                  <th className="py-3 px-4 font-semibold w-[12%]">Keputusan</th>
-                  <th className="py-3 px-4 font-semibold text-center w-[6%]">Aksi</th>
+                  <th className="py-3 px-4 font-semibold w-[14%]">Topik</th>
+                  <th className="py-3 px-4 font-semibold w-[13%]">Jenis Konten</th>
+                  <th className="py-3 px-4 font-semibold w-[12%]">Risiko Kata Kunci</th>
+                  <th className="py-3 px-4 font-semibold w-[9%]">Evergreen</th>
+                  <th className="py-3 px-4 font-semibold w-[9%]">Tumpang Tindih</th>
+                  <th className="py-3 px-4 font-semibold w-[9%]">Keputusan</th>
+                  <th className="py-3 px-4 font-semibold w-[11%]">Keputusan</th>
+                  <th className="py-3 px-4 font-semibold text-center w-[5%]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -307,6 +335,21 @@ export const KeywordPage: React.FC = () => {
                     {/* Jenis Konten */}
                     <td className="py-3.5 px-4 text-slate-700">
                       {item.contentType}
+                    </td>
+
+                    {/* Risiko Kata Kunci */}
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                          item.keywordRisk === 'Berisiko'
+                            ? 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
+                            : item.keywordRisk === 'Musiman'
+                            ? 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]'
+                            : 'bg-[#FFFBEB] text-[#B45309] border-[#FDE68A]'
+                        }`}
+                      >
+                        {item.keywordRisk}
+                      </span>
                     </td>
 
                     {/* Evergreen (green score) */}
@@ -354,7 +397,7 @@ export const KeywordPage: React.FC = () => {
                 ))}
                 {filteredKeywords.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="py-8 text-center text-slate-400">
+                    <td colSpan={9} className="py-8 text-center text-slate-400">
                       Tidak ada kata kunci yang cocok dengan kriteria pencarian.
                     </td>
                   </tr>
