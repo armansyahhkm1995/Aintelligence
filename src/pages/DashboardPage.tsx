@@ -21,7 +21,7 @@ export const DashboardPage: React.FC = () => {
   const { setCurrentPage } = useApp()
 
   const [aiDecisionTab, setAiDecisionTab] = useState<'keyword' | 'cluster' | 'brief'>('brief')
-  const [overrideFilter, setOverrideFilter] = useState<'all' | 'keyword' | 'cluster' | 'brief' | 'draft'>('all')
+  const [overrideFilter, setOverrideFilter] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('keyword')
 
   const steps = [
     {
@@ -339,18 +339,6 @@ export const DashboardPage: React.FC = () => {
         {/* Tab Content 1: Saring Kata Kunci */}
         {aiDecisionTab === 'keyword' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-500 pb-1">
-              <span>Mengapa kata kunci diputuskan Layak, Perlu Ditinjau, atau Tidak Layak:</span>
-              <button
-                type="button"
-                onClick={() => setCurrentPage('keyword')}
-                className="text-[#1866EF] hover:underline font-semibold inline-flex items-center gap-1 cursor-pointer"
-              >
-                <span>Lihat Semua di Manajemen Keyword</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
             <div className="divide-y divide-slate-100 border border-slate-100 rounded-lg overflow-hidden">
               {/* Item 1 */}
               <div className="p-3.5 hover:bg-slate-50/60 transition-colors space-y-2">
@@ -406,18 +394,6 @@ export const DashboardPage: React.FC = () => {
         {/* Tab Content 2: Kelompok Topik */}
         {aiDecisionTab === 'cluster' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-500 pb-1">
-              <span>Mengapa kata kunci pilar dan kata kunci pendukung dibentuk menjadi topik ini:</span>
-              <button
-                type="button"
-                onClick={() => setCurrentPage('cluster')}
-                className="text-[#1866EF] hover:underline font-semibold inline-flex items-center gap-1 cursor-pointer"
-              >
-                <span>Lihat Semua di Kelompok Topik</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
             <div className="space-y-3">
               {/* Cluster Item 1 */}
               <div className="p-4 border border-[#DBEAFE] rounded-xl bg-slate-50/30 space-y-2.5">
@@ -465,18 +441,6 @@ export const DashboardPage: React.FC = () => {
         {/* Tab Content 3: Arahan Artikel & Basis Draf (Single Narrative Paragraph) */}
         {aiDecisionTab === 'brief' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-slate-500 pb-1">
-              <span>Alasan mengapa topik kombinasi kata kunci menjadi judul arahan artikel dan basis penyusunan draf:</span>
-              <button
-                type="button"
-                onClick={() => setCurrentPage('brief')}
-                className="text-[#1866EF] hover:underline font-semibold inline-flex items-center gap-1 cursor-pointer"
-              >
-                <span>Buka Detail di Arahan Artikel</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
             {/* Rincian Komponen Arahan Artikel */}
             <div className="p-4 border border-[#DBEAFE] rounded-xl bg-white space-y-3.5 shadow-2xs">
               <div className="flex items-center justify-between">
@@ -546,10 +510,9 @@ export const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Module Filter Tabs: Full width matching SettingsPage */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-5 gap-1 bg-white select-none overflow-x-auto w-full">
+        {/* Module Filter Tabs: Full width matching SettingsPage (4 tabs, 'all' removed) */}
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-4 gap-1 bg-white select-none overflow-x-auto w-full">
           {[
-            { id: 'all', label: 'Semua Modul' },
             { id: 'keyword', label: 'Kata Kunci' },
             { id: 'cluster', label: 'Kelompok Topik' },
             { id: 'brief', label: 'Arahan Artikel' },
@@ -576,7 +539,7 @@ export const DashboardPage: React.FC = () => {
             <table className="w-full text-left text-xs min-w-[760px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[16%]">Modul & Aksi</th>
+                  <th className="py-3 px-3.5 w-[16%]">Aksi</th>
                   <th className="py-3 px-3.5 w-[24%]">Item Terkait</th>
                   <th className="py-3 px-3.5 w-[25%]">Keputusan Semula AI vs Koreksi</th>
                   <th className="py-3 px-3.5 w-[23%]">Alasan / Catatan Editor</th>
@@ -585,11 +548,10 @@ export const DashboardPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {/* 1. Kata Kunci: Koreksi Redaksional */}
-                {(overrideFilter === 'all' || overrideFilter === 'keyword') && (
+                {overrideFilter === 'keyword' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Kata Kunci</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-[#1D4ED8]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
                         Koreksi Status
                       </span>
                     </td>
@@ -615,11 +577,10 @@ export const DashboardPage: React.FC = () => {
                 )}
 
                 {/* 2. Kelompok Topik: Abaikan Kanibalisasi */}
-                {(overrideFilter === 'all' || overrideFilter === 'cluster') && (
+                {overrideFilter === 'cluster' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Kelompok Topik</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-[#B45309]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
                         Abaikan Bentrok
                       </span>
                     </td>
@@ -645,11 +606,10 @@ export const DashboardPage: React.FC = () => {
                 )}
 
                 {/* 3. Kelompok Topik: Perbarui Topik */}
-                {(overrideFilter === 'all' || overrideFilter === 'cluster') && (
+                {overrideFilter === 'cluster' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Kelompok Topik</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-[#15803D]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
                         Perbarui Topik
                       </span>
                     </td>
@@ -675,11 +635,10 @@ export const DashboardPage: React.FC = () => {
                 )}
 
                 {/* 4. Kelompok Topik: Pisahkan Kata Kunci */}
-                {(overrideFilter === 'all' || overrideFilter === 'cluster') && (
+                {overrideFilter === 'cluster' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Kelompok Topik</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-[#7E22CE]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
                         Pisahkan Keyword
                       </span>
                     </td>
@@ -705,11 +664,10 @@ export const DashboardPage: React.FC = () => {
                 )}
 
                 {/* 5. Arahan Artikel: Tolak Arahan Artikel */}
-                {(overrideFilter === 'all' || overrideFilter === 'brief') && (
+                {overrideFilter === 'brief' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Arahan Artikel</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-[#B91C1C]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FEF2F2] border border-[#FECACA] text-[#B91C1C]">
                         Tolak Arahan
                       </span>
                     </td>
@@ -735,11 +693,10 @@ export const DashboardPage: React.FC = () => {
                 )}
 
                 {/* 6. Draf Artikel: Hapus Draf */}
-                {(overrideFilter === 'all' || overrideFilter === 'draft') && (
+                {overrideFilter === 'draft' && (
                   <tr className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-3.5 align-top">
-                      <div className="font-semibold text-slate-900">Draf Artikel</div>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-[#B91C1C]">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FEF2F2] border border-[#FECACA] text-[#B91C1C]">
                         Hapus Draf
                       </span>
                     </td>
