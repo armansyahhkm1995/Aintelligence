@@ -128,13 +128,25 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Panduan Lengkap Mudik Lebaran 2027 Rute Tol Trans-Jawa
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded">
-                    Informasional
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    Potensi volume: 32.000 / bln • Menyerap: 8 Keyword • Waktu antrean: 45 mnt lalu
-                  </span>
+                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
+                    <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
+                      mudik lebaran 2027
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-slate-500 font-medium">Kata Kunci Pendukung:</span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      tol trans jawa
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      tarif tol mudik
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      tips mudik aman
+                    </span>
+                  </div>
                 </div>
               </div>
               <button
@@ -151,13 +163,25 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Kompilasi Bansos Cair November 2026: Syarat & Cara Cek NIK
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#FAF5FF] text-[#7E22CE] text-xs font-medium px-2 py-0.5 rounded">
-                    Transaksional
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    Potensi volume: 28.100 / bln • Menyerap: 6 Keyword • Waktu antrean: 1 jam lalu
-                  </span>
+                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
+                    <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
+                      bansos cair november 2026
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-slate-500 font-medium">Kata Kunci Pendukung:</span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      syarat bansos 2026
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      cara cek nik bansos
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      daftar penerima bansos
+                    </span>
+                  </div>
                 </div>
               </div>
               <button
@@ -174,13 +198,25 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Update Harga Emas Antam Hari Ini dan Tips Investasi Pemula
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded">
-                    Komersial
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    Potensi volume: 18.500 / bln • Menyerap: 5 Keyword • Waktu antrean: 2 jam lalu
-                  </span>
+                <div className="flex items-center gap-x-3 gap-y-1.5 flex-wrap text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
+                    <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
+                      harga emas antam hari ini
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-slate-500 font-medium">Kata Kunci Pendukung:</span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      tips investasi emas
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      prediksi harga emas
+                    </span>
+                    <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                      beli emas antam
+                    </span>
+                  </div>
                 </div>
               </div>
               <button
@@ -218,13 +254,15 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded">
+                <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
+                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                     Skor SEO: 96/100
                   </span>
-                  <span className="text-xs text-slate-500">Estimasi jumlah kata: 920 Kata</span>
-                  <span className="bg-[#FEF2F2] text-[#B91C1C] text-xs font-medium px-2 py-0.5 rounded">
-                    2 Kutipan Perlu Cek
+                  <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
+                    Versi Draft: Versi 2
+                  </span>
+                  <span className="bg-slate-50 text-slate-700 text-xs font-medium px-2 py-0.5 rounded border border-slate-200">
+                    Jumlah Kata: 920 Kata
                   </span>
                 </div>
               </div>
@@ -242,13 +280,15 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Strategi Ketahanan Pangan Nasional Hadapi Anomali Cuaca 2027
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded">
+                <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
+                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                     Skor SEO: 91/100
                   </span>
-                  <span className="text-xs text-slate-500">Estimasi jumlah kata: 900 Kata</span>
-                  <span className="bg-[#FEF2F2] text-[#B91C1C] text-xs font-medium px-2 py-0.5 rounded">
-                    1 Fakta Perlu Cek
+                  <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
+                    Versi Draft: Versi 1
+                  </span>
+                  <span className="bg-slate-50 text-slate-700 text-xs font-medium px-2 py-0.5 rounded border border-slate-200">
+                    Jumlah Kata: 900 Kata
                   </span>
                 </div>
               </div>
@@ -266,13 +306,15 @@ export const DashboardPage: React.FC = () => {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug">
                   Katalog Wisata Hidden Gem Dieng Terbaru Pasca Revitalisasi
                 </h3>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded">
+                <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
+                  <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                     Skor SEO: 94/100
                   </span>
-                  <span className="text-xs text-slate-500">Estimasi jumlah kata: 800 Kata</span>
-                  <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded">
-                    Siap Ekspor CMS
+                  <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
+                    Versi Draft: Versi 2
+                  </span>
+                  <span className="bg-slate-50 text-slate-700 text-xs font-medium px-2 py-0.5 rounded border border-slate-200">
+                    Jumlah Kata: 800 Kata
                   </span>
                 </div>
               </div>
