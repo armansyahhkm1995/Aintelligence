@@ -10,6 +10,7 @@ import {
   Sliders,
   Users2,
   History,
+  Clock,
   ChevronRight,
   LogOut,
   X,
@@ -44,6 +45,7 @@ export const Sidebar: React.FC = () => {
     { id: 'settings', label: 'Pengaturan Redaksi', icon: Sliders },
     { id: 'users', label: 'Manajemen Pengguna', icon: Users2 },
     { id: 'auditlog', label: 'Audit Log', icon: History },
+    { id: 'antrean', label: 'Antrean Tugas', icon: Clock },
   ]
 
   const handleNavClick = (id: AppPage) => {

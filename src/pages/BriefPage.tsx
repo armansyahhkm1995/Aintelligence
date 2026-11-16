@@ -9,11 +9,14 @@ import {
   ChevronDown,
   Search,
   ChevronLeft,
+  ChevronRight,
   Sparkles,
   Edit,
   CheckCircle2,
   FileText,
   Download,
+  Eye,
+  History,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -25,6 +28,81 @@ interface BriefTableRow {
   supportingKeywords: string[]
   status: 'Disetujui' | 'Draf' | 'Ditolak'
 }
+
+interface BriefVersionItem {
+  id: string
+  version: string
+  title: string
+  createdAt: string
+  createdBy: string
+  isAI: boolean
+  changeSummary: string
+  angle: string
+  targetAudience: string
+  h2List: string[]
+  primaryKeyword: string
+  supportingKeywords: string[]
+}
+
+const BRIEF_VERSIONS: BriefVersionItem[] = [
+  {
+    id: 'bv-3',
+    version: 'Versi 1.2',
+    title: 'Cara Investasi Reksadana Pemula: Panduan Aman Modal Rp10.000 Legal OJK',
+    createdAt: '12 Nov 2026, 14:30 WIB',
+    createdBy: 'Budi Santoso (Editor)',
+    isAI: false,
+    changeSummary: 'Penambahan H2 kepatuhan regulasi OJK & penajaman sudut pandang perlindungan konsumen.',
+    angle: 'Edukasi finansial praktis dan komprehensif bagi investor pemula untuk memahami instrumen reksadana, diversifikasi portofolio, dan regulasi OJK terbaru tahun 2026.',
+    targetAudience: 'Generasi muda dan masyarakat umum yang baru pertama kali ingin berinvestasi dengan modal terjangkau.',
+    h2List: [
+      'Apa Itu Reksadana dan Cara Kerjanya untuk Pemula',
+      'Mengenal 4 Jenis Reksadana: Pasar Uang, Pendapatan Tetap, Campuran, dan Saham',
+      'Panduan Memilih Platform APERD Legal Terdaftar dan Berizin OJK',
+      'Langkah Praktis Beli Reksadana Pertama Kali Mulai Modal Rp10.000',
+      'Strategi Diversifikasi Portofolio dan Manajemen Risiko Investasi',
+    ],
+    primaryKeyword: 'cara investasi reksadana',
+    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana', 'legal ojk'],
+  },
+  {
+    id: 'bv-2',
+    version: 'Versi 1.1',
+    title: 'Cara Investasi Reksadana Online Praktis',
+    createdAt: '11 Nov 2026, 10:15 WIB',
+    createdBy: 'Siti Rahmawati (Editor)',
+    isAI: false,
+    changeSummary: 'Penyesuaian kata kunci pendukung modal Rp10.000 dan platform resmi APERD.',
+    angle: 'Panduan langkah demi langkah investasi reksadana online bagi masyarakat pemula dengan fokus efisiensi transaksi perbankan.',
+    targetAudience: 'Masyarakat umum usia 20-40 tahun pengguna smartphone aktif.',
+    h2List: [
+      'Apa Itu Reksadana dan Keuntungannya',
+      'Jenis-jenis Reksadana yang Cocok untuk Modal Kecil',
+      'Cara Membuka Rekening Reksadana secara Online',
+      'Tips Memilih Manajer Investasi Terpercaya',
+    ],
+    primaryKeyword: 'cara investasi reksadana',
+    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+  },
+  {
+    id: 'bv-1',
+    version: 'Versi 1.0',
+    title: 'Panduan Investasi Reksadana Dasar',
+    createdAt: '10 Nov 2026, 09:00 WIB',
+    createdBy: 'AI Assistant (Claude 3.5 Sonnet)',
+    isAI: true,
+    changeSummary: 'Draf arahan artikel awal otomatis dari agregasi data riset Semrush.',
+    angle: 'Tinjauan dasar instrumen reksadana pasar uang dan saham untuk pembaca awam.',
+    targetAudience: 'Pemula yang belum pernah berinvestasi.',
+    h2List: [
+      'Pengertian Reksadana',
+      'Jenis Reksadana di Pasar Modal',
+      'Cara Membeli Reksadana',
+    ],
+    primaryKeyword: 'cara investasi reksadana',
+    supportingKeywords: ['reksadana pemula', 'belajar reksadana'],
+  },
+]
 
 const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
   {
@@ -74,8 +152,9 @@ export const BriefPage: React.FC = () => {
   } = useApp()
   const { showSuccess } = useToast()
 
-  // View Mode: 'table' (50 Daftar Arahan Artikel) vs 'detail' (Detail Editor)
-  const [viewMode, setViewMode] = useState<'table' | 'detail'>('table')
+  // View Mode: 'table' | 'detail' | 'versions' | 'compare'
+  const [viewMode, setViewMode] = useState<'table' | 'detail' | 'versions' | 'compare'>('table')
+  const [selectedCompareBriefVersion, setSelectedCompareBriefVersion] = useState<BriefVersionItem>(BRIEF_VERSIONS[1])
 
   // Table filters & search
   const [searchQuery, setSearchQuery] = useState('')
@@ -509,6 +588,292 @@ export const BriefPage: React.FC = () => {
   }
 
   // =========================================================================
+  // 3. VERSIONS TABLE VIEW: RIWAYAT VERSI ARAHAN ARTIKEL
+  // =========================================================================
+  if (viewMode === 'versions') {
+    return (
+      <div className="space-y-6">
+        {/* Milestone Stepper */}
+        <MilestoneStepper currentStep={4} />
+
+        {/* Back Link & Header */}
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setViewMode('detail')}
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 cursor-pointer transition-colors"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Kembali ke Detail Arahan Artikel</span>
+          </button>
+
+          <div>
+            <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
+              {activeItemTitle}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-4xl leading-relaxed">
+              <strong className="text-slate-700 font-semibold">Sudut Pandang Jurnalistik (Angle):</strong> Edukasi finansial praktis dan komprehensif bagi investor pemula untuk memahami instrumen reksadana, diversifikasi portofolio, dan kepatuhan regulasi OJK terbaru tahun 2026.
+            </p>
+          </div>
+        </div>
+
+        {/* Versions Table Card */}
+        <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-slate-900 leading-snug">
+              Daftar Riwayat Versi Arahan Artikel
+            </h2>
+            <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1866EF]">
+              {BRIEF_VERSIONS.length} Versi Tersimpan
+            </span>
+          </div>
+
+          <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[700px]">
+                <thead>
+                  <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
+                    <th className="py-3 px-4 font-semibold">Versi Arahan Artikel</th>
+                    <th className="py-3 px-4 font-semibold">Waktu Dibuat</th>
+                    <th className="py-3 px-4 font-semibold">Dibuat Oleh</th>
+                    <th className="py-3 px-4 font-semibold">Ringkasan Perubahan</th>
+                    <th className="py-3 px-4 font-semibold text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {BRIEF_VERSIONS.map((v, idx) => (
+                    <tr key={v.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900">{v.version}</span>
+                          {idx === 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-[10px] font-bold">
+                              Saat Ini
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600">{v.createdAt}</td>
+                      <td className="py-3.5 px-4">
+                        <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-800'}`}>
+                          {v.createdBy}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600 max-w-xs">{v.changeSummary}</td>
+                      <td className="py-3.5 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCompareBriefVersion(v)
+                            setViewMode('compare')
+                          }}
+                          className="px-3 py-1.5 bg-[#EFF6FF] hover:bg-blue-100 border border-[#BFDBFE] text-[#1866EF] font-semibold text-xs rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                          title="Bandingkan dengan Versi Terbaru"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Bandingkan</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // =========================================================================
+  // 4. COMPARE VIEW: PERBANDINGAN BERDAMPINGAN DUA VERSI (SIDE-BY-SIDE)
+  // =========================================================================
+  if (viewMode === 'compare') {
+    const latest = BRIEF_VERSIONS[0]
+    const compareTarget = selectedCompareBriefVersion || BRIEF_VERSIONS[1]
+
+    return (
+      <div className="space-y-6">
+        {/* Milestone Stepper */}
+        <MilestoneStepper currentStep={4} />
+
+        {/* Back Link & Header */}
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setViewMode('versions')}
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 cursor-pointer transition-colors"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Kembali ke Riwayat Versi</span>
+          </button>
+
+          <div>
+            <h1 className="text-2xl font-bold text-[#1866EF] tracking-tight">
+              Perbandingan Versi Arahan Artikel
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-4xl leading-relaxed">
+              Membandingkan <strong className="text-slate-800">{compareTarget.version}</strong> dengan <strong className="text-slate-800">{latest.version} (Versi Saat Ini)</strong>. Bagian yang disunting atau disempurnakan disorot dengan warna khusus.
+            </p>
+          </div>
+        </div>
+
+        {/* Side-by-Side 2 Column Comparison Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Column 1: Versi Pilihan (Target Compare) */}
+          <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-5">
+            {/* Header styled like draft detail */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
+                {compareTarget.version} | {compareTarget.createdAt}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(compareTarget.title)
+                  showSuccess('Salin Berhasil', `Konten ${compareTarget.version} disalin`)
+                }}
+                className="h-8 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Salin Arahan</span>
+              </button>
+            </div>
+
+            {/* Author Meta */}
+            <div className="text-xs text-slate-500">
+              Dibuat oleh: <strong className="text-slate-800">{compareTarget.createdBy}</strong>
+            </div>
+
+            {/* Judul Artikel */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Judul Usulan Artikel</div>
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800">
+                {compareTarget.title}
+              </div>
+            </div>
+
+            {/* Sudut Pandang */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Sudut Pandang Jurnalistik (Angle)</div>
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 leading-relaxed">
+                {compareTarget.angle}
+              </div>
+            </div>
+
+            {/* Sasaran Pembaca */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Target Pembaca</div>
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700">
+                {compareTarget.targetAudience}
+              </div>
+            </div>
+
+            {/* Kerangka Outline H2 */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kerangka Naskah (Outline H2)</div>
+              <div className="space-y-1.5">
+                {compareTarget.h2List.map((h2, i) => (
+                  <div key={i} className="p-2.5 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-700 flex items-start gap-2">
+                    <span className="font-bold text-slate-400">H2.{i + 1}</span>
+                    <span>{h2}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Versi Terbaru (Versi 1.2 Saat Ini) */}
+          <div className="bg-white border-2 border-[#1866EF]/40 rounded-xl p-6 shadow-sm space-y-5">
+            {/* Header styled like draft detail */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1866EF] text-xs font-bold">
+                {latest.version} (Saat Ini) | {latest.createdAt}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(latest.title)
+                  showSuccess('Salin Berhasil', `Konten ${latest.version} disalin`)
+                }}
+                className="h-8 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Salin Arahan</span>
+              </button>
+            </div>
+
+            {/* Author Meta */}
+            <div className="text-xs text-slate-500">
+              Dibuat oleh: <strong className="text-slate-800">{latest.createdBy}</strong>
+            </div>
+
+            {/* Judul Artikel (Highlighted Improvement) */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Judul Usulan Artikel</div>
+              <div className="p-3 bg-emerald-50/60 border border-emerald-300 rounded-lg text-xs font-semibold text-emerald-950">
+                {latest.title}
+                <span className="block text-[10px] text-emerald-700 font-normal mt-1">
+                  ✓ Penajaman kata kunci: menambahkan "Legal OJK" & "Modal Rp10.000".
+                </span>
+              </div>
+            </div>
+
+            {/* Sudut Pandang (Highlighted Improvement) */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Sudut Pandang Jurnalistik (Angle)</div>
+              <div className="p-3 bg-emerald-50/60 border border-emerald-300 rounded-lg text-xs text-emerald-950 leading-relaxed">
+                {latest.angle}
+                <span className="block text-[10px] text-emerald-700 font-normal mt-1">
+                  ✓ Diperbarui: Penekanan regulasi OJK terbaru tahun 2026 dan perlindungan konsumen.
+                </span>
+              </div>
+            </div>
+
+            {/* Sasaran Pembaca */}
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Target Pembaca</div>
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700">
+                {latest.targetAudience}
+              </div>
+            </div>
+
+            {/* Kerangka Outline H2 (Highlighted Additions) */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kerangka Naskah (Outline H2)</div>
+              <div className="space-y-1.5">
+                {latest.h2List.map((h2, i) => {
+                  const isNew = i >= 2 && i <= 3
+                  return (
+                    <div
+                      key={i}
+                      className={`p-2.5 rounded-md text-xs flex items-start gap-2 border ${
+                        isNew
+                          ? 'bg-emerald-50/70 border-emerald-300 text-emerald-950'
+                          : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }`}
+                    >
+                      <span className={`font-bold ${isNew ? 'text-emerald-700' : 'text-slate-400'}`}>H2.{i + 1}</span>
+                      <div className="flex-1">
+                        <span>{h2}</span>
+                        {isNew && (
+                          <span className="ml-2 text-[10px] font-semibold text-emerald-700 bg-white/80 px-1.5 py-0.2 rounded border border-emerald-300">
+                            Subtopik Baru
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // =========================================================================
   // 2. DETAIL VIEW: EDIT ARAHAN ARTIKEL (Matching Image 11)
   // =========================================================================
   return (
@@ -533,6 +898,23 @@ export const BriefPage: React.FC = () => {
           </h1>
 
           <div className="flex items-center gap-2.5 shrink-0">
+            {/* Button Tertiary: Versioning info & shortcut to versions page */}
+            <button
+              type="button"
+              onClick={() => setViewMode('versions')}
+              className="h-10 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-lg transition-colors cursor-pointer shadow-2xs flex flex-col items-start justify-center text-left"
+              title="Lihat Riwayat Versi Arahan Artikel"
+            >
+              <div className="flex items-center gap-1.5">
+                <History className="w-3.5 h-3.5 text-[#1866EF]" />
+                <span className="text-xs font-bold text-slate-900">Versi: 1.2</span>
+                <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-semibold">Aktif</span>
+              </div>
+              <span className="text-[10px] text-slate-400 font-normal leading-tight">
+                Disunting oleh Budi Santoso (12 Nov 2026, 14:30)
+              </span>
+            </button>
+
             <button
               type="button"
               onClick={handleRegenerateWithAI}
@@ -853,79 +1235,6 @@ export const BriefPage: React.FC = () => {
             <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">
               Brief yang disetujui akan otomatis masuk antrean produksi Draf AI Claude 3.5 Sonnet
             </p>
-          </div>
-
-          {/* Card 2: Riwayat Versi Brief */}
-          <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
-            <h3 className="text-xs font-bold text-slate-900">Riwayat Versi Brief</h3>
-
-            {/* Versi 2 (Selected) */}
-            <div
-              onClick={() => setSelectedVersion('v2')}
-              className={`p-3.5 rounded-xl border transition-colors cursor-pointer ${
-                selectedVersion === 'v2'
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0]'
-                  : 'bg-white border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      selectedVersion === 'v2'
-                        ? 'border-[#10B981] bg-white'
-                        : 'border-slate-300'
-                    }`}
-                  >
-                    {selectedVersion === 'v2' && (
-                      <div className="w-2 h-2 rounded-full bg-[#10B981]" />
-                    )}
-                  </div>
-                  <span className="text-xs font-bold text-slate-900">
-                    Versi 2 (Saat Ini)
-                  </span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#15803D] text-[10px] font-bold">
-                  Aktif
-                </span>
-              </div>
-              <p className="text-xs text-slate-800 font-medium mt-1.5 ml-6">
-                Perubahan: Menambahkan H3 verifikasi izin OJK.
-              </p>
-              <p className="text-[11px] text-slate-500 mt-1 ml-6">
-                Disunting oleh Editor Cameron • Hari ini, 14:15 WIB
-              </p>
-            </div>
-
-            {/* Versi 1 */}
-            <div
-              onClick={() => setSelectedVersion('v1')}
-              className={`p-3.5 rounded-xl border transition-colors cursor-pointer ${
-                selectedVersion === 'v1'
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0]'
-                  : 'bg-white border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                    selectedVersion === 'v1'
-                      ? 'border-[#10B981] bg-white'
-                      : 'border-slate-300'
-                  }`}
-                >
-                  {selectedVersion === 'v1' && (
-                    <div className="w-2 h-2 rounded-full bg-[#10B981]" />
-                  )}
-                </div>
-                <span className="text-xs font-bold text-slate-900">
-                  Versi 1
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 mt-1.5 ml-6">
-                Dihasilkan Claude 3.5 Sonnet • Hari ini, 14:10 WIB
-              </p>
-            </div>
           </div>
         </div>
       </div>

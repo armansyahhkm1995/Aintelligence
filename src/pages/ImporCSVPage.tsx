@@ -155,6 +155,36 @@ export const ImporCSVPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Metrics Row: 3 Cards Informasi CSV (Gaya Manajemen Pengguna) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Card 1: Jumlah Baris */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
+          <div className="text-xs font-medium text-slate-500 mb-1">
+            Jumlah Baris
+          </div>
+          <div className="text-xl font-bold text-slate-900">842 Baris</div>
+          <div className="text-[11px] text-slate-400 mt-1">Total baris data terbaca dari berkas CSV</div>
+        </div>
+
+        {/* Card 2: Data yang Terduplikat */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
+          <div className="text-xs font-medium text-slate-500 mb-1">
+            Data yang Terduplikat
+          </div>
+          <div className="text-xl font-bold text-[#D97706]">14 Baris</div>
+          <div className="text-[11px] text-slate-400 mt-1">Ditemukan query berulang & otomatis difilter</div>
+        </div>
+
+        {/* Card 3: Baris yang Tidak Ada Datanya */}
+        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
+          <div className="text-xs font-medium text-slate-500 mb-1">
+            Baris yang Tidak Ada Datanya
+          </div>
+          <div className="text-xl font-bold text-[#DC2626]">5 Baris</div>
+          <div className="text-[11px] text-slate-400 mt-1">Nilai kolom kosong atau tidak lengkap</div>
+        </div>
+      </div>
+
       {/* 5. Table 1: Pratinjau file semrush CSV */}
       <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
         {/* Table Header Row */}
@@ -163,9 +193,6 @@ export const ImporCSVPage: React.FC = () => {
             <h2 className="text-base font-bold text-slate-900 leading-snug">
               Pratinjau file semrush CSV
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              4 dari 842 baris pertama
-            </p>
           </div>
           <span className="self-start sm:self-center px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1866EF] flex items-center">
             Simulasi 3 Baris Teratas

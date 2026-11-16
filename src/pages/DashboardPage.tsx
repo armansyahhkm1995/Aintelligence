@@ -89,13 +89,13 @@ export const DashboardPage: React.FC = () => {
         ))}
       </div>
 
-      {/* COMP-TodoList-Editor: Daftar Tugas Butuh Tindakan Editor */}
+      {/* COMP-TodoList-Editor: Daftar Antrean Editor */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-5">
         {/* Header Row */}
         <div>
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-900">
-              Daftar Tugas Butuh Tindakan Editor
+              Daftar Antrean Editor
             </h2>
             <span className="bg-[#FFFBEB] text-[#B45309] text-xs font-medium px-2 py-0.5 rounded border border-amber-200">
               7 Butuh Tindakan
@@ -563,12 +563,123 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* CARD 3: DAFTAR OVERRIDE EDITOR (LOG AUDIT KOREKSI MANUAL)                 */}
+      {/* CARD 2: AKTIVITAS TERBARU (EDITOR NON-SUPER ADMIN)                        */}
+      {/* ========================================================================= */}
+      <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-4">
+        {/* Header Row */}
+        <div>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-slate-900">
+              Aktivitas Terbaru
+            </h2>
+            <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
+              4 Aktivitas Redaksi
+            </span>
+          </div>
+          <p className="text-sm text-slate-400 mt-1">
+            Riwayat pengerjaan, persetujuan arahan, dan publikasi draf oleh editor non-super admin.
+          </p>
+        </div>
+
+        {/* List of recent editor activities */}
+        <div className="divide-y divide-slate-100 border border-slate-100 rounded-md overflow-hidden">
+          {/* Item 1 */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">
+                  Persetujuan Arahan
+                </span>
+                <span className="text-xs text-slate-400">10 menit yang lalu</span>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                Menyetujui Arahan Artikel: Panduan Reksadana 2026
+              </h3>
+              <p className="text-xs text-slate-500">
+                Disetujui untuk lanjut ke proses pembuatan draf otomatis AI tanpa revisi outline.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs font-semibold text-slate-800">Siti Rahmawati</div>
+              <div className="text-[11px] text-slate-400">Role: Editor</div>
+            </div>
+          </div>
+
+          {/* Item 2 */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                  Ekspor CMS
+                </span>
+                <span className="text-xs text-slate-400">35 menit yang lalu</span>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                Mengekspor Draf Artikel: Tips Menabung Saham untuk Pemula
+              </h3>
+              <p className="text-xs text-slate-500">
+                Draf artikel versi 2.0 berhasil diekspor ke portal CMS RRI Digital dengan skor SEO 92.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs font-semibold text-slate-800">Ahmad Fauzi</div>
+              <div className="text-[11px] text-slate-400">Role: Editor</div>
+            </div>
+          </div>
+
+          {/* Item 3 */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-amber-200">
+                  Penyuntingan Draf
+                </span>
+                <span className="text-xs text-slate-400">1 jam yang lalu</span>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                Menyunting Paragraf Lead: Update Harga Emas Antam Hari Ini
+              </h3>
+              <p className="text-xs text-slate-500">
+                Menambahkan konfirmasi harga beli kembali (buyback) dari butik Logam Mulia resmi.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs font-semibold text-slate-800">Dewi Lestari</div>
+              <div className="text-[11px] text-slate-400">Role: Editor</div>
+            </div>
+          </div>
+
+          {/* Item 4 */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                  Catatan Revisi
+                </span>
+                <span className="text-xs text-slate-400">2 jam yang lalu</span>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                Meminta Verifikasi Data: Pilihan Asuransi Kesehatan Keluarga 2026
+              </h3>
+              <p className="text-xs text-slate-500">
+                Membutuhkan konfirmasi premi dasar BPJS Kesehatan kelas 1-3 terbaru.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs font-semibold text-slate-800">Siti Rahmawati</div>
+              <div className="text-[11px] text-slate-400">Role: Editor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* CARD 3: DAFTAR KOREKSI OLEH EDITOR (LOG AUDIT KOREKSI MANUAL)             */}
       {/* ========================================================================= */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-4">
         {/* Header */}
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Daftar Override Editor</h2>
+          <h2 className="text-base font-semibold text-slate-900">Daftar Koreksi oleh Editor</h2>
           <p className="text-xs text-slate-400 mt-0.5">
             Riwayat intervensi, koreksi manual, penolakan, serta resolusi konflik oleh redaktur terhadap keputusan AI di seluruh modul.
           </p>
@@ -786,151 +897,6 @@ export const DashboardPage: React.FC = () => {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Status Mesin AI Card (Daftar Topik Pantauan in Figma) */}
-      <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-5">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-base font-semibold text-slate-900">Status Mesin AI</h2>
-            <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded border border-green-200">
-              Aktif Normal
-            </span>
-          </div>
-          <span className="text-sm text-slate-400">Worker Claude 3.5 Sonnet</span>
-        </div>
-
-        {/* Quota Progress Box */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-slate-900">
-              Limit Pemakaian AI Bulanan (Januari 2026)
-            </span>
-            <span className="font-bold text-[#1E40AF]">86%</span>
-          </div>
-          <div className="w-full bg-[#F1F5F9] rounded-full h-[7px] overflow-hidden">
-            <div className="bg-[#1866EF] h-[7px] rounded-full" style={{ width: '86%' }} />
-          </div>
-          <div className="text-xs text-slate-500 text-left">
-            14.250.000 /  20.000.000 Token
-          </div>
-        </div>
-
-        {/* 2x2 Grid of Status Tasks */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-          {/* Card 0: Antre */}
-          <div className="rounded-lg overflow-hidden border border-[#FDE68A]">
-            <div className="h-[34px] px-4 py-2 bg-[#FDE68A] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#B45309]">Antre</span>
-              <span className="text-xs font-bold text-slate-900">24 Tugas</span>
-            </div>
-            <div className="bg-[#FEFCE8] p-3 space-y-2">
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#B45309]">Klasifikasi CSV</span>
-                  <span className="text-slate-400">10:05 WIB</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Keyword_Kesehatan_Nov.csv
-                </div>
-              </div>
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#B45309]">Generate Draf</span>
-                  <span className="text-slate-400">10:05 WIB</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Panduan Investasi Reksadana 2027
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 1: Diproses */}
-          <div className="rounded-lg overflow-hidden border border-[#BFDBFE]">
-            <div className="h-[34px] px-4 py-2 bg-[#BFDBFE] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#1E40AF]">Diproses</span>
-              <span className="text-xs font-bold text-slate-900">24 Tugas</span>
-            </div>
-            <div className="bg-[#EFF6FF] p-3 space-y-2">
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#1E40AF]">Generate Draf</span>
-                  <span className="text-slate-400">Status: Memproses ...</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Update Harga Emas Antam Hari Ini
-                </div>
-              </div>
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#1E40AF]">Clustering AI</span>
-                  <span className="text-slate-400">Status: Memproses ...</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Otomotif & Kendaraan Listrik
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Selesai */}
-          <div className="rounded-lg overflow-hidden border border-[#BBF7D0]">
-            <div className="h-[34px] px-4 py-2 bg-[#BBF7D0] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#15803D]">Selesai</span>
-              <span className="text-xs font-bold text-slate-900">24 Tugas</span>
-            </div>
-            <div className="bg-[#F0FDF4] p-3 space-y-2">
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#15803D]">Draf Selesai</span>
-                  <span className="text-slate-400">10:05 WIB / 200 Token</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Strategi Ketahanan Pangan Nasional 2027
-                </div>
-              </div>
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#15803D]">Cluster Selesai</span>
-                  <span className="text-slate-400">10:05 WIB / 200 Token</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Topik: Wisata Liburan Akhir Tahun
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Gagal */}
-          <div className="rounded-lg overflow-hidden border border-[#FECACA]">
-            <div className="h-[34px] px-4 py-2 bg-[#FECACA] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#B91C1C]">Gagal</span>
-              <span className="text-xs font-bold text-slate-900">24 Tugas</span>
-            </div>
-            <div className="bg-[#FEF2F2] p-3 space-y-2">
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#B91C1C]">Timeout</span>
-                  <span className="text-slate-400">LLM terlalu lama merespons</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Panduan ESG di Indonesia
-                </div>
-              </div>
-              <div className="bg-white border border-slate-200 rounded p-2.5 space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#B91C1C]">Limit Token</span>
-                  <span className="text-slate-400">Kuota token harian tidak mencukupi</span>
-                </div>
-                <div className="text-sm font-semibold text-slate-900 truncate">
-                  Politik_Pilkada_2026.csv
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

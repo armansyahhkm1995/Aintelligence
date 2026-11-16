@@ -30,6 +30,7 @@ export type AppPage =
   | 'draft'
   | 'settings'
   | 'auditlog'
+  | 'antrean'
   | 'users'
   | 'notifikasi'
 

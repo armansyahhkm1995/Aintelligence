@@ -12,6 +12,7 @@ const PAGE_NAMES: Record<AppPage, string> = {
   settings: 'Pengaturan Redaksi',
   users: 'Manajemen Pengguna',
   auditlog: 'Audit Log',
+  antrean: 'Antrean Tugas',
   notifikasi: 'Notifikasi',
 }
 

@@ -349,7 +349,7 @@ export const KeywordPage: React.FC = () => {
                   <th className="py-3 px-4 font-semibold w-[9%]">Evergreen</th>
                   <th className="py-3 px-4 font-semibold w-[9%]">Tumpang Tindih</th>
                   <th className="py-3 px-4 font-semibold w-[9%]">Keputusan</th>
-                  <th className="py-3 px-4 font-semibold w-[11%]">Keputusan</th>
+                  <th className="py-3 px-4 font-semibold w-[11%]">Alasan</th>
                   <th className="py-3 px-4 font-semibold text-center w-[5%]">Aksi</th>
                 </tr>
               </thead>

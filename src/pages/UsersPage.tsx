@@ -5,15 +5,14 @@ import {
   UserPlus,
   Search,
   ChevronDown,
-  ShieldCheck,
-  ShieldAlert,
   Edit3,
-  X,
+  Trash2,
 } from 'lucide-react'
 
 export const UsersPage: React.FC = () => {
   const {
     users,
+    editUser,
     setIsTambahPenggunaOpen,
     setUserToEdit,
     setIsNonaktifkanPenggunaOpen,
@@ -115,7 +114,7 @@ export const UsersPage: React.FC = () => {
             Manajemen Pengguna & Kontrol Hak Akses
           </h1>
           <p className="text-sm text-slate-400 mt-1 leading-relaxed">
-            Pengaturan hak akses pengguna, pemantauan status akun aktif, dan audit kepatuhan keamanan 2FA.
+            Pengaturan hak akses pengguna dan pemantauan status akun aktif redaksi.
           </p>
         </div>
         <button
@@ -127,8 +126,8 @@ export const UsersPage: React.FC = () => {
         </button>
       </div>
 
-      {/* MetricsRow: 3 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* MetricsRow: 2 Cards (Kepatuhan 2FA Dihapus) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Card 1 */}
         <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
           <div className="text-xs font-medium text-slate-500 mb-1">
@@ -139,13 +138,6 @@ export const UsersPage: React.FC = () => {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
-          <div className="text-xs font-medium text-slate-500 mb-1">Kepatuhan 2FA</div>
-          <div className="text-xl font-bold text-[#15803D]">7 Aktif (87.5%)</div>
-          <div className="text-[11px] text-slate-400 mt-1">1 Akun belum aktivasi 2FA</div>
-        </div>
-
-        {/* Card 3 */}
         <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-4 shadow-xs">
           <div className="text-xs font-medium text-slate-500 mb-1">
             Status Akun Aktif
@@ -230,7 +222,6 @@ export const UsersPage: React.FC = () => {
               <tr className="border-b border-[#DBEAFE] text-slate-500 bg-[#F8FAFC]">
                 <th className="py-3 px-4 font-semibold">Nama & Email</th>
                 <th className="py-3 px-4 font-semibold">Peran Akses</th>
-                <th className="py-3 px-4 font-semibold">Verifikasi 2FA</th>
                 <th className="py-3 px-4 font-semibold">Status Akun</th>
                 <th className="py-3 px-4 font-semibold text-center">Aksi</th>
               </tr>
@@ -250,28 +241,27 @@ export const UsersPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      {u.has2FA ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#15803D]">
-                          <ShieldCheck className="w-3.5 h-3.5" />
-                          <span>2FA Terverifikasi</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={isAktif}
+                          onClick={() => editUser(u.id, { status: isAktif ? 'nonaktif' : 'aktif' })}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1866EF] focus:ring-offset-2 ${
+                            isAktif ? 'bg-[#1866EF]' : 'bg-slate-200'
+                          }`}
+                          title={isAktif ? 'Klik untuk nonaktifkan akun' : 'Klik untuk aktifkan akun'}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                              isAktif ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                        <span className={`text-[11px] font-semibold ${isAktif ? 'text-[#15803D]' : 'text-slate-400'}`}>
+                          {isAktif ? 'Aktif' : 'Non-aktif'}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B45309]">
-                          <ShieldAlert className="w-3.5 h-3.5" />
-                          <span>Belum diaktifkan</span>
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${
-                          isAktif
-                            ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                            : 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
-                        }`}
-                      >
-                        {isAktif ? 'Aktif' : 'Non-aktif'}
-                      </span>
+                      </div>
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <div className="flex items-center justify-center gap-2">
@@ -285,14 +275,14 @@ export const UsersPage: React.FC = () => {
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Deactivate / Cross Icon */}
+                        {/* Delete / Trash Icon */}
                         <button
                           type="button"
                           onClick={() => handleDeactivate(u)}
                           className="p-1 rounded text-[#B91C1C] hover:text-rose-900 hover:bg-rose-50 transition-colors"
-                          title="Nonaktifkan Pengguna"
+                          title="Hapus / Nonaktifkan Pengguna"
                         >
-                          <X className="w-3.5 h-3.5 text-[#B91C1C]" />
+                          <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
                         </button>
                       </div>
                     </td>

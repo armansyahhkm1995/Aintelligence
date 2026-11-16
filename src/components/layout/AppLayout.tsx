@@ -10,6 +10,7 @@ import { BriefPage } from '../../pages/BriefPage'
 import { DraftPage } from '../../pages/DraftPage'
 import { SettingsPage } from '../../pages/SettingsPage'
 import { AuditLogPage } from '../../pages/AuditLogPage'
+import { AntreanTugasPage } from '../../pages/AntreanTugasPage'
 import { UsersPage } from '../../pages/UsersPage'
 import { NotifikasiPage } from '../../pages/NotifikasiPage'
 import { LoginPage } from '../../pages/LoginPage'
@@ -33,7 +34,7 @@ export const AppLayout: React.FC = () => {
 
   // Redirect editor away from admin pages if navigated directly
   useEffect(() => {
-    if (currentUser?.role === 'editor' && ['settings', 'users', 'auditlog'].includes(currentPage)) {
+    if (currentUser?.role === 'editor' && ['settings', 'users', 'auditlog', 'antrean'].includes(currentPage)) {
       setCurrentPage('dashboard')
     }
   }, [currentUser, currentPage, setCurrentPage])
@@ -60,6 +61,8 @@ export const AppLayout: React.FC = () => {
         return <SettingsPage />
       case 'auditlog':
         return <AuditLogPage />
+      case 'antrean':
+        return <AntreanTugasPage />
       case 'users':
         return <UsersPage />
       case 'notifikasi':

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import { ClusterItem } from '../types'
-import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge } from 'lucide-react'
+import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge, ChevronLeft, ChevronRight } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
@@ -183,7 +183,7 @@ export const ClusterPage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama cluster ..."
+            placeholder="Cari nama kelompok topik ..."
             className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
           />
         </div>
@@ -610,6 +610,67 @@ export const ClusterPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Pagination Bar Kelompok Topik */}
+        <div className="p-3.5 bg-white border border-[#DBEAFE] rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 shadow-xs">
+          <div className="flex items-center justify-between w-full sm:w-auto gap-2">
+            <span>Menampilkan 1-10 dari 45 kelompok topik</span>
+            <div className="relative">
+              <select className="h-[28px] pl-2 pr-6 bg-white border border-[#DBEAFE] rounded text-xs text-slate-700 appearance-none cursor-pointer">
+                <option>10 / hal</option>
+                <option>25 / hal</option>
+                <option>50 / hal</option>
+              </select>
+              <ChevronDown className="absolute right-1.5 top-2 w-3 h-3 text-slate-400 pointer-events-none" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-500 cursor-pointer disabled:opacity-50"
+              disabled
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center bg-[#1866EF] text-white font-semibold rounded cursor-pointer"
+            >
+              1
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-700 cursor-pointer"
+            >
+              2
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-700 cursor-pointer"
+            >
+              3
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-700 cursor-pointer"
+            >
+              4
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-700 cursor-pointer"
+            >
+              5
+            </button>
+            <button
+              type="button"
+              className="w-7 h-7 flex items-center justify-center border border-[#DBEAFE] rounded hover:bg-slate-50 text-slate-500 cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Modal Abaikan Peringatan Kanibalisasi */}
