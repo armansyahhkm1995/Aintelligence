@@ -166,11 +166,28 @@ export const DraftPage: React.FC = () => {
     setIsHapusDraftOpen,
     setCurrentPage,
   } = useApp()
-  const { showSuccess } = useToast()
+  const { showSuccess, showWarning } = useToast()
 
   // View Mode: 'table' | 'detail' | 'versions' | 'compare'
   const [viewMode, setViewMode] = useState<'table' | 'detail' | 'versions' | 'compare'>('table')
+  const [activeDraftVersionId, setActiveDraftVersionId] = useState<string>('dv-3')
   const [selectedCompareDraftVersion, setSelectedCompareDraftVersion] = useState<DraftVersionItem>(DRAFT_VERSIONS[1])
+
+  const handleToggleDraftVersion = (versionId: string) => {
+    if (activeDraftVersionId === versionId) {
+      showWarning(
+        'Versi Draf Artikel',
+        'Harus ada minimal 1 versi draf artikel yang aktif atau pilih versi yang lain.'
+      )
+      return
+    }
+    setActiveDraftVersionId(versionId)
+    const target = DRAFT_VERSIONS.find((v) => v.id === versionId)
+    showSuccess(
+      'Versi Draf Artikel',
+      `${target?.version || 'Versi'} berhasil diaktifkan sebagai draf artikel utama.`
+    )
+  }
 
   // Table filters & search
   const [searchQuery, setSearchQuery] = useState('')
@@ -592,18 +609,38 @@ export const DraftPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
-                  {DRAFT_VERSIONS.map((v, idx) => (
-                    <tr key={v.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900">{v.version}</span>
-                          {idx === 0 && (
-                            <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-[10px] font-bold">
-                              Saat Ini
-                            </span>
-                          )}
-                        </div>
-                      </td>
+                  {DRAFT_VERSIONS.map((v) => {
+                    const isActive = v.id === activeDraftVersionId
+                    return (
+                      <tr key={v.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            {/* Toggle Switch */}
+                            <button
+                              type="button"
+                              onClick={() => handleToggleDraftVersion(v.id)}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-hidden cursor-pointer shrink-0 ${
+                                isActive ? 'bg-[#1866EF]' : 'bg-slate-300'
+                              }`}
+                              title={isActive ? 'Versi ini sedang aktif' : 'Klik untuk aktifkan versi ini'}
+                            >
+                              <span
+                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                                  isActive ? 'translate-x-4.5' : 'translate-x-1'
+                                }`}
+                              />
+                            </button>
+
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-slate-900">{v.version}</span>
+                              {isActive && (
+                                <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-[10px] font-bold">
+                                  Aktif
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
                       <td className="py-3.5 px-4 text-slate-600">{v.createdAt}</td>
                       <td className="py-3.5 px-4">
                         <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-800'}`}>
@@ -636,7 +673,8 @@ export const DraftPage: React.FC = () => {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  )
+                })}
                 </tbody>
               </table>
             </div>
@@ -650,8 +688,10 @@ export const DraftPage: React.FC = () => {
   // 4. COMPARE VIEW: PERBANDINGAN BERDAMPINGAN DUA DRAF (SIDE-BY-SIDE)
   // =========================================================================
   if (viewMode === 'compare') {
-    const latest = DRAFT_VERSIONS[0]
-    const compareTarget = selectedCompareDraftVersion || DRAFT_VERSIONS[1]
+    const latest = DRAFT_VERSIONS.find((v) => v.id === activeDraftVersionId) || DRAFT_VERSIONS[0]
+    const compareTarget =
+      selectedCompareDraftVersion ||
+      (activeDraftVersionId === 'dv-1' ? DRAFT_VERSIONS[0] : DRAFT_VERSIONS[1])
 
     return (
       <div className="space-y-6">
@@ -844,21 +884,29 @@ export const DraftPage: React.FC = () => {
 
           <div className="flex items-center gap-2.5 shrink-0">
             {/* Button Tertiary: Versioning info & shortcut to versions page */}
-            <button
-              type="button"
-              onClick={() => setViewMode('versions')}
-              className="h-10 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-lg transition-colors cursor-pointer shadow-2xs flex flex-col items-start justify-center text-left"
-              title="Lihat Riwayat Versi Draf Artikel"
-            >
-              <div className="flex items-center gap-1.5">
-                <History className="w-3.5 h-3.5 text-[#1866EF]" />
-                <span className="text-xs font-bold text-slate-900">Versi: 2.0</span>
-                <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-semibold">Aktif</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-normal leading-tight">
-                Disunting oleh Budi Santoso (14 Nov 2026, 16:45)
-              </span>
-            </button>
+            {(() => {
+              const currentActiveVer =
+                DRAFT_VERSIONS.find((v) => v.id === activeDraftVersionId) || DRAFT_VERSIONS[0]
+              return (
+                <button
+                  type="button"
+                  onClick={() => setViewMode('versions')}
+                  className="h-10 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-lg transition-colors cursor-pointer shadow-2xs flex flex-col items-start justify-center text-left"
+                  title="Lihat Riwayat Versi Draf Artikel"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <History className="w-3.5 h-3.5 text-[#1866EF]" />
+                    <span className="text-xs font-bold text-slate-900">{currentActiveVer.version}</span>
+                    <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-semibold">Aktif</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-normal leading-tight">
+                    {currentActiveVer.isAI
+                      ? 'Dibuat oleh AI Assistant'
+                      : `Disunting oleh ${currentActiveVer.createdBy.split(' (')[0]} (${currentActiveVer.createdAt.split(' WIB')[0]})`}
+                  </span>
+                </button>
+              )
+            })()}
 
             <button
               type="button"
