@@ -12,7 +12,6 @@ import { SettingsPage } from '../../pages/SettingsPage'
 import { AuditLogPage } from '../../pages/AuditLogPage'
 import { AntreanTugasPage } from '../../pages/AntreanTugasPage'
 import { UsersPage } from '../../pages/UsersPage'
-import { NotifikasiPage } from '../../pages/NotifikasiPage'
 import { LoginPage } from '../../pages/LoginPage'
 import { ErrorBoundary } from '../common/ErrorBoundary'
 
@@ -65,8 +64,6 @@ export const AppLayout: React.FC = () => {
         return <AntreanTugasPage />
       case 'users':
         return <UsersPage />
-      case 'notifikasi':
-        return <NotifikasiPage />
       default:
         return <DashboardPage />
     }

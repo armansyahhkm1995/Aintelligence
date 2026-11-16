@@ -32,7 +32,6 @@ export type AppPage =
   | 'auditlog'
   | 'antrean'
   | 'users'
-  | 'notifikasi'
 
 interface AppContextType {
   // Navigation & Page State

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useApp, AppPage } from '../../context/AppContext'
-import { Bell, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 
 const PAGE_NAMES: Record<AppPage, string> = {
   dashboard: 'Ringkasan',
@@ -13,11 +13,10 @@ const PAGE_NAMES: Record<AppPage, string> = {
   users: 'Manajemen Pengguna',
   auditlog: 'Audit Log',
   antrean: 'Antrean Tugas',
-  notifikasi: 'Notifikasi',
 }
 
 export const Header: React.FC = () => {
-  const { currentPage, setCurrentPage, setIsMobileNavOpen, currentUser } = useApp()
+  const { currentPage, setIsMobileNavOpen, currentUser } = useApp()
 
   const currentLabel = PAGE_NAMES[currentPage] || 'Beranda'
 
@@ -44,20 +43,6 @@ export const Header: React.FC = () => {
 
       {/* Right Controls */}
       <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
-        {/* Notification Bell Button (Outlined Box) */}
-        <button
-          onClick={() => setCurrentPage('notifikasi')}
-          className={`p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors relative ${
-            currentPage === 'notifikasi' ? 'bg-blue-50 border-blue-300 text-blue-600' : ''
-          }`}
-          title="Notifikasi"
-        >
-          <Bell className="w-4 h-4 text-slate-700" />
-        </button>
-
-        {/* Vertical Divider */}
-        <div className="h-7 w-px bg-slate-200" />
-
         {/* User Profile (Text only, matching Figma) */}
         <div className="flex flex-col text-left leading-tight">
           <span className="text-xs font-semibold text-slate-900 truncate max-w-[110px] sm:max-w-none">
