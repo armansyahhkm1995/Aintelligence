@@ -601,7 +601,6 @@ export const DraftPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
                     <th className="py-3 px-4 font-semibold">Versi Draft Artikel</th>
-                    <th className="py-3 px-4 font-semibold">Waktu Dibuat</th>
                     <th className="py-3 px-4 font-semibold">Dibuat Oleh</th>
                     <th className="py-3 px-4 font-semibold">Statistik Naskah</th>
                     <th className="py-3 px-4 font-semibold">Ringkasan Perubahan</th>
@@ -641,12 +640,16 @@ export const DraftPage: React.FC = () => {
                             </div>
                           </div>
                         </td>
-                      <td className="py-3.5 px-4 text-slate-600">{v.createdAt}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-800'}`}>
-                          {v.createdBy}
-                        </span>
-                      </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="flex flex-col">
+                            <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-900'}`}>
+                              {v.createdBy}
+                            </span>
+                            <span className="text-[11px] text-slate-500 font-normal leading-tight mt-0.5">
+                              {v.createdAt}
+                            </span>
+                          </div>
+                        </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1866EF] border border-blue-200 text-[10px] font-semibold">

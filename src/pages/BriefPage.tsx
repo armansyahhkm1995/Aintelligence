@@ -651,7 +651,6 @@ export const BriefPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
                     <th className="py-3 px-4 font-semibold">Versi Arahan Artikel</th>
-                    <th className="py-3 px-4 font-semibold">Waktu Dibuat</th>
                     <th className="py-3 px-4 font-semibold">Dibuat Oleh</th>
                     <th className="py-3 px-4 font-semibold">Ringkasan Perubahan</th>
                     <th className="py-3 px-4 font-semibold text-center">Aksi</th>
@@ -690,12 +689,16 @@ export const BriefPage: React.FC = () => {
                             </div>
                           </div>
                         </td>
-                      <td className="py-3.5 px-4 text-slate-600">{v.createdAt}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-800'}`}>
-                          {v.createdBy}
-                        </span>
-                      </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="flex flex-col">
+                            <span className={`font-semibold ${v.isAI ? 'text-[#1866EF]' : 'text-slate-900'}`}>
+                              {v.createdBy}
+                            </span>
+                            <span className="text-[11px] text-slate-500 font-normal leading-tight mt-0.5">
+                              {v.createdAt}
+                            </span>
+                          </div>
+                        </td>
                       <td className="py-3.5 px-4 text-slate-600 max-w-xs">{v.changeSummary}</td>
                       <td className="py-3.5 px-4 text-center">
                         <button
