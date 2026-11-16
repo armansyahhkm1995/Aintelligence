@@ -241,27 +241,35 @@ export const UsersPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={isAktif}
-                          onClick={() => editUser(u.id, { status: isAktif ? 'nonaktif' : 'aktif' })}
-                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1866EF] focus:ring-offset-2 ${
-                            isAktif ? 'bg-[#1866EF]' : 'bg-slate-200'
-                          }`}
-                          title={isAktif ? 'Klik untuk nonaktifkan akun' : 'Klik untuk aktifkan akun'}
-                        >
-                          <span
-                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                              isAktif ? 'translate-x-5' : 'translate-x-0'
+                      {u.role === 'admin' ? (
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                            Aktif
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isAktif}
+                            onClick={() => editUser(u.id, { status: isAktif ? 'nonaktif' : 'aktif' })}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1866EF] focus:ring-offset-2 ${
+                              isAktif ? 'bg-[#1866EF]' : 'bg-slate-200'
                             }`}
-                          />
-                        </button>
-                        <span className={`text-[11px] font-semibold ${isAktif ? 'text-[#15803D]' : 'text-slate-400'}`}>
-                          {isAktif ? 'Aktif' : 'Non-aktif'}
-                        </span>
-                      </div>
+                            title={isAktif ? 'Klik untuk nonaktifkan akun' : 'Klik untuk aktifkan akun'}
+                          >
+                            <span
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                                isAktif ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                          <span className={`text-[11px] font-semibold ${isAktif ? 'text-[#15803D]' : 'text-slate-400'}`}>
+                            {isAktif ? 'Aktif' : 'Non-aktif'}
+                          </span>
+                        </div>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <div className="flex items-center justify-center gap-2">
@@ -269,21 +277,23 @@ export const UsersPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(u)}
-                          className="p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                          className="p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
                           title="Edit Pengguna"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Delete / Trash Icon */}
-                        <button
-                          type="button"
-                          onClick={() => handleDeactivate(u)}
-                          className="p-1 rounded text-[#B91C1C] hover:text-rose-900 hover:bg-rose-50 transition-colors"
-                          title="Hapus / Nonaktifkan Pengguna"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
-                        </button>
+                        {/* Delete / Trash Icon (Hanya untuk Editor, Admin tidak boleh dinonaktifkan) */}
+                        {u.role !== 'admin' && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeactivate(u)}
+                            className="p-1 rounded text-[#B91C1C] hover:text-rose-900 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Hapus / Nonaktifkan Pengguna"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
