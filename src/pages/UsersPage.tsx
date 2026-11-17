@@ -13,10 +13,11 @@ export const UsersPage: React.FC = () => {
   const {
     users,
     editUser,
+    toggleUserStatus,
     setIsTambahPenggunaOpen,
     setUserToEdit,
-    setIsNonaktifkanPenggunaOpen,
-    setUserToDeactivate,
+    setIsHapusPenggunaOpen,
+    setUserToDelete,
   } = useApp()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -100,9 +101,9 @@ export const UsersPage: React.FC = () => {
     setIsTambahPenggunaOpen(true)
   }
 
-  const handleDeactivate = (user: User) => {
-    setUserToDeactivate(user)
-    setIsNonaktifkanPenggunaOpen(true)
+  const handleDeleteUser = (user: User) => {
+    setUserToDelete(user)
+    setIsHapusPenggunaOpen(true)
   }
 
   return (
@@ -253,7 +254,7 @@ export const UsersPage: React.FC = () => {
                             type="button"
                             role="switch"
                             aria-checked={isAktif}
-                            onClick={() => editUser(u.id, { status: isAktif ? 'nonaktif' : 'aktif' })}
+                            onClick={() => toggleUserStatus(u.id)}
                             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1866EF] focus:ring-offset-2 ${
                               isAktif ? 'bg-[#1866EF]' : 'bg-slate-200'
                             }`}
@@ -283,13 +284,13 @@ export const UsersPage: React.FC = () => {
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Delete / Trash Icon (Hanya untuk Editor, Admin tidak boleh dinonaktifkan) */}
+                        {/* Delete / Trash Icon (Hanya untuk Editor, Admin tidak boleh dinonaktifkan/dihapus) */}
                         {u.role !== 'admin' && (
                           <button
                             type="button"
-                            onClick={() => handleDeactivate(u)}
+                            onClick={() => handleDeleteUser(u)}
                             className="p-1 rounded text-[#B91C1C] hover:text-rose-900 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Hapus / Nonaktifkan Pengguna"
+                            title="Hapus Pengguna"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
                           </button>

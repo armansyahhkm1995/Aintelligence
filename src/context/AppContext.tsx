@@ -90,9 +90,13 @@ interface AppContextType {
   users: User[]
   addUser: (user: Omit<User, 'id' | 'lastActive'>) => void
   editUser: (id: string, updates: Partial<User>) => void
+  deleteUser: (id: string) => void
+  toggleUserStatus: (id: string) => void
   deactivateUser: (id: string) => void
   userToDeactivate: User | null
   setUserToDeactivate: (user: User | null) => void
+  userToDelete: User | null
+  setUserToDelete: (user: User | null) => void
   userToEdit: User | null
   setUserToEdit: (user: User | null) => void
 
@@ -126,6 +130,8 @@ interface AppContextType {
   setIsHapusAturanOpen: (open: boolean) => void
   isTambahPenggunaOpen: boolean
   setIsTambahPenggunaOpen: (open: boolean) => void
+  isHapusPenggunaOpen: boolean
+  setIsHapusPenggunaOpen: (open: boolean) => void
   isNonaktifkanPenggunaOpen: boolean
   setIsNonaktifkanPenggunaOpen: (open: boolean) => void
 }
@@ -232,6 +238,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [ruleToDelete, setRuleToDelete] = useState<FilterRule | null>(null)
   const [ruleToEdit, setRuleToEdit] = useState<FilterRule | null>(null)
   const [isTambahPenggunaOpen, setIsTambahPenggunaOpen] = useState(false)
+  const [isHapusPenggunaOpen, setIsHapusPenggunaOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const [isNonaktifkanPenggunaOpen, setIsNonaktifkanPenggunaOpen] = useState(false)
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
@@ -501,6 +509,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserToEdit(null)
   }
 
+  const toggleUserStatus = (id: string) => {
+    const u = users.find((user) => user.id === id)
+    if (!u) return
+    const nextStatus = u.status === 'aktif' ? 'nonaktif' : 'aktif'
+    setUsers((prev) =>
+      prev.map((user) => (user.id === id ? { ...user, status: nextStatus } : user))
+    )
+    if (nextStatus === 'nonaktif') {
+      addAuditLog('Manajemen Pengguna', `Menonaktifkan akun pengguna: ${u.name}.`)
+      showWarning('Manajemen Pengguna', `Pengguna ${u.name} telah dinonaktifkan`)
+    } else {
+      addAuditLog('Manajemen Pengguna', `Mengaktifkan kembali akun pengguna: ${u.name}.`)
+      showSuccess('Manajemen Pengguna', `Pengguna ${u.name} berhasil diaktifkan kembali`)
+    }
+  }
+
+  const deleteUser = (id: string) => {
+    const u = users.find((user) => user.id === id)
+    setUsers((prev) => prev.filter((user) => user.id !== id))
+    addAuditLog('Manajemen Pengguna', `Menghapus akun pengguna: ${u?.name || id}.`)
+    showSuccess('Manajemen Pengguna', `Pengguna ${u?.name || id} berhasil dihapus dari sistem`)
+    setIsHapusPenggunaOpen(false)
+    setUserToDelete(null)
+  }
+
   const deactivateUser = (id: string) => {
     const u = users.find((user) => user.id === id)
     setUsers((prev) =>
@@ -556,9 +589,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         users,
         addUser,
         editUser,
+        deleteUser,
+        toggleUserStatus,
         deactivateUser,
         userToDeactivate,
         setUserToDeactivate,
+        userToDelete,
+        setUserToDelete,
         userToEdit,
         setUserToEdit,
         auditLogs,
@@ -586,6 +623,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsHapusAturanOpen,
         isTambahPenggunaOpen,
         setIsTambahPenggunaOpen,
+        isHapusPenggunaOpen,
+        setIsHapusPenggunaOpen,
         isNonaktifkanPenggunaOpen,
         setIsNonaktifkanPenggunaOpen,
       }}

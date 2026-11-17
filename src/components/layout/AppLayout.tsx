@@ -26,6 +26,7 @@ import { AddRuleModal } from '../modals/AddRuleModal'
 import { DeleteRuleModal } from '../modals/DeleteRuleModal'
 import { AddUserModal } from '../modals/AddUserModal'
 import { DeactivateUserModal } from '../modals/DeactivateUserModal'
+import { HapusPenggunaModal } from '../modals/HapusPenggunaModal'
 import { EditClusterDrawer } from '../drawers/EditClusterDrawer'
 
 export const AppLayout: React.FC = () => {
@@ -95,6 +96,7 @@ export const AppLayout: React.FC = () => {
       <DeleteRuleModal />
       <AddUserModal />
       <DeactivateUserModal />
+      <HapusPenggunaModal />
       <EditClusterDrawer />
     </div>
   )
