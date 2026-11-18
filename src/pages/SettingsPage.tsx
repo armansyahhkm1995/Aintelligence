@@ -41,14 +41,6 @@ export const SettingsPage: React.FC = () => {
   const [toneOfVoice, setToneOfVoice] = useState(
     'Lugas, Objektif, Terverifikasi, dan Ramah Pembaca Digital (Sesuai Pedoman Jurnalistik RRI)'
   )
-  const [blacklist, setBlacklist] = useState([
-    'slot gacor',
-    'skema ponzi',
-    'investasi bodong',
-    'sensasional',
-  ])
-  const [newBlacklistWord, setNewBlacklistWord] = useState('')
-  const [isAddingTag, setIsAddingTag] = useState(false)
 
   // Headings template for Tab 2
   const [headingTemplates, setHeadingTemplates] = useState([
@@ -123,21 +115,6 @@ export const SettingsPage: React.FC = () => {
     setIsHapusAturanOpen(true)
   }
 
-  const handleAddBlacklist = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && newBlacklistWord.trim()) {
-      e.preventDefault()
-      if (!blacklist.includes(newBlacklistWord.trim())) {
-        setBlacklist([...blacklist, newBlacklistWord.trim()])
-      }
-      setNewBlacklistWord('')
-      setIsAddingTag(false)
-    }
-  }
-
-  const handleRemoveBlacklist = (word: string) => {
-    setBlacklist(blacklist.filter((w) => w !== word))
-  }
-
   const filteredRules = (rules || []).filter((r) => {
     if (!r) return false
     const matchSearch =
@@ -156,7 +133,7 @@ export const SettingsPage: React.FC = () => {
           Pengaturan Sistem & AI
         </h1>
         <p className="text-sm text-slate-400 mt-1 leading-relaxed">
-          Konfigurasi aturan filter otomatis keyword, pedoman buku gaya editorial, serta manajemen kredensial LLM.
+          Konfigurasi aturan filter otomatis kata kunci dan pedoman buku gaya editorial.
         </p>
       </div>
 
@@ -173,7 +150,7 @@ export const SettingsPage: React.FC = () => {
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            Aturan Filter Keyword
+            Aturan Filter Kata Kunci
           </button>
 
           <button
@@ -190,7 +167,7 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* ======================================================== */}
-        {/* TAB 1: Aturan Filter Keyword (matches media_1794227113969_17687f9c.jpg) */}
+        {/* TAB 1: Aturan Filter Kata Kunci (matches media_1794227113969_17687f9c.jpg) */}
         {/* ======================================================== */}
         {activeTab === 'filter' && (
           <div className="space-y-4">
@@ -198,7 +175,7 @@ export const SettingsPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-slate-900 leading-snug">
-                  Manajemen Aturan Filter Keyword
+                  Manajemen Aturan Filter Kata Kunci
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
                   Blacklist topik berdasarkan pola kata, query musiman, dan parameter eliminasi otomatis.
@@ -455,58 +432,7 @@ export const SettingsPage: React.FC = () => {
               />
             </div>
 
-            {/* Section 2: Daftar Kata Terlarang */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-900 block">
-                Daftar Kata Terlarang (Blacklist Frasa Redaksional)
-              </label>
-              <div className="min-h-[64px] p-2.5 bg-white border border-[#DBEAFE] rounded-[6px] flex flex-wrap items-center gap-2">
-                {blacklist.map((word) => (
-                  <span
-                    key={word}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]"
-                  >
-                    <span>{word}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveBlacklist(word)}
-                      className="hover:text-rose-900 focus:outline-none"
-                    >
-                      <X className="w-3 h-3 text-[#B91C1C]" />
-                    </button>
-                  </span>
-                ))}
-
-                {isAddingTag ? (
-                  <input
-                    type="text"
-                    autoFocus
-                    value={newBlacklistWord}
-                    onChange={(e) => setNewBlacklistWord(e.target.value)}
-                    onKeyDown={handleAddBlacklist}
-                    onBlur={() => {
-                      if (newBlacklistWord.trim()) {
-                        setBlacklist([...blacklist, newBlacklistWord.trim()])
-                        setNewBlacklistWord('')
-                      }
-                      setIsAddingTag(false)
-                    }}
-                    placeholder="Ketik lalu Enter..."
-                    className="h-[28px] px-2 text-xs border border-blue-400 rounded-full focus:outline-none"
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingTag(true)}
-                    className="h-[28px] w-[28px] rounded-full border border-dashed border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] flex items-center justify-center transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Section 3: Struktur Baku Heading Artikel */}
+            {/* Section 2: Struktur Baku Heading Artikel */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-slate-900 block">
@@ -545,13 +471,28 @@ export const SettingsPage: React.FC = () => {
                       <div className="w-6 p-1 text-slate-300" title="H1 Baku Permanen" />
                     )}
 
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#1866EF] text-white">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                      h.level === 'H1'
+                        ? 'bg-[#1866EF] text-white'
+                        : h.level === 'P'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-[#1866EF] text-white'
+                    }`}>
                       {h.level}
                     </span>
 
-                    <span className="flex-1 font-medium text-slate-800">
-                      {h.text}
-                    </span>
+                    <input
+                      type="text"
+                      value={h.text}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setHeadingTemplates((prev) =>
+                          prev.map((item) => (item.id === h.id ? { ...item, text: val } : item))
+                        )
+                      }}
+                      className="flex-1 bg-transparent hover:bg-slate-50 focus:bg-white px-2 py-1 text-xs font-medium text-slate-800 rounded border border-transparent hover:border-slate-200 focus:border-blue-400 focus:outline-none transition-colors"
+                      placeholder="Nama heading / elemen..."
+                    />
 
                     {/* Level Selector Dropdown */}
                     <div className="relative">
@@ -568,7 +509,7 @@ export const SettingsPage: React.FC = () => {
 
                       {openLevelDropdownId === h.id && (
                         <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg z-20 py-1">
-                          {['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
+                          {['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
                             <button
                               key={lvl}
                               type="button"

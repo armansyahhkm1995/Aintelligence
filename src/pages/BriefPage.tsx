@@ -17,6 +17,7 @@ import {
   Download,
   Eye,
   History,
+  X,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -190,6 +191,30 @@ export const BriefPage: React.FC = () => {
   const [angle, setAngle] = useState(
     'Fokus pada keamanan modal, regulasi perlindungan konsumen OJK, dan kemudahan pencairan untuk pemula berpenghasilan pertama.'
   )
+  const [targetAudience, setTargetAudience] = useState(
+    'Masyarakat yang mengurus dokumen kependudukan'
+  )
+  const [mainQuestions, setMainQuestions] = useState<string[]>([
+    'Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?',
+    'Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?',
+    'Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?',
+  ])
+  const [supportingSources, setSupportingSources] = useState<string[]>([
+    'OJK (Otoritas Jasa Keuangan)',
+    'Inflasi Tahunan BI',
+    'Bursa Efek Indonesia (BEI)',
+    'UU P2SK No. 4/2023',
+  ])
+  const [newSourceInput, setNewSourceInput] = useState('')
+  const [isAddingSource, setIsAddingSource] = useState(false)
+
+  const [internalLinks, setInternalLinks] = useState<{ id: string; title: string; url: string }[]>([
+    { id: 'il-1', title: 'Mengenal Perbedaan Saham dan ORI025', url: 'rri.co.id/bisnis/512' },
+    { id: 'il-2', title: 'Tips Alokasi Gaji 50/30/20', url: 'rri.co.id/lifestyle/481' },
+  ])
+  const [isAddingLink, setIsAddingLink] = useState(false)
+  const [newLinkTitle, setNewLinkTitle] = useState('')
+  const [newLinkUrl, setNewLinkUrl] = useState('')
 
   const [headings, setHeadings] = useState([
     { id: 'bh-0', level: 'H1', text: 'Panduan Lengkap Memulai Investasi Reksadana bagi Pemula' },
@@ -285,14 +310,12 @@ export const BriefPage: React.FC = () => {
       <body>
         <h1>${briefTitle}</h1>
         <div class="meta-box">
-          <p><strong>Sasaran Pembaca:</strong> Masyarakat yang mengurus dokumen kependudukan</p>
+          <p><strong>Sasaran Pembaca:</strong> ${targetAudience}</p>
         </div>
         <div class="meta-box">
           <p><strong>Pertanyaan Utama:</strong></p>
           <ul>
-            <li>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</li>
-            <li>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</li>
-            <li>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</li>
+            ${mainQuestions.map((q) => `<li>${q}</li>`).join('')}
           </ul>
         </div>
         <p><strong>Sudut Pandang Jurnalistik (Angle):</strong></p>
@@ -317,7 +340,9 @@ export const BriefPage: React.FC = () => {
 
   const handleExportMD = () => {
     setIsExportDropdownOpen(false)
-    const md = `# ${briefTitle}\n\n**Sasaran Pembaca:**\nMasyarakat yang mengurus dokumen kependudukan\n\n**Pertanyaan Utama:**\n- Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?\n- Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?\n- Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?\n\n**Sudut Pandang Jurnalistik (Angle):**\n${angle}\n\n## Struktur Kerangka Naskah:\n${headings
+    const md = `# ${briefTitle}\n\n**Sasaran Pembaca:**\n${targetAudience}\n\n**Pertanyaan Utama:**\n${mainQuestions
+      .map((q) => `- ${q}`)
+      .join('\n')}\n\n**Sudut Pandang Jurnalistik (Angle):**\n${angle}\n\n## Struktur Kerangka Naskah:\n${headings
       .map((h) => `${h.level === 'H2' ? '##' : '###'} ${h.text}`)
       .join('\n')}\n\n## Data & Entitas Wajib Dikutip:\n- OJK (Otoritas Jasa Keuangan)\n- Inflasi Tahunan BI\n- Bursa Efek Indonesia (BEI)\n- UU P2SK No. 4/2023`
     const blob = new Blob([md], { type: 'text/markdown' })
@@ -349,14 +374,12 @@ export const BriefPage: React.FC = () => {
         <body>
           <h1>${briefTitle}</h1>
           <div class="box">
-            <strong>Sasaran Pembaca:</strong> Masyarakat yang mengurus dokumen kependudukan
+            <strong>Sasaran Pembaca:</strong> ${targetAudience}
           </div>
           <div class="box">
             <strong>Pertanyaan Utama:</strong>
             <ul>
-              <li>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</li>
-              <li>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</li>
-              <li>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</li>
+              ${mainQuestions.map((q) => `<li>${q}</li>`).join('')}
             </ul>
           </div>
           <h3>Sudut Pandang Jurnalistik (Angle):</h3>
@@ -1003,29 +1026,57 @@ export const BriefPage: React.FC = () => {
             <label className="text-xs font-bold text-slate-900 block">
               Sasaran Pembaca
             </label>
-            <div className="p-3 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-800 font-medium">
-              Masyarakat yang mengurus dokumen kependudukan
-            </div>
+            <input
+              type="text"
+              value={targetAudience}
+              onChange={(e) => setTargetAudience(e.target.value)}
+              placeholder="Masukkan sasaran pembaca..."
+              className="w-full px-3.5 py-2.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] font-medium"
+            />
           </div>
 
           {/* Card 3: Pertanyaan Utama (Sebelumnya: Pertanyaan Pembaca Terjawab, dipindahkan ke bawah Sasaran Pembaca) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
-            <label className="text-xs font-bold text-slate-900 block">
-              Pertanyaan Utama
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-900 block">
+                Pertanyaan Utama
+              </label>
+              <button
+                type="button"
+                onClick={() => setMainQuestions([...mainQuestions, ''])}
+                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah</span>
+              </button>
+            </div>
             <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-700 space-y-2">
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Berapa modal awal paling sedikit untuk mulai reksadana di Indonesia?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Apakah investasi reksadana dijamin LPS seperti halnya tabungan deposito?</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-slate-400">•</span>
-                <span>Berapa hari kerja proses pencairan saldo reksadana ke rekening bank?</span>
-              </div>
+              {mainQuestions.map((q, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <span className="text-slate-400 font-bold">•</span>
+                  <input
+                    type="text"
+                    value={q}
+                    onChange={(e) => {
+                      const updated = [...mainQuestions]
+                      updated[idx] = e.target.value
+                      setMainQuestions(updated)
+                    }}
+                    placeholder="Ketik pertanyaan utama..."
+                    className="flex-1 px-3 py-1.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF]"
+                  />
+                  {mainQuestions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setMainQuestions(mainQuestions.filter((_, i) => i !== idx))}
+                      className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer"
+                      title="Hapus pertanyaan"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -1042,7 +1093,7 @@ export const BriefPage: React.FC = () => {
             />
           </div>
 
-          {/* Card 5: Kerangka Naskah (Heading H1 Baku di atas, H2 & H3) */}
+          {/* Card 5: Kerangka Naskah (Heading H1 Baku di atas, H2-H6 & P) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-900 block">
@@ -1054,7 +1105,7 @@ export const BriefPage: React.FC = () => {
                 className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Heading</span>
+                <span>Tambah</span>
               </button>
             </div>
 
@@ -1088,7 +1139,15 @@ export const BriefPage: React.FC = () => {
                         ? 'bg-[#1866EF] text-white'
                         : item.level === 'H2'
                         ? 'bg-blue-100 text-[#1866EF]'
-                        : 'bg-slate-200 text-slate-700'
+                        : item.level === 'H3'
+                        ? 'bg-slate-200 text-slate-700'
+                        : item.level === 'H4'
+                        ? 'bg-indigo-100 text-indigo-700'
+                        : item.level === 'H5'
+                        ? 'bg-purple-100 text-purple-700'
+                        : item.level === 'H6'
+                        ? 'bg-cyan-100 text-cyan-700'
+                        : 'bg-emerald-100 text-emerald-800'
                     }`}
                   >
                     {item.level}
@@ -1117,20 +1176,18 @@ export const BriefPage: React.FC = () => {
 
                       {openLevelId === item.id && (
                         <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
-                          <button
-                            type="button"
-                            onClick={() => handleLevelChange(item.id, 'H2')}
-                            className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
-                          >
-                            H2
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleLevelChange(item.id, 'H3')}
-                            className="w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium"
-                          >
-                            H3
-                          </button>
+                          {['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
+                            <button
+                              key={lvl}
+                              type="button"
+                              onClick={() => handleLevelChange(item.id, lvl)}
+                              className={`w-full text-left px-3 py-1 text-xs hover:bg-slate-50 font-medium ${
+                                item.level === lvl ? 'text-[#1866EF] font-bold bg-blue-50/50' : 'text-slate-700'
+                              }`}
+                            >
+                              {lvl}
+                            </button>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -1154,49 +1211,192 @@ export const BriefPage: React.FC = () => {
 
           {/* Card 6: Daftar URL/penerbit/sumber pendukung */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
-            <label className="text-xs font-bold text-slate-900 block">
-              Daftar URL/penerbit/sumber pendukung
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                'OJK (Otoritas Jasa Keuangan)',
-                'Inflasi Tahunan BI',
-                'Bursa Efek Indonesia (BEI)',
-                'UU P2SK No. 4/2023',
-              ].map((ent, i) => (
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-900 block">
+                Daftar URL/penerbit/sumber pendukung
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsAddingSource(true)}
+                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah</span>
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {supportingSources.map((ent, i) => (
                 <span
                   key={i}
-                  className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium"
                 >
-                  {ent}
+                  <span>{ent}</span>
+                  <button
+                    type="button"
+                    onClick={() => setSupportingSources(supportingSources.filter((_, idx) => idx !== i))}
+                    className="hover:text-rose-600 transition-colors cursor-pointer"
+                    title="Hapus sumber"
+                  >
+                    <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
+                  </button>
                 </span>
               ))}
+
+              {isAddingSource ? (
+                <div className="inline-flex items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
+                  <input
+                    type="text"
+                    autoFocus
+                    value={newSourceInput}
+                    onChange={(e) => setNewSourceInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newSourceInput.trim()) {
+                        e.preventDefault()
+                        setSupportingSources([...supportingSources, newSourceInput.trim()])
+                        setNewSourceInput('')
+                        setIsAddingSource(false)
+                      }
+                    }}
+                    placeholder="Nama sumber / URL..."
+                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-48"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newSourceInput.trim()) {
+                        setSupportingSources([...supportingSources, newSourceInput.trim()])
+                        setNewSourceInput('')
+                      }
+                      setIsAddingSource(false)
+                    }}
+                    className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
+                  >
+                    Simpan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewSourceInput('')
+                      setIsAddingSource(false)
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingSource(true)}
+                  className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
+                  title="Tambah Sumber Pendukung"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
 
-
-          {/* Card 6: Rekomendasi Tautan Internal Portal RRI */}
+          {/* Card 7: Rekomendasi Tautan Internal Portal RRI */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
-            <label className="text-xs font-bold text-slate-900 block">
-              Rekomendasi Tautan Internal Portal RRI
-            </label>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href="#internal-link"
-                onClick={(e) => e.preventDefault()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium hover:bg-blue-100 transition-colors"
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-900 block">
+                Rekomendasi Tautan Internal Portal RRI
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsAddingLink(true)}
+                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
               >
-                <span>Mengenal Perbedaan Saham dan ORI025 (rri.co.id/bisnis/512)</span>
-                <ExternalLink className="w-3 h-3 text-[#1D4ED8]" />
-              </a>
-              <a
-                href="#internal-link"
-                onClick={(e) => e.preventDefault()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium hover:bg-blue-100 transition-colors"
-              >
-                <span>Tips Alokasi Gaji 50/30/20 (rri.co.id/lifestyle/481)</span>
-                <ExternalLink className="w-3 h-3 text-[#1D4ED8]" />
-              </a>
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah</span>
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {internalLinks.map((link) => (
+                <div
+                  key={link.id}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium group"
+                >
+                  <a
+                    href={`#${link.url}`}
+                    onClick={(e) => e.preventDefault()}
+                    className="inline-flex items-center gap-1 hover:underline"
+                  >
+                    <span>{link.title} ({link.url})</span>
+                    <ExternalLink className="w-3 h-3 text-[#1D4ED8]" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setInternalLinks(internalLinks.filter((l) => l.id !== link.id))}
+                    className="hover:text-rose-600 transition-colors cursor-pointer ml-1"
+                    title="Hapus tautan internal"
+                  >
+                    <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
+                  </button>
+                </div>
+              ))}
+
+              {isAddingLink ? (
+                <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
+                  <input
+                    type="text"
+                    autoFocus
+                    value={newLinkTitle}
+                    onChange={(e) => setNewLinkTitle(e.target.value)}
+                    placeholder="Judul artikel internal..."
+                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
+                  />
+                  <input
+                    type="text"
+                    value={newLinkUrl}
+                    onChange={(e) => setNewLinkUrl(e.target.value)}
+                    placeholder="URL (contoh: rri.co.id/bisnis/512)"
+                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-48"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newLinkTitle.trim()) {
+                        setInternalLinks([
+                          ...internalLinks,
+                          {
+                            id: `il-${Date.now()}`,
+                            title: newLinkTitle.trim(),
+                            url: newLinkUrl.trim() || 'rri.co.id/berita/artikel',
+                          },
+                        ])
+                        setNewLinkTitle('')
+                        setNewLinkUrl('')
+                      }
+                      setIsAddingLink(false)
+                    }}
+                    className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
+                  >
+                    Simpan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewLinkTitle('')
+                      setNewLinkUrl('')
+                      setIsAddingLink(false)
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingLink(true)}
+                  className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
+                  title="Tambah Tautan Internal"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         </div>
