@@ -170,6 +170,7 @@ export const DraftPage: React.FC = () => {
 
   // View Mode: 'table' | 'detail' | 'versions' | 'compare'
   const [viewMode, setViewMode] = useState<'table' | 'detail' | 'versions' | 'compare'>('table')
+  const [draftVersions, setDraftVersions] = useState<DraftVersionItem[]>(DRAFT_VERSIONS)
   const [activeDraftVersionId, setActiveDraftVersionId] = useState<string>('dv-3')
   const [selectedCompareDraftVersion, setSelectedCompareDraftVersion] = useState<DraftVersionItem>(DRAFT_VERSIONS[1])
 
@@ -182,7 +183,7 @@ export const DraftPage: React.FC = () => {
       return
     }
     setActiveDraftVersionId(versionId)
-    const target = DRAFT_VERSIONS.find((v) => v.id === versionId)
+    const target = draftVersions.find((v) => v.id === versionId)
     showSuccess(
       'Versi Draf Artikel',
       `${target?.version || 'Versi'} berhasil diaktifkan sebagai draf artikel utama.`
@@ -194,8 +195,9 @@ export const DraftPage: React.FC = () => {
   const [draftList, setDraftList] = useState<DraftTableRow[]>(INITIAL_DRAFT_TABLE)
   const [activePage, setActivePage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
+  const [activeDraftId, setActiveDraftId] = useState<string>('DFT-004')
   const [activeItemTitle, setActiveItemTitle] = useState(
-    'Cara Mengurus Kartu Keluarga dan Persyaratannya'
+    'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
   )
 
   // Detail view states
@@ -227,8 +229,38 @@ export const DraftPage: React.FC = () => {
 
   // Copy dropdown menu state & handlers
   const [isCopyDropdownOpen, setIsCopyDropdownOpen] = useState(false)
-  const articleHeadline = 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
-  const articleBodyText = `JAKARTA — Menghadapi dinamika ekonomi digital dan tekanan inflasi, minat generasi muda terhadap instrumen investasi legal kian meningkat. Reksadana kini menjadi salah satu pintu masuk paling diminati bagi kalangan pemula karena modal awal yang sangat terjangkau serta dikelola langsung oleh manajer investasi berizin resmi.\n\nApa Itu Reksadana dan Mengapa Ramah Pemula?\nBerdasarkan rilis statistik Otoritas Jasa Keuangan (OJK), akumulasi dana kelolaan reksadana nasional tercatat menembus angka pertumbuhan signifikan di kuartal kedua. Fleksibilitas serta transparansi laporan bulanan manajer investasi menjadi daya tarik utama bagi investor pemula berpenghasilan pertama.\n\nLangkah Praktis Memilih Agen Penjual (APERD) Resmi\nCalon investor wajib memastikan platform Agen Penjual Efek Reksa Dana (APERD) telah terdaftar di OJK. Jangan tergiur promosi return tidak wajar yang menjanjikan keuntungan pasti di media sosial tanpa memahami profil risiko.\n\nDengan pemahaman risiko yang baik dan kedisiplinan alokasi dana darurat, generasi muda dapat mengoptimalkan reksadana sebagai benteng ketahanan finansial masa depan tanpa terjebak investasi bodong.`
+
+  // Article content states for inline editing
+  const [articleHeadline, setArticleHeadline] = useState(
+    'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
+  )
+  const [leadText, setLeadText] = useState(
+    'JAKARTA — Menghadapi dinamika ekonomi digital dan tekanan inflasi, minat generasi muda terhadap instrumen investasi legal kian meningkat. Reksadana kini menjadi salah satu pintu masuk paling diminati bagi kalangan pemula karena modal awal yang sangat terjangkau serta dikelola langsung oleh manajer investasi berizin resmi.'
+  )
+  const [section1Heading, setSection1Heading] = useState(
+    'Apa Itu Reksadana dan Mengapa Ramah Pemula?'
+  )
+  const [section1Callout1] = useState(
+    'Butuh Verifikasi Fakta: Konfirmasi nilai statistik resmi OJK terbaru'
+  )
+  const [section1Content, setSection1Content] = useState(
+    'Berdasarkan rilis statistik Otoritas Jasa Keuangan (OJK), akumulasi dana kelolaan reksadana nasional tercatat menembus angka pertumbuhan signifikan di kuartal kedua. Fleksibilitas serta transparansi laporan bulanan manajer investasi menjadi daya tarik utama bagi investor pemula berpenghasilan pertama.'
+  )
+  const [section1Callout2] = useState(
+    'Kutipan Narasumber Dibutuhkan'
+  )
+  const [section2Heading, setSection2Heading] = useState(
+    'Langkah Praktis Memilih Agen Penjual (APERD) Resmi'
+  )
+  const [section2Content1, setSection2Content1] = useState(
+    'Calon investor wajib memastikan platform Agen Penjual Efek Reksa Dana (APERD) telah terdaftar di OJK. Jangan tergiur promosi return tidak wajar yang menjanjikan keuntungan pasti di media sosial tanpa memahami profil risiko.'
+  )
+  const [section2Content2, setSection2Content2] = useState(
+    'Dengan pemahaman risiko yang baik dan kedisiplinan alokasi dana darurat, generasi muda dapat mengoptimalkan reksadana sebagai benteng ketahanan finansial masa depan tanpa terjebak investasi bodong.'
+  )
+
+  const articleBodyText = `${leadText}\n\n${section1Heading}\n${section1Content}\n\n${section2Heading}\n${section2Content1}\n\n${section2Content2}`
+  const wordCount = (articleHeadline + ' ' + articleBodyText).trim().split(/\s+/).filter(Boolean).length
 
   const handleCopyOption = (option: 1 | 2 | 3 | 4 | 5) => {
     setIsCopyDropdownOpen(false)
@@ -261,7 +293,31 @@ export const DraftPage: React.FC = () => {
   }
 
   const handleSaveDraft = () => {
-    showSuccess('Draf Artikel', 'Perubahan naskah dan paket metadata SEO berhasil disimpan.')
+    setDraftList((prev) =>
+      prev.map((item) =>
+        item.id === activeDraftId || item.title === activeItemTitle
+          ? { ...item, title: articleHeadline }
+          : item
+      )
+    )
+    setActiveItemTitle(articleHeadline)
+    setDraftVersions((prev) =>
+      prev.map((v) =>
+        v.id === activeDraftVersionId
+          ? {
+              ...v,
+              title: articleHeadline,
+              wordCount,
+              lead: leadText,
+              sections: [
+                { heading: section1Heading, content: section1Content },
+                { heading: section2Heading, content: `${section2Content1}\n\n${section2Content2}` },
+              ],
+            }
+          : v
+      )
+    )
+    showSuccess('Draf Tersimpan', `Perubahan judul "${articleHeadline}" dan isi artikel berhasil disimpan.`)
   }
 
   const handleExportDraftDocs = () => {
@@ -431,7 +487,9 @@ export const DraftPage: React.FC = () => {
                     <tr
                       key={item.id}
                       onClick={() => {
+                        setActiveDraftId(item.id)
                         setActiveItemTitle(item.title)
+                        setArticleHeadline(item.title)
                         setViewMode('detail')
                       }}
                       className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
@@ -452,7 +510,9 @@ export const DraftPage: React.FC = () => {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation()
+                            setActiveDraftId(item.id)
                             setActiveItemTitle(item.title)
+                            setArticleHeadline(item.title)
                             setViewMode('detail')
                           }}
                           className="p-1.5 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
@@ -591,7 +651,7 @@ export const DraftPage: React.FC = () => {
               Daftar Riwayat Versi Draft Artikel
             </h2>
             <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-semibold text-[#1866EF]">
-              {DRAFT_VERSIONS.length} Versi Tersimpan
+              {draftVersions.length} Versi Tersimpan
             </span>
           </div>
 
@@ -608,7 +668,7 @@ export const DraftPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
-                  {DRAFT_VERSIONS.map((v) => {
+                  {draftVersions.map((v) => {
                     const isActive = v.id === activeDraftVersionId
                     return (
                       <tr key={v.id} className="hover:bg-slate-50/70 transition-colors">
@@ -691,10 +751,10 @@ export const DraftPage: React.FC = () => {
   // 4. COMPARE VIEW: PERBANDINGAN BERDAMPINGAN DUA DRAF (SIDE-BY-SIDE)
   // =========================================================================
   if (viewMode === 'compare') {
-    const latest = DRAFT_VERSIONS.find((v) => v.id === activeDraftVersionId) || DRAFT_VERSIONS[0]
+    const latest = draftVersions.find((v) => v.id === activeDraftVersionId) || draftVersions[0]
     const compareTarget =
       selectedCompareDraftVersion ||
-      (activeDraftVersionId === 'dv-1' ? DRAFT_VERSIONS[0] : DRAFT_VERSIONS[1])
+      (activeDraftVersionId === 'dv-1' ? draftVersions[0] : draftVersions[1])
 
     return (
       <div className="space-y-6">
@@ -889,7 +949,7 @@ export const DraftPage: React.FC = () => {
             {/* Button Tertiary: Versioning info & shortcut to versions page */}
             {(() => {
               const currentActiveVer =
-                DRAFT_VERSIONS.find((v) => v.id === activeDraftVersionId) || DRAFT_VERSIONS[0]
+                draftVersions.find((v) => v.id === activeDraftVersionId) || draftVersions[0]
               return (
                 <button
                   type="button"
@@ -934,7 +994,7 @@ export const DraftPage: React.FC = () => {
             {/* Top Bar inside Article Card */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
-                Artikel Siap Rilis | Versi 2 | 2.110 kata
+                Artikel Siap Rilis | Versi 2 | {wordCount.toLocaleString('id-ID')} kata
               </span>
 
               <div className="relative">
@@ -1011,59 +1071,113 @@ export const DraftPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Category / Type */}
-            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              Artikel
+            {/* Category / Type & Helper */}
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                Artikel (Editor Draf Aktif)
+              </span>
+              <span className="text-[11px] text-slate-400 italic">
+                Klik teks judul atau paragraf untuk mengedit inline
+              </span>
             </div>
 
-            {/* Article Headline */}
-            <h2 className="text-xl font-bold text-slate-900 leading-snug">
-              Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
-            </h2>
+            {/* Article Headline - Inline Editable */}
+            <div className="relative group/title">
+              <textarea
+                value={articleHeadline}
+                onChange={(e) => setArticleHeadline(e.target.value)}
+                rows={Math.max(1, Math.ceil(articleHeadline.length / 50))}
+                className="w-full text-xl font-bold text-slate-900 leading-snug bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
+                placeholder="Tulis judul artikel..."
+                title="Klik untuk mengedit judul artikel secara inline"
+              />
+            </div>
 
-            {/* Lead Paragraph */}
-            <p className="text-xs text-slate-700 leading-relaxed">
-              JAKARTA — Menghadapi dinamika ekonomi digital dan tekanan inflasi, minat generasi muda terhadap instrumen investasi legal kian meningkat. Reksadana kini menjadi salah satu pintu masuk paling diminati bagi kalangan pemula karena modal awal yang sangat terjangkau serta dikelola langsung oleh manajer investasi berizin resmi.
-            </p>
+            {/* Lead Paragraph - Inline Editable */}
+            <div className="relative group/lead">
+              <textarea
+                value={leadText}
+                onChange={(e) => setLeadText(e.target.value)}
+                rows={4}
+                className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
+                placeholder="Tulis lead artikel (5W+1H)..."
+                title="Klik untuk mengedit lead artikel secara inline"
+              />
+            </div>
 
             {/* Section 1 */}
             <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold text-slate-900">
-                Apa Itu Reksadana dan Mengapa Ramah Pemula?
-              </h3>
+              <div className="relative group/s1h">
+                <input
+                  type="text"
+                  value={section1Heading}
+                  onChange={(e) => setSection1Heading(e.target.value)}
+                  className="w-full text-sm font-bold text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 font-sans"
+                  placeholder="Heading Bagian 1..."
+                  title="Klik untuk mengedit heading secara inline"
+                />
+              </div>
 
               {/* Yellow Callout 1 */}
               <div>
                 <span className="inline-block px-3 py-1 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
-                  Butuh Verifikasi Fakta: Konfirmasi nilai statistik resmi OJK terbaru
+                  {section1Callout1}
                 </span>
               </div>
 
-              <p className="text-xs text-slate-700 leading-relaxed">
-                Berdasarkan rilis statistik Otoritas Jasa Keuangan (OJK), akumulasi dana kelolaan reksadana nasional tercatat menembus angka pertumbuhan signifikan di kuartal kedua. Fleksibilitas serta transparansi laporan bulanan manajer investasi menjadi daya tarik utama bagi investor pemula berpenghasilan pertama.
-              </p>
+              <div className="relative group/s1c">
+                <textarea
+                  value={section1Content}
+                  onChange={(e) => setSection1Content(e.target.value)}
+                  rows={4}
+                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
+                  placeholder="Tulis isi paragraf bagian 1..."
+                  title="Klik untuk mengedit paragraf secara inline"
+                />
+              </div>
 
               {/* Yellow Callout 2 */}
               <div>
                 <span className="inline-block px-3 py-1 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
-                  Kutipan Narasumber Dibutuhkan
+                  {section1Callout2}
                 </span>
               </div>
             </div>
 
             {/* Section 2 */}
             <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold text-slate-900">
-                Langkah Praktis Memilih Agen Penjual (APERD) Resmi
-              </h3>
+              <div className="relative group/s2h">
+                <input
+                  type="text"
+                  value={section2Heading}
+                  onChange={(e) => setSection2Heading(e.target.value)}
+                  className="w-full text-sm font-bold text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 font-sans"
+                  placeholder="Heading Bagian 2..."
+                  title="Klik untuk mengedit heading secara inline"
+                />
+              </div>
 
-              <p className="text-xs text-slate-700 leading-relaxed">
-                Calon investor wajib memastikan platform Agen Penjual Efek Reksa Dana (APERD) telah terdaftar di OJK. Jangan tergiur promosi return tidak wajar yang menjanjikan keuntungan pasti di media sosial tanpa memahami profil risiko.
-              </p>
+              <div className="relative group/s2c1">
+                <textarea
+                  value={section2Content1}
+                  onChange={(e) => setSection2Content1(e.target.value)}
+                  rows={3}
+                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
+                  placeholder="Tulis paragraf 1 bagian 2..."
+                  title="Klik untuk mengedit paragraf secara inline"
+                />
+              </div>
 
-              <p className="text-xs text-slate-700 leading-relaxed">
-                Dengan pemahaman risiko yang baik dan kedisiplinan alokasi dana darurat, generasi muda dapat mengoptimalkan reksadana sebagai benteng ketahanan finansial masa depan tanpa terjebak investasi bodong.
-              </p>
+              <div className="relative group/s2c2">
+                <textarea
+                  value={section2Content2}
+                  onChange={(e) => setSection2Content2(e.target.value)}
+                  rows={3}
+                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
+                  placeholder="Tulis paragraf 2 bagian 2..."
+                  title="Klik untuk mengedit paragraf secara inline"
+                />
+              </div>
             </div>
           </div>
         </div>
