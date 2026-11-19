@@ -23,6 +23,7 @@ import {
   LogOut,
   User,
   Clock,
+  RefreshCw,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -557,6 +558,14 @@ export const BriefPage: React.FC = () => {
     )
   }
 
+  const handleRetryProcess = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    setBriefList((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, processStatus: 'antre' as const } : b))
+    )
+    showSuccess('Proses Dimuat Ulang', 'Status arahan artikel berhasil dikembalikan ke antre.')
+  }
+
   const renderClaimModal = () => {
     if (!isClaimModalOpen || !itemToClaim) return null
     return (
@@ -824,10 +833,23 @@ export const BriefPage: React.FC = () => {
                               Antre
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                              <ShieldAlert className="w-3 h-3 text-rose-600" />
-                              Gagal
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                <ShieldAlert className="w-3 h-3 text-rose-600" />
+                                Gagal
+                              </span>
+                              {currentUser?.role === 'admin' && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleRetryProcess(item.id, e)}
+                                  className="p-1 px-1.5 rounded-md text-slate-600 hover:text-[#1866EF] hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer flex items-center gap-1 text-[11px] font-semibold"
+                                  title="Muat ulang proses (kembalikan ke antrean)"
+                                >
+                                  <RefreshCw className="w-3 h-3" />
+                                  <span>Muat Ulang</span>
+                                </button>
+                              )}
+                            </div>
                           )}
                         </td>
 
