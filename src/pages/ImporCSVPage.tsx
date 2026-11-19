@@ -217,18 +217,13 @@ export const ImporCSVPage: React.FC = () => {
 
       {/* Full-width 100% Alert Banner / Newsletter */}
       <div className="w-full bg-amber-50/90 border border-amber-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-amber-950">
-              Pemberitahuan Rutin: Belum Ada Unggahan Data SEMrush Minggu Ini
-            </h3>
-            <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-              Anda belum mengunggah data kata kunci dari SEMrush dalam waktu 1 minggu terakhir. Perbarui dataset riset secara berkala agar arahan editorial dan tren topik tetap relevan serta akurat.
-            </p>
-          </div>
+        <div>
+          <h3 className="text-sm font-bold text-amber-950">
+            Pemberitahuan Rutin: Belum Ada Unggahan Data SEMrush Minggu Ini
+          </h3>
+          <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+            Anda belum mengunggah data kata kunci dari SEMrush dalam waktu 1 minggu terakhir. Perbarui dataset riset secara berkala agar arahan editorial dan tren topik tetap relevan serta akurat.
+          </p>
         </div>
         <button
           type="button"

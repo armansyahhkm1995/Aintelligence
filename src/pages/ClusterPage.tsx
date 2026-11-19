@@ -222,23 +222,18 @@ export const ClusterPage: React.FC = () => {
       {/* Flag / Newsletter Banner AI (Pengganti Toast saat klik Buat Kelompok dengan AI) */}
       {aiNewsletter && (
         <div className="bg-gradient-to-r from-blue-50 via-indigo-50/60 to-blue-50 border border-blue-200 rounded-xl p-4 shadow-xs relative flex items-start justify-between gap-4 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 text-[#1866EF] shrink-0 mt-0.5">
-              <Sparkles className="w-4 h-4" />
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="text-xs font-bold text-slate-900">
+                {aiNewsletter.title}
+              </h4>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1866EF] text-white">
+                Pembaruan AI
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="text-xs font-bold text-slate-900">
-                  {aiNewsletter.title}
-                </h4>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1866EF] text-white">
-                  Pembaruan AI
-                </span>
-              </div>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed">
-                {aiNewsletter.message}
-              </p>
-            </div>
+            <p className="text-xs text-slate-700 mt-1 leading-relaxed">
+              {aiNewsletter.message}
+            </p>
           </div>
           <button
             type="button"

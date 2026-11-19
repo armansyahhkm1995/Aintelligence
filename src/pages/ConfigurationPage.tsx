@@ -2,15 +2,10 @@ import React, { useState } from 'react'
 import {
   Cpu,
   CheckCircle2,
-  AlertTriangle,
   Clock,
   Sparkles,
-  Sliders,
-  RefreshCw,
-  Save,
   Info,
 } from 'lucide-react'
-import { useToast } from '../context/ToastContext'
 
 interface MonthQuotaItem {
   month: string
@@ -21,8 +16,6 @@ interface MonthQuotaItem {
 }
 
 export const ConfigurationPage: React.FC = () => {
-  const { showSuccess } = useToast()
-
   // Monthly breakdown: 12 months with 8.33% annual quota allocation each
   const [monthlyQuotas] = useState<MonthQuotaItem[]>([
     { month: 'Jan', fullName: 'Januari 2026', annualShare: '8.33%', usedPercent: 72, status: 'passed' },
@@ -39,18 +32,8 @@ export const ConfigurationPage: React.FC = () => {
     { month: 'Des', fullName: 'Desember 2026', annualShare: '8.33%', usedPercent: 0, status: 'upcoming' },
   ])
 
-  // Threshold settings in percentages
-  const [warningThreshold, setWarningThreshold] = useState<number>(85)
-  const [criticalThreshold, setCriticalThreshold] = useState<number>(95)
-  const [isRolloverActive, setIsRolloverActive] = useState<boolean>(true)
+  // Model Mode selection
   const [modelMode, setModelMode] = useState<string>('balanced')
-
-  const handleSaveConfig = () => {
-    showSuccess(
-      'Konfigurasi Disimpan',
-      `Ambang peringatan ${warningThreshold}% dan ambang kritis ${criticalThreshold}% berhasil diperbarui.`
-    )
-  }
 
   return (
     <div className="space-y-6">
@@ -229,90 +212,6 @@ export const ConfigurationPage: React.FC = () => {
           <p className="leading-relaxed">
             <strong>Catatan Penggunaan Proporsional:</strong> Apabila pemakaian pada bulan berjalan mencapai 100%, sistem akan mengalirkan kuota cadangan dari bulan berikutnya secara otomatis melalui mekanisme rollover tanpa mengganggu stabilitas produksi berita.
           </p>
-        </div>
-      </div>
-
-      {/* 4. Configuration Settings & Thresholds */}
-      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
-        <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-          <Sliders className="w-4 h-4 text-[#1866EF]" />
-          <h2 className="text-base font-bold text-slate-900">
-            Kebijakan & Ambang Batas Peringatan Kuota
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Threshold 1: Warning */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-800">
-                Ambang Notifikasi Peringatan Bulanan
-              </label>
-              <span className="text-xs font-mono font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                {warningThreshold}% Terpakai
-              </span>
-            </div>
-            <input
-              type="range"
-              min={50}
-              max={95}
-              step={5}
-              value={warningThreshold}
-              onChange={(e) => setWarningThreshold(Number(e.target.value))}
-              className="w-full accent-[#1866EF] cursor-pointer"
-            />
-            <p className="text-[11px] text-slate-400">
-              Sistem akan memicu peringatan ke admin jika pemakaian kuota bulan berjalan melampaui {warningThreshold}%.
-            </p>
-          </div>
-
-          {/* Threshold 2: Critical */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-800">
-                Ambang Pembatasan Otomatis (Throttle)
-              </label>
-              <span className="text-xs font-mono font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">
-                {criticalThreshold}% Terpakai
-              </span>
-            </div>
-            <input
-              type="range"
-              min={70}
-              max={100}
-              step={5}
-              value={criticalThreshold}
-              onChange={(e) => setCriticalThreshold(Number(e.target.value))}
-              className="w-full accent-rose-600 cursor-pointer"
-            />
-            <p className="text-[11px] text-slate-400">
-              Sistem membatasi antrean generasi draf otomatis dan memprioritaskan arahan artikel penting saat mencapai {criticalThreshold}%.
-            </p>
-          </div>
-        </div>
-
-        <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="rollover-check"
-              checked={isRolloverActive}
-              onChange={(e) => setIsRolloverActive(e.target.checked)}
-              className="w-4 h-4 text-[#1866EF] rounded border-slate-300 focus:ring-[#1866EF] cursor-pointer"
-            />
-            <label htmlFor="rollover-check" className="text-xs text-slate-700 font-medium cursor-pointer">
-              Aktifkan Rollover Kuota (Sisa kuota bulan lampau tidak hangus dan dialihkan ke cadangan akhir tahun)
-            </label>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleSaveConfig}
-            className="h-10 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center justify-center gap-2 shrink-0"
-          >
-            <Save className="w-3.5 h-3.5" />
-            <span>Simpan Konfigurasi</span>
-          </button>
         </div>
       </div>
     </div>

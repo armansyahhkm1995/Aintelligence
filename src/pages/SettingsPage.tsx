@@ -10,6 +10,10 @@ import {
   Edit3,
   GripVertical,
   X,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
 } from 'lucide-react'
 
 export const SettingsPage: React.FC = () => {
@@ -27,6 +31,11 @@ export const SettingsPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya' | 'csv'>('filter')
   const [tempCooldownMonths, setTempCooldownMonths] = useState<number>(csvCooldownMonths || 3)
+
+  // Tab 3: Custom Date Range State (shadcn UI style 2-month calendar)
+  const [rangeFrom, setRangeFrom] = useState<Date>(new Date(2026, 9, 1)) // 1 Okt 2026
+  const [rangeTo, setRangeTo] = useState<Date>(new Date(2026, 10, 19)) // 19 Nov 2026
+  const [viewDate, setViewDate] = useState<Date>(new Date(2026, 9, 1)) // Oct 2026 (left), Nov 2026 (right)
 
   // Search & Filters for Tab 1
   const [searchRule, setSearchRule] = useState('')
@@ -576,7 +585,7 @@ export const SettingsPage: React.FC = () => {
         )}
 
         {/* ======================================================== */}
-        {/* TAB 3: Pengaturan Unggah CSV (Batas Kedaluwarsa & Revalidasi) */}
+        {/* TAB 3: Pengaturan Unggah CSV (Kustom Date Range Shadcn UI) */}
         {/* ======================================================== */}
         {activeTab === 'csv' && (
           <div className="space-y-6">
@@ -585,79 +594,357 @@ export const SettingsPage: React.FC = () => {
                 Pengaturan Unggah & Validasi CSV Semrush
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Konfigurasi jeda waktu unggah ulang berkas CSV serupa serta parameter deteksi duplikasi kata kunci untuk menjamin kebaruan tren redaksional.
+                Konfigurasi rentang tanggal validasi kustom untuk berkas CSV riset kata kunci dan keyword gap yang diizinkan masuk ke sistem antrean redaksi.
               </p>
             </div>
 
-            {/* Section 1: Jeda Waktu Unggah Ulang Berkas CSV Serupa */}
-            <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 space-y-4">
-              <div>
-                <h3 className="text-xs font-bold text-slate-900">
-                  Jenjang Waktu Jeda Unggah Ulang Berkas CSV Serupa (Batas Kedaluwarsa Tren)
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Tentukan jeda waktu minimum kapan suatu berkas CSV dengan kumpulan kata kunci serupa baru diizinkan untuk diunggah kembali ke sistem. Berkas serupa yang diunggah sebelum jeda waktu terlewati akan otomatis ditolak guna mencegah penulisan konten berbasis tren yang sudah lampau.
-                </p>
+            {/* Container Kalender Ganda (Shadcn Date Range Picker UI) */}
+            <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 sm:p-6 shadow-xs space-y-6">
+              {/* Info & Selected Range Preview */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center justify-center shrink-0">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                      Rentang Tanggal Validasi Aktif
+                    </div>
+                    <div className="text-sm font-bold text-slate-900 flex items-center gap-2 mt-0.5">
+                      <span>
+                        {rangeFrom.getDate()}{' '}
+                        {[
+                          'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+                        ][rangeFrom.getMonth()]}{' '}
+                        {rangeFrom.getFullYear()}
+                      </span>
+                      <span className="text-slate-400 font-normal">—</span>
+                      <span>
+                        {rangeTo.getDate()}{' '}
+                        {[
+                          'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+                        ][rangeTo.getMonth()]}{' '}
+                        {rangeTo.getFullYear()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                    Status: Rentang Kustom Aktif
+                  </span>
+                </div>
               </div>
 
-              {/* Radio options */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Quick Preset Buttons */}
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <span className="text-slate-500 font-medium mr-1">Preset Cepat:</span>
                 {[
-                  { value: 1, label: '1 Bulan', desc: 'Siklus tren sangat cepat' },
-                  { value: 3, label: '3 Bulan (Rekomendasi)', desc: 'Ideal untuk evaluasi kuartal redaksi' },
-                  { value: 6, label: '6 Bulan', desc: 'Siklus tren jangka panjang (semester)' },
-                ].map((opt) => {
-                  const isSelected = tempCooldownMonths === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setTempCooldownMonths(opt.value)}
-                      className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
-                        isSelected
-                          ? 'border-[#1866EF] bg-[#EFF6FF] text-[#1866EF] ring-1 ring-[#1866EF]'
-                          : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs">{opt.label}</span>
-                        <span
-                          className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                            isSelected ? 'border-[#1866EF] bg-[#1866EF]' : 'border-slate-300'
-                          }`}
-                        >
-                          {isSelected && <span className="w-1.5 h-1.5 bg-white rounded-full" />}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-400">{opt.desc}</p>
-                    </button>
-                  )
-                })}
+                  {
+                    label: '7 Hari Terakhir',
+                    from: new Date(2026, 10, 12),
+                    to: new Date(2026, 10, 19),
+                    view: new Date(2026, 9, 1),
+                  },
+                  {
+                    label: '30 Hari Terakhir',
+                    from: new Date(2026, 9, 20),
+                    to: new Date(2026, 10, 19),
+                    view: new Date(2026, 9, 1),
+                  },
+                  {
+                    label: 'Bulan Ini (November 2026)',
+                    from: new Date(2026, 10, 1),
+                    to: new Date(2026, 10, 19),
+                    view: new Date(2026, 9, 1),
+                  },
+                  {
+                    label: 'Kuartal Q4 (3 Bulan)',
+                    from: new Date(2026, 9, 1),
+                    to: new Date(2026, 11, 31),
+                    view: new Date(2026, 9, 1),
+                  },
+                  {
+                    label: 'Tahun 2026 Penuh',
+                    from: new Date(2026, 0, 1),
+                    to: new Date(2026, 10, 19),
+                    view: new Date(2026, 9, 1),
+                  },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setRangeFrom(preset.from)
+                      setRangeTo(preset.to)
+                      setViewDate(preset.view)
+                    }}
+                    className="px-3 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-[#1866EF] border border-slate-200 hover:border-blue-200 rounded-lg text-slate-700 font-medium transition-colors cursor-pointer"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setTempCooldownMonths(csvCooldownMonths)}
-                className="h-[36px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors cursor-pointer"
-              >
-                Reset
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setCsvCooldownMonths(tempCooldownMonths)
-                  showSuccess(
-                    'Pengaturan Unggah CSV',
-                    `Jeda waktu unggah ulang CSV berhasil diatur menjadi ${tempCooldownMonths} bulan dengan validasi 20 kata kunci pertama.`
-                  )
-                }}
-                className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs cursor-pointer"
-              >
-                Simpan Pengaturan CSV
-              </button>
+              {/* 2 Kalender Berdampingan (Style Shadcn Date-Range-Picker) */}
+              <div className="p-4 sm:p-6 bg-slate-50/50 border border-slate-200 rounded-xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+                  {/* Kalender 1: Bulan Kiri */}
+                  {(() => {
+                    const monthDate = viewDate
+                    const year = monthDate.getFullYear()
+                    const month = monthDate.getMonth()
+                    const daysInMonth = new Date(year, month + 1, 0).getDate()
+                    const firstDayIndex = new Date(year, month, 1).getDay()
+                    const monthNames = [
+                      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+                    ]
+                    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']
+
+                    const days = []
+                    for (let i = 0; i < firstDayIndex; i++) days.push(null)
+                    for (let d = 1; d <= daysInMonth; d++) days.push(new Date(year, month, d))
+
+                    const isSameDay = (d1: Date, d2: Date) =>
+                      d1.getFullYear() === d2.getFullYear() &&
+                      d1.getMonth() === d2.getMonth() &&
+                      d1.getDate() === d2.getDate()
+
+                    const isBetween = (d: Date, start: Date, end: Date) => {
+                      const t = d.getTime()
+                      const s = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime()
+                      const e = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime()
+                      return t > s && t < e
+                    }
+
+                    const handleDateClick = (clicked: Date) => {
+                      if (isSameDay(rangeFrom, rangeTo)) {
+                        if (clicked < rangeFrom) {
+                          setRangeFrom(clicked)
+                        } else {
+                          setRangeTo(clicked)
+                        }
+                      } else {
+                        setRangeFrom(clicked)
+                        setRangeTo(clicked)
+                      }
+                    }
+
+                    return (
+                      <div className="flex-1 space-y-3 md:pr-4">
+                        <div className="flex items-center justify-between h-9 px-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))
+                            }
+                            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-white text-slate-700 transition-colors cursor-pointer shadow-2xs"
+                            title="Bulan Sebelumnya"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                          <span className="text-xs font-bold text-slate-900">
+                            {monthNames[month]} {year}
+                          </span>
+                          <div className="w-8 h-8" />
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1 text-center border-b border-slate-100 pb-1.5">
+                          {dayNames.map((dn) => (
+                            <span key={dn} className="text-[11px] font-semibold text-slate-400">
+                              {dn}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-y-1">
+                          {days.map((day, idx) => {
+                            if (!day) return <div key={`l-empty-${idx}`} className="h-8" />
+
+                            const isStart = isSameDay(day, rangeFrom)
+                            const isEnd = isSameDay(day, rangeTo)
+                            const inBetween = isBetween(day, rangeFrom, rangeTo)
+
+                            return (
+                              <div
+                                key={day.toISOString()}
+                                className={`h-8 flex items-center justify-center relative ${
+                                  inBetween ? 'bg-blue-50/90' : ''
+                                } ${
+                                  isStart && !isEnd ? 'bg-gradient-to-r from-transparent to-blue-50/90' : ''
+                                } ${
+                                  isEnd && !isStart ? 'bg-gradient-to-l from-transparent to-blue-50/90' : ''
+                                }`}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => handleDateClick(day)}
+                                  className={`w-8 h-8 flex items-center justify-center text-xs transition-colors cursor-pointer ${
+                                    isStart || isEnd
+                                      ? 'bg-[#1866EF] text-white font-bold rounded-md shadow-xs z-10'
+                                      : inBetween
+                                      ? 'text-blue-900 font-semibold rounded-none hover:bg-blue-100'
+                                      : 'text-slate-700 hover:bg-white hover:border hover:border-slate-200 rounded-md'
+                                  }`}
+                                >
+                                  {day.getDate()}
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* Kalender 2: Bulan Kanan */}
+                  {(() => {
+                    const monthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1)
+                    const year = monthDate.getFullYear()
+                    const month = monthDate.getMonth()
+                    const daysInMonth = new Date(year, month + 1, 0).getDate()
+                    const firstDayIndex = new Date(year, month, 1).getDay()
+                    const monthNames = [
+                      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+                    ]
+                    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']
+
+                    const days = []
+                    for (let i = 0; i < firstDayIndex; i++) days.push(null)
+                    for (let d = 1; d <= daysInMonth; d++) days.push(new Date(year, month, d))
+
+                    const isSameDay = (d1: Date, d2: Date) =>
+                      d1.getFullYear() === d2.getFullYear() &&
+                      d1.getMonth() === d2.getMonth() &&
+                      d1.getDate() === d2.getDate()
+
+                    const isBetween = (d: Date, start: Date, end: Date) => {
+                      const t = d.getTime()
+                      const s = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime()
+                      const e = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime()
+                      return t > s && t < e
+                    }
+
+                    const handleDateClick = (clicked: Date) => {
+                      if (isSameDay(rangeFrom, rangeTo)) {
+                        if (clicked < rangeFrom) {
+                          setRangeFrom(clicked)
+                        } else {
+                          setRangeTo(clicked)
+                        }
+                      } else {
+                        setRangeFrom(clicked)
+                        setRangeTo(clicked)
+                      }
+                    }
+
+                    return (
+                      <div className="flex-1 space-y-3 pt-6 md:pt-0 md:pl-6">
+                        <div className="flex items-center justify-between h-9 px-1">
+                          <div className="w-8 h-8" />
+                          <span className="text-xs font-bold text-slate-900">
+                            {monthNames[month]} {year}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))
+                            }
+                            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-white text-slate-700 transition-colors cursor-pointer shadow-2xs"
+                            title="Bulan Berikutnya"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1 text-center border-b border-slate-100 pb-1.5">
+                          {dayNames.map((dn) => (
+                            <span key={dn} className="text-[11px] font-semibold text-slate-400">
+                              {dn}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-y-1">
+                          {days.map((day, idx) => {
+                            if (!day) return <div key={`r-empty-${idx}`} className="h-8" />
+
+                            const isStart = isSameDay(day, rangeFrom)
+                            const isEnd = isSameDay(day, rangeTo)
+                            const inBetween = isBetween(day, rangeFrom, rangeTo)
+
+                            return (
+                              <div
+                                key={day.toISOString()}
+                                className={`h-8 flex items-center justify-center relative ${
+                                  inBetween ? 'bg-blue-50/90' : ''
+                                } ${
+                                  isStart && !isEnd ? 'bg-gradient-to-r from-transparent to-blue-50/90' : ''
+                                } ${
+                                  isEnd && !isStart ? 'bg-gradient-to-l from-transparent to-blue-50/90' : ''
+                                }`}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => handleDateClick(day)}
+                                  className={`w-8 h-8 flex items-center justify-center text-xs transition-colors cursor-pointer ${
+                                    isStart || isEnd
+                                      ? 'bg-[#1866EF] text-white font-bold rounded-md shadow-xs z-10'
+                                      : inBetween
+                                      ? 'text-blue-900 font-semibold rounded-none hover:bg-blue-100'
+                                      : 'text-slate-700 hover:bg-white hover:border hover:border-slate-200 rounded-md'
+                                  }`}
+                                >
+                                  {day.getDate()}
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <p className="text-[11px] text-slate-500">
+                  Semua berkas CSV Semrush yang diunggah akan otomatis divalidasi terhadap rentang tanggal kustom di atas.
+                </p>
+
+                <div className="flex items-center gap-3 self-end sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRangeFrom(new Date(2026, 9, 1))
+                      setRangeTo(new Date(2026, 10, 19))
+                      setViewDate(new Date(2026, 9, 1))
+                    }}
+                    className="h-[36px] px-4 border border-[#DBEAFE] hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showSuccess(
+                        'Pengaturan Rentang Tanggal Disimpan',
+                        `Rentang tanggal validasi CSV berhasil diatur: ${rangeFrom.getDate()}/${rangeFrom.getMonth() + 1}/${rangeFrom.getFullYear()} - ${rangeTo.getDate()}/${rangeTo.getMonth() + 1}/${rangeTo.getFullYear()}`
+                      )
+                    }}
+                    className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer"
+                  >
+                    Simpan Pengaturan Rentang Tanggal
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
