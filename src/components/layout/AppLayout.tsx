@@ -33,15 +33,10 @@ import { EditClusterDrawer } from '../drawers/EditClusterDrawer'
 export const AppLayout: React.FC = () => {
   const { currentPage, setCurrentPage, isAuthenticated, currentUser } = useApp()
 
-  // Redirect editor away from all pages except dashboard, brief, and draft
+  // Redirect editor away from all pages except brief and draft
   useEffect(() => {
-    if (
-      currentUser?.role === 'editor' &&
-      currentPage !== 'dashboard' &&
-      currentPage !== 'brief' &&
-      currentPage !== 'draft'
-    ) {
-      setCurrentPage('dashboard')
+    if (currentUser?.role === 'editor' && currentPage !== 'brief' && currentPage !== 'draft') {
+      setCurrentPage('brief')
     }
   }, [currentUser, currentPage, setCurrentPage])
 
