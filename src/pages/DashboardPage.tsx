@@ -19,46 +19,17 @@ import {
   ShieldAlert,
   User,
   Clock,
+  FileCheck2,
+  FileEdit,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
-  const { setCurrentPage } = useApp()
+  const { setCurrentPage, currentUser } = useApp()
 
-  const [aiDecisionTab, setAiDecisionTab] = useState<'keyword' | 'cluster' | 'brief'>('brief')
-  const [overrideFilter, setOverrideFilter] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('keyword')
-
-  const steps = [
-    {
-      step: 'Step 1: Impor CSV',
-      count: '2 File Baru',
-      sub: 'Unggahan terbaru 20 menit lalu',
-      page: 'impor' as const,
-    },
-    {
-      step: 'Step 2: Kata Kunci',
-      count: '1.250 Layak',
-      sub: 'Dari 3.420 total keyword',
-      page: 'keyword' as const,
-    },
-    {
-      step: 'Step 3: Kelompok Topik',
-      count: '45 Terbentuk',
-      sub: '3 potensi kanibalisasi',
-      page: 'cluster' as const,
-    },
-    {
-      step: 'Step 4: Arahan Artikel',
-      count: '12 Disetujui',
-      sub: '4 menunggu tinjauan',
-      page: 'brief' as const,
-    },
-    {
-      step: 'Step 5: Draf Artikel',
-      count: '8 Siap Salin',
-      sub: 'Siap verifikasi editor',
-      page: 'draft' as const,
-    },
-  ]
+  const [aiDecisionTab, setAiDecisionTab] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('brief')
+  const [overrideFilter, setOverrideFilter] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>(
+    currentUser?.role === 'editor' ? 'brief' : 'keyword'
+  )
 
   return (
     <div className="space-y-6">
@@ -72,238 +43,85 @@ export const DashboardPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 5 Metrics Cards Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5">
-        {steps.map((item, i) => (
-          <div
-            key={i}
-            onClick={() => setCurrentPage(item.page)}
-            className="bg-white border border-[#DBEAFE] rounded-md p-3.5 sm:p-4 flex flex-col justify-between hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer group min-h-[120px] sm:h-[136px]"
-          >
-            <div className="text-[11px] sm:text-xs font-medium text-slate-500">{item.step}</div>
-            <div>
-              <div className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">{item.count}</div>
-              {item.sub ? (
-                <div className="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">{item.sub}</div>
-              ) : (
-                <div className="h-4" />
-              )}
+      {/* Kartu Ringkasan Naskah yang Diambil oleh Editor */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card 1: Arahan Artikel Diambil */}
+        <div
+          onClick={() => setCurrentPage('brief')}
+          className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer group flex flex-col justify-between min-h-[120px]"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center justify-center">
+                <FileCheck2 className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Arahan Artikel
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#1866EF] transition-colors">
+                  Sedang Anda Ambil
+                </h3>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Audit Kepemilikan & Status Penguncian Editor (War Ticket Rule) */}
-      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-base font-bold text-slate-900">
-              Audit Kepemilikan Naskah & Status Kunci Editor
-            </h2>
-            <p className="text-xs text-slate-500 max-w-4xl leading-relaxed mt-1">
-              Setiap kali editor masuk ke tampilan detail suatu Arahan Artikel atau Draf Berita, sistem secara otomatis mengunci naskah tersebut atas nama editor yang bersangkutan. Naskah yang terkunci tidak dapat dibuka atau diubah oleh editor lain sampai pemilik naskah menekan tombol Lepas Arahan / Draft Artikel.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="bg-blue-50 text-[#1866EF] text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              6 Naskah Dikunci
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center gap-1">
+              <Lock className="w-3 h-3" />
+              Terkunci
             </span>
-            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
-              2 Naskah Tersedia
+          </div>
+
+          <div className="mt-4 flex items-baseline justify-between">
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                3 Naskah
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Naskah arahan aktif dalam proses review redaksional Anda
+              </p>
+            </div>
+            <span className="text-xs font-semibold text-[#1866EF] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              Buka Arahan <ChevronRight className="w-4 h-4" />
             </span>
           </div>
         </div>
 
-        {/* Dual Grid: Arahan Artikel vs Draf Artikel */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
-          {/* Kolom 1: Arahan Artikel (Brief) */}
-          <div className="border border-slate-200 rounded-lg p-4 space-y-3 bg-slate-50/40">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#1866EF]"></span>
-                <span className="text-xs font-bold text-slate-900">Arahan Artikel Terkini</span>
+        {/* Card 2: Draft Artikel Diambil */}
+        <div
+          onClick={() => setCurrentPage('draft')}
+          className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-emerald-400 hover:shadow-sm transition-all cursor-pointer group flex flex-col justify-between min-h-[120px]"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
+                <FileEdit className="w-4 h-4" />
               </div>
-              <button
-                type="button"
-                onClick={() => setCurrentPage('brief')}
-                className="text-[11px] font-semibold text-[#1866EF] hover:underline cursor-pointer flex items-center gap-0.5"
-              >
-                <span>Lihat Semua</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Draft Artikel
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                  Sedang Anda Ambil
+                </h3>
+              </div>
             </div>
-
-            <div className="space-y-2">
-              {[
-                {
-                  id: 'BRF-001',
-                  title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
-                  editor: 'Budi Santoso',
-                  status: 'Disetujui oleh Budi Santoso',
-                  statusType: 'approved',
-                  time: '10 menit lalu',
-                },
-                {
-                  id: 'BRF-003',
-                  title: 'Syarat dan Dokumen Pembuatan Paspor Elektronik 2026',
-                  editor: 'Siti Rahmawati',
-                  status: 'Diambil oleh Siti Rahmawati',
-                  statusType: 'claimed',
-                  time: '25 menit lalu',
-                },
-                {
-                  id: 'BRF-005',
-                  title: 'Strategi Investasi Reksadana Saham bagi Pemula',
-                  editor: 'Ahmad Fauzi',
-                  status: 'Dibuat ulang oleh Ahmad Fauzi',
-                  statusType: 'regen',
-                  time: '45 menit lalu',
-                },
-                {
-                  id: 'BRF-004',
-                  title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
-                  editor: '-',
-                  status: 'Tersedia',
-                  statusType: 'available',
-                  time: 'Siap diambil',
-                },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setCurrentPage('brief')}
-                  className="p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-3 hover:border-blue-300 hover:shadow-2xs transition-all cursor-pointer"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-slate-900 truncate">
-                      {item.title}
-                    </p>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-1">
-                      {item.editor !== '-' ? (
-                        <span className="flex items-center gap-1 font-medium text-slate-700">
-                          <User className="w-3 h-3 text-slate-400" />
-                          {item.editor}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 italic">Belum ada editor</span>
-                      )}
-                      <span>•</span>
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Clock className="w-3 h-3" />
-                        {item.time}
-                      </span>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
-                      item.statusType === 'available'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : item.statusType === 'approved'
-                        ? 'bg-purple-50 text-purple-700 border-purple-200'
-                        : item.statusType === 'regen'
-                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                        : 'bg-blue-50 text-blue-700 border-blue-200'
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+              <Lock className="w-3 h-3" />
+              Terkunci
+            </span>
           </div>
 
-          {/* Kolom 2: Draf Artikel (Draft) */}
-          <div className="border border-slate-200 rounded-lg p-4 space-y-3 bg-slate-50/40">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span className="text-xs font-bold text-slate-900">Draf Artikel Terkini</span>
+          <div className="mt-4 flex items-baseline justify-between">
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                2 Naskah
               </div>
-              <button
-                type="button"
-                onClick={() => setCurrentPage('draft')}
-                className="text-[11px] font-semibold text-[#1866EF] hover:underline cursor-pointer flex items-center gap-0.5"
-              >
-                <span>Lihat Semua</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Naskah draf berita yang sedang Anda kunci dan verifikasi
+              </p>
             </div>
-
-            <div className="space-y-2">
-              {[
-                {
-                  id: 'DFT-001',
-                  title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
-                  editor: 'Siti Rahmawati',
-                  status: 'Diambil oleh Siti Rahmawati',
-                  statusType: 'claimed',
-                  time: '15 menit lalu',
-                },
-                {
-                  id: 'DFT-003',
-                  title: 'Prosedur Pindah Domisili Antar Provinsi Tanpa Surat Pengantar RT',
-                  editor: 'Dewi Lestari',
-                  status: 'Diambil oleh Dewi Lestari',
-                  statusType: 'claimed',
-                  time: '30 menit lalu',
-                },
-                {
-                  id: 'DFT-005',
-                  title: 'Strategi Investasi Reksadana Saham bagi Pemula',
-                  editor: 'Ahmad Fauzi',
-                  status: 'Diambil oleh Ahmad Fauzi',
-                  statusType: 'claimed',
-                  time: '50 menit lalu',
-                },
-                {
-                  id: 'DFT-004',
-                  title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
-                  editor: '-',
-                  status: 'Tersedia',
-                  statusType: 'available',
-                  time: 'Siap diambil',
-                },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setCurrentPage('draft')}
-                  className="p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-3 hover:border-blue-300 hover:shadow-2xs transition-all cursor-pointer"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-slate-900 truncate">
-                      {item.title}
-                    </p>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-1">
-                      {item.editor !== '-' ? (
-                        <span className="flex items-center gap-1 font-medium text-slate-700">
-                          <User className="w-3 h-3 text-slate-400" />
-                          {item.editor}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 italic">Belum ada editor</span>
-                      )}
-                      <span>•</span>
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Clock className="w-3 h-3" />
-                        {item.time}
-                      </span>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
-                      item.statusType === 'available'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-blue-50 text-blue-700 border-blue-200'
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              Buka Draf <ChevronRight className="w-4 h-4" />
+            </span>
           </div>
         </div>
       </div>
@@ -320,8 +138,8 @@ export const DashboardPage: React.FC = () => {
               7 Butuh Tindakan
             </span>
           </div>
-          <p className="text-sm text-slate-400 mt-1">
-            Item bottleneck prioritas yang menunggu persetujuan dan penyuntingan Anda.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Daftar tugas yang belum diambil dan memerlukan tinjauan Anda.
           </p>
         </div>
 
@@ -583,41 +401,68 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Tab Selector: Full width matching SettingsPage */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-3 gap-1 bg-white select-none overflow-x-auto w-full">
-          <button
-            type="button"
-            onClick={() => setAiDecisionTab('keyword')}
-            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
-              aiDecisionTab === 'keyword'
-                ? 'bg-[#1866EF] text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            Kata Kunci
-          </button>
-          <button
-            type="button"
-            onClick={() => setAiDecisionTab('cluster')}
-            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
-              aiDecisionTab === 'cluster'
-                ? 'bg-[#1866EF] text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            Kelompok Topik
-          </button>
-          <button
-            type="button"
-            onClick={() => setAiDecisionTab('brief')}
-            className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
-              aiDecisionTab === 'brief'
-                ? 'bg-[#1866EF] text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            Arahan & Draf Artikel
-          </button>
-        </div>
+        {currentUser?.role === 'editor' ? (
+          <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-2 gap-1 bg-white select-none overflow-x-auto w-full">
+            <button
+              type="button"
+              onClick={() => setAiDecisionTab('brief')}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                aiDecisionTab === 'brief'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Arahan Artikel
+            </button>
+            <button
+              type="button"
+              onClick={() => setAiDecisionTab('draft')}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                aiDecisionTab === 'draft'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Draf Artikel
+            </button>
+          </div>
+        ) : (
+          <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-3 gap-1 bg-white select-none overflow-x-auto w-full">
+            <button
+              type="button"
+              onClick={() => setAiDecisionTab('keyword')}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                aiDecisionTab === 'keyword'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Kata Kunci
+            </button>
+            <button
+              type="button"
+              onClick={() => setAiDecisionTab('cluster')}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                aiDecisionTab === 'cluster'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Kelompok Topik
+            </button>
+            <button
+              type="button"
+              onClick={() => setAiDecisionTab('brief')}
+              className={`h-[36px] px-3 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                aiDecisionTab === 'brief'
+                  ? 'bg-[#1866EF] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Arahan & Draf Artikel
+            </button>
+          </div>
+        )}
 
         {/* Tab Content 1: Saring Kata Kunci */}
         {aiDecisionTab === 'keyword' && (
@@ -779,6 +624,74 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Tab Content 4: Draf Artikel Khusus Editor */}
+        {aiDecisionTab === 'draft' && (
+          <div className="space-y-4">
+            <div className="p-4 border border-[#DBEAFE] rounded-xl bg-white space-y-3.5 shadow-2xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Draf Naskah Terverifikasi AI
+                  </span>
+                  <h3 className="text-base font-bold text-[#1866EF] mt-0.5">
+                    Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
+                  </h3>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-bold self-start sm:self-auto">
+                  Status: Siap Salin &amp; Review
+                </span>
+              </div>
+
+              {/* Grid 4 Evaluasi Keputusan Redaksional AI pada Draf */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                <div className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-lg space-y-1">
+                  <span className="text-[10px] font-bold text-slate-500 block uppercase">
+                    1. Struktur Lead 5W+1H
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium">
+                    Paragraf pembuka memuat fokus edukasi, menjabarkan apa itu reksadana, modal minimal Rp10.000, serta legalitas perlindungan OJK.
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-lg space-y-1">
+                  <span className="text-[10px] font-bold text-slate-500 block uppercase">
+                    2. Kepatuhan Buku Gaya
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium">
+                    Tata bahasa baku KBBI, netral, menguraikan akronim APERD dan RDN, serta menyertakan klausul disclaimer risiko investasi.
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-lg space-y-1">
+                  <span className="text-[10px] font-bold text-slate-500 block uppercase">
+                    3. Keterbacaan &amp; SEO
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium">
+                    Skor Flesch 72 (mudah dipahami pembaca pemula), kepadatan kata kunci 1.8%, dan struktur subjudul ramah mesin telusur.
+                  </p>
+                </div>
+                <div className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-lg space-y-1">
+                  <span className="text-[10px] font-bold text-slate-500 block uppercase">
+                    4. Orisinalitas &amp; Kemiripan
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium">
+                    Tingkat kemiripan naskah 18.4% (aman di bawah ambang 20%), sitasi langsung ke regulasi resmi OJK dan BI telah diproteksi.
+                  </p>
+                </div>
+              </div>
+
+              {/* Kesimpulan Naratif AI untuk Draf */}
+              <div className="p-4 bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl space-y-1.5 mt-2">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1866EF]">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Kesimpulan Keputusan AI (Pertimbangan Produksi Draf):</span>
+                </div>
+                <p className="text-xs text-slate-800 leading-relaxed text-justify">
+                  Draf artikel diproduksi secara komprehensif mengikuti arahan editorial sebelumnya. AI memastikan seluruh paragraf mengalir logis tanpa repetisi informasi, bebas dari kata kunci terlarang atau frasa spekulatif, dan siap disalin oleh editor ke CMS portal berita RRI.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ========================================================================= */}
@@ -904,11 +817,19 @@ export const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Module Filter Tabs: Full width matching SettingsPage (4 tabs, 'all' removed) */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-4 gap-1 bg-white select-none overflow-x-auto w-full">
+        {/* Module Filter Tabs: Full width matching SettingsPage (Filtered for Editor) */}
+        <div
+          className={`border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid ${
+            currentUser?.role === 'editor' ? 'sm:grid-cols-2' : 'sm:grid-cols-4'
+          } gap-1 bg-white select-none overflow-x-auto w-full`}
+        >
           {[
-            { id: 'keyword', label: 'Kata Kunci' },
-            { id: 'cluster', label: 'Kelompok Topik' },
+            ...(currentUser?.role === 'editor'
+              ? []
+              : [
+                  { id: 'keyword', label: 'Kata Kunci' },
+                  { id: 'cluster', label: 'Kelompok Topik' },
+                ]),
             { id: 'brief', label: 'Arahan Artikel' },
             { id: 'draft', label: 'Draf Artikel' },
           ].map((f) => (

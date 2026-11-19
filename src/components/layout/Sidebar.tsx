@@ -107,7 +107,7 @@ export const Sidebar: React.FC = () => {
             {pipelineNavItems
               .filter((item) => {
                 if (currentUser?.role === 'editor') {
-                  return item.id === 'brief' || item.id === 'draft'
+                  return item.id === 'dashboard' || item.id === 'brief' || item.id === 'draft'
                 }
                 return true
               })
