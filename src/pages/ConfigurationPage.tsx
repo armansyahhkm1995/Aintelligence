@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import {
-  Cpu,
   CheckCircle2,
   Clock,
   Sparkles,
-  Info,
 } from 'lucide-react'
 
 interface MonthQuotaItem {
@@ -32,9 +30,6 @@ export const ConfigurationPage: React.FC = () => {
     { month: 'Des', fullName: 'Desember 2026', annualShare: '8.33%', usedPercent: 0, status: 'upcoming' },
   ])
 
-  // Model Mode selection
-  const [modelMode, setModelMode] = useState<string>('balanced')
-
   return (
     <div className="space-y-6">
       {/* 1. Header Title & Description */}
@@ -54,31 +49,9 @@ export const ConfigurationPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Visual Metric Cards: Kuota Tahunan & Kuota Bulan Berjalan */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: Kuota Tahunan Total */}
-        <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">Total Alokasi Tahunan</span>
-            <span className="p-1.5 rounded-lg bg-blue-50 text-[#1866EF]">
-              <Cpu className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="mt-4">
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-slate-900">100%</span>
-              <span className="text-xs font-medium text-slate-400">Plafon 1 Tahun</span>
-            </div>
-            <div className="mt-3 w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-              <div className="bg-[#1866EF] h-2.5 rounded-full" style={{ width: '100%' }} />
-            </div>
-            <p className="text-[11px] text-slate-500 mt-2">
-              Periode aktif: 1 Januari 2026 – 31 Desember 2026
-            </p>
-          </div>
-        </div>
-
-        {/* Card 2: Sisa Kuota Tahunan */}
+      {/* 2. Visual Metric Cards: Sisa Kuota Tahunan & Kuota Bulan Berjalan */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card 1: Sisa Kuota Tahunan */}
         <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">Sisa Kuota Tahunan</span>
@@ -97,12 +70,12 @@ export const ConfigurationPage: React.FC = () => {
               <div className="bg-emerald-500 h-2.5 rounded-full" style={{ width: '71.5%' }} />
             </div>
             <p className="text-[11px] text-slate-500 mt-2">
-              Realisasi pemakaian tahun berjalan sebesar 28.5%
+              Periode aktif: 1 Januari 2026 – 31 Desember 2026
             </p>
           </div>
         </div>
 
-        {/* Card 3: Bulan Berjalan (November) */}
+        {/* Card 2: Bulan Berjalan (November) */}
         <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">Batas Bulan Ini (Nov 2026)</span>
@@ -205,13 +178,6 @@ export const ConfigurationPage: React.FC = () => {
               </div>
             )
           })}
-        </div>
-
-        <div className="p-3.5 bg-blue-50/60 border border-blue-100 rounded-lg flex items-start gap-2.5 text-xs text-blue-900">
-          <Info className="w-4 h-4 text-[#1866EF] shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <strong>Catatan Penggunaan Proporsional:</strong> Apabila pemakaian pada bulan berjalan mencapai 100%, sistem akan mengalirkan kuota cadangan dari bulan berikutnya secara otomatis melalui mekanisme rollover tanpa mengganggu stabilitas produksi berita.
-          </p>
         </div>
       </div>
     </div>
