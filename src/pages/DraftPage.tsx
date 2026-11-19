@@ -526,20 +526,16 @@ export const DraftPage: React.FC = () => {
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           <div className="p-6">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1866EF] flex items-center justify-center mb-4">
-              <Lock className="w-6 h-6" />
-            </div>
             <h3 className="text-base font-bold text-slate-900 mb-2">
               Ambil & Kunci Draf Artikel?
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed mb-4">
               Draf artikel <strong className="text-slate-800 font-semibold">"{itemToClaim.title}"</strong> saat ini berstatus <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Tersedia</span>.
             </p>
-            <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl mb-4 text-[11px] text-blue-900 leading-relaxed">
-              <p className="font-semibold mb-1">Mekanisme War Ticket Editor:</p>
-              Ketika Anda mengambil draf artikel ini, sistem akan menguncinya atas nama Anda (<span className="font-bold">{currentUser?.name || 'Budi Santoso'}</span>). Editor lain tidak dapat masuk atau mengeditnya sampai Anda mengklik tombol <strong>Lepas Draft Artikel</strong>.
+            <div className="p-3.5 bg-blue-50/60 border border-blue-100 rounded-xl mb-5 text-xs text-blue-900 leading-relaxed">
+              Ketika Anda mengambil draf artikel ini, sistem akan menguncinya atas nama Anda (<span className="font-bold">{currentUser?.name || 'Budi Prasetyo (Anda)'}</span>). Editor lain tidak dapat masuk atau mengeditnya sampai Anda mengklik tombol <strong>Lepas Draft Artikel</strong>.
             </div>
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-3 pt-1">
               <button
                 type="button"
                 onClick={() => {
@@ -555,7 +551,6 @@ export const DraftPage: React.FC = () => {
                 onClick={handleConfirmClaim}
                 className="px-4 py-2 text-xs font-bold text-white bg-[#1866EF] hover:bg-blue-600 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                <Lock className="w-3.5 h-3.5" />
                 <span>Ambil & Kunci Draf</span>
               </button>
             </div>
@@ -571,16 +566,13 @@ export const DraftPage: React.FC = () => {
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           <div className="p-6">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
-              <ShieldAlert className="w-6 h-6" />
-            </div>
             <h3 className="text-base font-bold text-slate-900 mb-2">
-              Draf Artikel Sedang Dikerjakan
+              Draft Artikel Sudah Diambil
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed mb-4">
               Draf <strong className="text-slate-800 font-semibold">"{lockedItemInfo.title}"</strong> saat ini telah diambil dan dikunci oleh:
             </p>
-            <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl mb-5 flex items-center gap-3">
+            <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl mb-4 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-amber-200 text-amber-800 font-bold flex items-center justify-center text-xs">
                 {lockedItemInfo.editor.charAt(0)}
               </div>
@@ -589,8 +581,8 @@ export const DraftPage: React.FC = () => {
                 <p className="text-[10px] text-amber-700 font-medium">Sedang meninjau / menyunting naskah</p>
               </div>
             </div>
-            <p className="text-[11px] text-slate-500 mb-5 leading-relaxed">
-              Sesuai aturan antrean redaksi RRI (War Ticket), Anda baru dapat mengambil atau melihat draf ini setelah editor tersebut melepaskannya.
+            <p className="text-xs text-slate-600 mb-5 leading-relaxed">
+              Anda baru dapat mengambil atau melihat draf ini setelah editor tersebut melepaskannya.
             </p>
             <div className="flex items-center justify-end">
               <button
@@ -599,7 +591,7 @@ export const DraftPage: React.FC = () => {
                   setIsLockAlertOpen(false)
                   setLockedItemInfo(null)
                 }}
-                className="px-5 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-sm transition-colors cursor-pointer"
+                className="px-6 py-2 text-xs font-bold text-white bg-[#1866EF] hover:bg-blue-600 rounded-lg shadow-sm transition-colors cursor-pointer"
               >
                 Tutup
               </button>
@@ -744,7 +736,7 @@ export const DraftPage: React.FC = () => {
                               Tersedia
                             </span>
                           ) : (
-                            <span className="inline-block px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#1866EF] text-[11px] font-semibold">
+                            <span className="text-slate-700 font-medium text-xs">
                               {item.status}
                             </span>
                           )}

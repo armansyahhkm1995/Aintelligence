@@ -27,8 +27,6 @@ export const SettingsPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya' | 'csv'>('filter')
   const [tempCooldownMonths, setTempCooldownMonths] = useState<number>(csvCooldownMonths || 3)
-  const [checkFirst20, setCheckFirst20] = useState(true)
-  const [autoRejectDuplicate, setAutoRejectDuplicate] = useState(true)
 
   // Search & Filters for Tab 1
   const [searchRule, setSearchRule] = useState('')
@@ -635,54 +633,6 @@ export const SettingsPage: React.FC = () => {
                     </button>
                   )
                 })}
-              </div>
-            </div>
-
-            {/* Section 2: Validasi Duplikasi 20 Kata Kunci Pertama */}
-            <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 space-y-4">
-              <div>
-                <h3 className="text-xs font-bold text-slate-900">
-                  Metode Validasi Duplikasi & Pengecekan Isi Berkas
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Sistem tidak hanya memeriksa nama berkas, melainkan mencocokkan sampel 20 kata kunci pertama guna mendeteksi berkas lama yang hanya diubah namanya.
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-1">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={checkFirst20}
-                    onChange={(e) => setCheckFirst20(e.target.checked)}
-                    className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF]"
-                  />
-                  <div>
-                    <span className="text-xs font-semibold text-slate-800 block">
-                      Revalidasi Sampel 20 Kata Kunci Pertama (Ringan & Cepat)
-                    </span>
-                    <span className="text-[11px] text-slate-400 block">
-                      Membandingkan 20 kata kunci pertama dengan riwayat berkas sebelumnya. Jika kecocokan &ge; 80% dalam rentang jeda waktu ({tempCooldownMonths} bulan), sistem akan memicu alert penolakan duplikasi.
-                    </span>
-                  </div>
-                </label>
-
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={autoRejectDuplicate}
-                    onChange={(e) => setAutoRejectDuplicate(e.target.checked)}
-                    className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF]"
-                  />
-                  <div>
-                    <span className="text-xs font-semibold text-slate-800 block">
-                      Tolak Otomatis Berkas Duplikat & Catat ke Audit Log
-                    </span>
-                    <span className="text-[11px] text-slate-400 block">
-                      Memberikan peringatan penolakan instan pada form unggah CSV dan mencatat upaya pengunggahan berkas kedaluwarsa ke riwayat audit log redaksi.
-                    </span>
-                  </div>
-                </label>
               </div>
             </div>
 

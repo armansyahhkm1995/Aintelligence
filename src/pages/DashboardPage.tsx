@@ -97,20 +97,15 @@ export const DashboardPage: React.FC = () => {
       <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1866EF] flex items-center justify-center shrink-0">
-              <Lock className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Audit Kepemilikan Naskah & Status Kunci Editor
-              </h2>
-              <p className="text-xs text-slate-500">
-                Pemantauan real-time status kepemilikan arahan artikel dan draf berita dalam sistem antrean redaksi.
-              </p>
-            </div>
+          <div>
+            <h2 className="text-base font-bold text-slate-900">
+              Audit Kepemilikan Naskah & Status Kunci Editor
+            </h2>
+            <p className="text-xs text-slate-500 max-w-4xl leading-relaxed mt-1">
+              Setiap kali editor masuk ke tampilan detail suatu Arahan Artikel atau Draf Berita, sistem secara otomatis mengunci naskah tersebut atas nama editor yang bersangkutan. Naskah yang terkunci tidak dapat dibuka atau diubah oleh editor lain sampai pemilik naskah menekan tombol Lepas Arahan / Draft Artikel.
+            </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="bg-blue-50 text-[#1866EF] text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
               6 Naskah Dikunci
@@ -118,17 +113,6 @@ export const DashboardPage: React.FC = () => {
             <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
               2 Naskah Tersedia
             </span>
-          </div>
-        </div>
-
-        {/* Subheader Banner (War Ticket Explanation) */}
-        <div className="p-3.5 bg-gradient-to-r from-blue-50/80 via-blue-50/40 to-slate-50 border border-blue-200 rounded-xl flex items-start gap-3">
-          <ShieldAlert className="w-4 h-4 text-[#1866EF] shrink-0 mt-0.5" />
-          <div className="text-xs text-slate-700 leading-relaxed">
-            <strong className="text-slate-900 font-semibold block mb-0.5">
-              Aturan War Ticket & Penguncian Otomatis Redaksi:
-            </strong>
-            Setiap kali editor masuk ke tampilan detail suatu Arahan Artikel atau Draf Berita, sistem secara otomatis mengunci naskah tersebut atas nama editor yang bersangkutan. Naskah yang terkunci tidak dapat dibuka atau diubah oleh editor lain sampai pemilik naskah menekan tombol <span className="font-semibold text-amber-800 bg-amber-100/70 px-1 py-0.5 rounded">Lepas Arahan / Draft Artikel</span>.
           </div>
         </div>
 

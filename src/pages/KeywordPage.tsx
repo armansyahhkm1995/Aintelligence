@@ -347,23 +347,25 @@ export const KeywordPage: React.FC = () => {
             <table className="w-full text-left text-xs min-w-[950px]">
               <thead>
                 <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                  <th className="py-3 px-4 font-semibold w-[14%]">
+                  <th className="py-3 pl-4 pr-1 w-[40px] text-center">
+                    <input
+                      type="checkbox"
+                      checked={
+                        filteredKeywords.length > 0 &&
+                        selectedIds.length === filteredKeywords.length
+                      }
+                      onChange={handleToggleSelectAll}
+                      className="rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
+                  <th className="py-3 px-3 font-semibold w-[14%]">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
                       <span>Tanggal Entry</span>
                     </div>
                   </th>
                   <th className="py-3 px-4 font-semibold w-[22%]">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={
-                          filteredKeywords.length > 0 &&
-                          selectedIds.length === filteredKeywords.length
-                        }
-                        onChange={handleToggleSelectAll}
-                        className="rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
-                      />
+                    <div className="flex items-center gap-1.5">
                       <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
                       <span>Kata Kunci</span>
                     </div>
@@ -384,8 +386,18 @@ export const KeywordPage: React.FC = () => {
                     key={item.id}
                     className="hover:bg-slate-50/70 transition-colors"
                   >
+                    {/* Checkbox */}
+                    <td className="py-3.5 pl-4 pr-1 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item.id)}
+                        onChange={() => handleToggleSelectRow(item.id)}
+                        className="rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
+
                     {/* Tanggal Entry */}
-                    <td className="py-3.5 px-4 whitespace-nowrap">
+                    <td className="py-3.5 px-3 whitespace-nowrap">
                       <div className="font-semibold text-slate-900 text-xs">
                         {item.entryDate}
                       </div>
@@ -396,20 +408,12 @@ export const KeywordPage: React.FC = () => {
 
                     {/* Kata Kunci with sub-meta */}
                     <td className="py-3.5 px-4">
-                      <div className="flex items-start gap-2.5">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(item.id)}
-                          onChange={() => handleToggleSelectRow(item.id)}
-                          className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-blue-500 cursor-pointer"
-                        />
-                        <div>
-                          <div className="font-bold text-slate-900 leading-snug">
-                            {item.keywordName}
-                          </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5 font-normal">
-                            Vol: {item.vol} | KD: {item.kd} | {item.intent}
-                          </div>
+                      <div>
+                        <div className="font-bold text-slate-900 leading-snug">
+                          {item.keywordName}
+                        </div>
+                        <div className="text-[11px] text-slate-400 mt-0.5 font-normal">
+                          Vol: {item.vol} | KD: {item.kd} | {item.intent}
                         </div>
                       </div>
                     </td>
@@ -484,7 +488,7 @@ export const KeywordPage: React.FC = () => {
                 ))}
                 {filteredKeywords.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="py-8 text-center text-slate-400">
+                    <td colSpan={11} className="py-8 text-center text-slate-400">
                       Tidak ada kata kunci yang cocok dengan kriteria pencarian.
                     </td>
                   </tr>

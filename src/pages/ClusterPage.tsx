@@ -520,9 +520,9 @@ export const ClusterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleRestoreMergedTopic}
-                className="h-9 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 self-end sm:self-auto"
+                className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5 self-end sm:self-auto"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
                 <span>Kembalikan Topik</span>
               </button>
             </div>
@@ -649,11 +649,11 @@ export const ClusterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleUndoSplit}
-                className="h-9 px-3.5 bg-white hover:bg-amber-50 text-amber-800 border border-amber-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
                 title="Batalkan pemecahan dan kembalikan kata kunci ke kelompok topik induk"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
-                <span>Undo Pecahan</span>
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                <span>Kembalikan Topik</span>
               </button>
               <button
                 type="button"

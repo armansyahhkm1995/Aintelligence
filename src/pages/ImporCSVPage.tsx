@@ -166,16 +166,8 @@ export const ImporCSVPage: React.FC = () => {
       {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={1} />
 
-      {/* 4. Drag & Drop Upload Zone with Revalidation Status */}
+      {/* 4. Drag & Drop Upload Zone */}
       <div className="bg-[#EFF6FF] border-2 border-dashed border-[#BFDBFE] rounded-xl p-8 sm:p-10 text-center transition-colors space-y-4">
-        {/* Policy pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-[#BFDBFE] rounded-full text-[11px] text-[#1866EF] font-semibold shadow-2xs">
-          <Clock className="w-3.5 h-3.5 shrink-0" />
-          <span>
-            Batas Kedaluwarsa: Jeda {csvCooldownMonths} Bulan • Validasi Otomatis Sampel 20 Kata Kunci Pertama
-          </span>
-        </div>
-
         <div className="flex justify-center">
           <Upload className="w-7 h-7 text-[#1866EF]" />
         </div>
@@ -184,7 +176,7 @@ export const ImporCSVPage: React.FC = () => {
             Tarik dan seret file CSV Semrush di sini, atau klik tombol di bawah
           </h2>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Hanya format .CSV yang didukung. Maksimal 50.000 baris / 25 MB. Sistem otomatis memvalidasi 20 kata kunci teratas.
+            Hanya format .CSV yang didukung. Maksimal 50.000 baris / 25 MB.
           </p>
         </div>
 
@@ -195,16 +187,6 @@ export const ImporCSVPage: React.FC = () => {
             className="h-10 px-6 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center justify-center gap-2"
           >
             {isUploading ? 'Memproses Berkas...' : 'Pilih File CSV dari Komputer'}
-          </button>
-
-          <button
-            onClick={handleSimulateDuplicatePick}
-            disabled={isUploading}
-            className="h-10 px-4 bg-white hover:bg-amber-50 text-[#B45309] border border-[#FDE68A] text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5"
-            title="Klik untuk mensimulasikan upload berkas yang isinya sama dengan data lampau"
-          >
-            <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Simulasikan Berkas Duplikat</span>
           </button>
         </div>
       </div>
