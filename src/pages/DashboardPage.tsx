@@ -19,8 +19,6 @@ import {
   ShieldAlert,
   User,
   Clock,
-  FileCheck2,
-  FileEdit,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
@@ -84,80 +82,48 @@ export const DashboardPage: React.FC = () => {
           {/* Card 1: Arahan Artikel Diambil */}
           <div
             onClick={() => setCurrentPage('brief')}
-            className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer group flex flex-col justify-between min-h-[120px]"
+            className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between min-h-[110px]"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center justify-center">
-                  <FileCheck2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Arahan Artikel
-                  </span>
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#1866EF] transition-colors">
-                    Sedang Anda Ambil
-                  </h3>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                Terkunci
+            <div>
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Arahan Artikel
               </span>
+              <h3 className="text-sm font-bold text-slate-900 mt-0.5">
+                Sedang Anda Ambil
+              </h3>
             </div>
 
-            <div className="mt-4 flex items-baseline justify-between">
-              <div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  3 Naskah
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Naskah arahan aktif dalam proses review redaksional Anda
-                </p>
+            <div className="mt-3">
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                3 Naskah
               </div>
-              <span className="text-xs font-semibold text-[#1866EF] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                Buka Arahan <ChevronRight className="w-4 h-4" />
-              </span>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Naskah arahan aktif dalam proses review redaksional Anda
+              </p>
             </div>
           </div>
 
           {/* Card 2: Draft Artikel Diambil */}
           <div
             onClick={() => setCurrentPage('draft')}
-            className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-emerald-400 hover:shadow-sm transition-all cursor-pointer group flex flex-col justify-between min-h-[120px]"
+            className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs hover:border-emerald-400 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between min-h-[110px]"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
-                  <FileEdit className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Draft Artikel
-                  </span>
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                    Sedang Anda Ambil
-                  </h3>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                Terkunci
+            <div>
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Draft Artikel
               </span>
+              <h3 className="text-sm font-bold text-slate-900 mt-0.5">
+                Sedang Anda Ambil
+              </h3>
             </div>
 
-            <div className="mt-4 flex items-baseline justify-between">
-              <div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  2 Naskah
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Naskah draf berita yang sedang Anda kunci dan verifikasi
-                </p>
+            <div className="mt-3">
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                2 Naskah
               </div>
-              <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                Buka Draf <ChevronRight className="w-4 h-4" />
-              </span>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Naskah draf berita yang sedang Anda verifikasi
+              </p>
             </div>
           </div>
         </div>
