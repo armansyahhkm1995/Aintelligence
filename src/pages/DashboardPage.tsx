@@ -69,10 +69,12 @@ export const DashboardPage: React.FC = () => {
       {/* Title and Description */}
       <div>
         <h1 className="text-xl font-bold text-[#1866EF] tracking-tight">
-          Dashboard Pipeline Produksi
+          {currentUser?.role === 'editor' ? 'Ringkasan Tugas Editor' : 'Dashboard Pipeline Produksi'}
         </h1>
         <p className="text-sm text-slate-400 mt-1">
-          Ruang kendali riset keyword, penyusunan brief, dan produksi draf berita otomatis.
+          {currentUser?.role === 'editor'
+            ? 'Ruang kerja editor untuk memantau tugas naskah, keputusan AI, dan riwayat aktivitas redaksi.'
+            : 'Ruang kendali riset keyword, penyusunan brief, dan produksi draf berita otomatis.'}
         </p>
       </div>
 
