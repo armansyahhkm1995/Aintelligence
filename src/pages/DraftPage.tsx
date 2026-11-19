@@ -815,24 +815,20 @@ export const DraftPage: React.FC = () => {
                         {/* Kolom Status Proses */}
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           {item.processStatus === 'selesai' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                               Selesai
                             </span>
                           ) : item.processStatus === 'diproses' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                              <Sparkles className="w-3 h-3 animate-spin text-blue-600" />
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                               Diproses
                             </span>
                           ) : item.processStatus === 'antre' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                              <Clock className="w-3 h-3 text-amber-600" />
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                               Antre
                             </span>
                           ) : (
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                                <ShieldAlert className="w-3 h-3 text-rose-600" />
+                              <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
                                 Gagal
                               </span>
                               {currentUser?.role === 'admin' && (

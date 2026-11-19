@@ -113,7 +113,14 @@ const HISTORY_DATA: ImportHistoryItem[] = [
 
 export const ImporCSVPage: React.FC = () => {
   const { showSuccess } = useToast()
-  const { csvCooldownMonths, setNewKeywordsBadgeCount, setNewKeywordGapBadgeCount } = useApp()
+  const {
+    csvCooldownMonths,
+    csvRetentionDays,
+    lastCsvUploadDate,
+    setLastCsvUploadDate,
+    setNewKeywordsBadgeCount,
+    setNewKeywordGapBadgeCount,
+  } = useApp()
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(10)
   const [activePage, setActivePage] = useState<number>(1)
@@ -124,6 +131,19 @@ export const ImporCSVPage: React.FC = () => {
     similarity: number
     matchedKeywords: string[]
   } | null>(null)
+
+  const calculateDaysSinceUpload = () => {
+    try {
+      const uploadTime = new Date(lastCsvUploadDate).getTime()
+      const nowTime = new Date(2026, 10, 19).getTime() // 19 Nov 2026
+      const diffTime = Math.max(0, nowTime - uploadTime)
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    } catch {
+      return 9
+    }
+  }
+  const daysSinceLastUpload = calculateDaysSinceUpload()
+  const isRetentionExceeded = daysSinceLastUpload >= (csvRetentionDays || 7)
 
   // Upload Dropdown & Type Selection
   const [isUploadDropdownOpen, setIsUploadDropdownOpen] = useState(false)
@@ -136,6 +156,7 @@ export const ImporCSVPage: React.FC = () => {
     setTimeout(() => {
       setIsUploading(false)
       setSelectedImportType(type)
+      setLastCsvUploadDate(new Date(2026, 10, 19).toISOString())
       if (type === 'keyword') {
         setPreviewFileName('semrush_keywords_export_nov2026.csv')
         setNewKeywordsBadgeCount(10)
@@ -158,6 +179,7 @@ export const ImporCSVPage: React.FC = () => {
     setIsUploading(true)
     setTimeout(() => {
       setIsUploading(false)
+      setLastCsvUploadDate(new Date(2026, 10, 19).toISOString())
       showSuccess(
         'Impor CSV Selesai',
         'Berkas semrush_keywords_export_nov2026.csv (842 kata kunci) berhasil divalidasi & diproses oleh AI.'
@@ -215,25 +237,27 @@ export const ImporCSVPage: React.FC = () => {
       {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={1} />
 
-      {/* Full-width 100% Alert Banner / Newsletter */}
-      <div className="w-full bg-amber-50/90 border border-amber-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="text-sm font-bold text-amber-950">
-            Pemberitahuan Rutin: Belum Ada Unggahan Data SEMrush Minggu Ini
-          </h3>
-          <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-            Anda belum mengunggah data kata kunci dari SEMrush dalam waktu 1 minggu terakhir. Perbarui dataset riset secara berkala agar arahan editorial dan tren topik tetap relevan serta akurat.
-          </p>
+      {/* Full-width 100% Alert Banner / Flag Retensi CSV */}
+      {isRetentionExceeded && (
+        <div className="w-full bg-amber-50/90 border border-amber-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+          <div>
+            <h3 className="text-sm font-bold text-amber-950">
+              Pemberitahuan Retensi: Perlu Unggah Dataset Kata Kunci Terbaru
+            </h3>
+            <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+              Anda belum mengunggah data kata kunci dari SEMrush dalam waktu <strong>{daysSinceLastUpload} hari terakhir</strong> (batas retensi redaksi: <strong>{csvRetentionDays || 7} hari</strong>). Perbarui dataset riset secara berkala agar arahan editorial dan tren topik tetap relevan serta akurat.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsUploadDropdownOpen(true)}
+            className="shrink-0 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Unggah Sekarang
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsUploadDropdownOpen(true)}
-          className="shrink-0 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
-        >
-          <Upload className="w-3.5 h-3.5" />
-          Unggah Sekarang
-        </button>
-      </div>
+      )}
 
       {/* 4. Drag & Drop Upload Zone */}
       <div className="bg-[#EFF6FF] border-2 border-dashed border-[#BFDBFE] rounded-xl p-8 sm:p-10 text-center transition-colors space-y-4">

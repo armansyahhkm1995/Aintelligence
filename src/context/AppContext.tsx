@@ -139,9 +139,13 @@ interface AppContextType {
   isNonaktifkanPenggunaOpen: boolean
   setIsNonaktifkanPenggunaOpen: (open: boolean) => void
 
-  // CSV Upload Settings (Batas Kedaluwarsa)
+  // CSV Upload Settings (Batas Kedaluwarsa & Retensi Hari)
   csvCooldownMonths: number
   setCsvCooldownMonths: (months: number) => void
+  csvRetentionDays: number
+  setCsvRetentionDays: (days: number) => void
+  lastCsvUploadDate: string
+  setLastCsvUploadDate: (date: string) => void
 
   // Cluster to Brief Transition Context
   activeClusterForBrief: ActiveClusterBriefData | null
@@ -266,6 +270,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [csvCooldownMonths, setCsvCooldownMonths] = useState<number>(() =>
     getStored('csvCooldownMonths', 3)
   )
+  const [csvRetentionDays, setCsvRetentionDays] = useState<number>(() =>
+    getStored('csvRetentionDays', 7)
+  )
+  const [lastCsvUploadDate, setLastCsvUploadDate] = useState<string>(() =>
+    getStored('lastCsvUploadDate', '2026-11-05T09:30:00')
+  )
 
   // Cluster to Brief Transition Context
   const [activeClusterForBrief, setActiveClusterForBrief] = useState<ActiveClusterBriefData | null>(null)
@@ -298,6 +308,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Persist
   useEffect(() => setStored('csvCooldownMonths', csvCooldownMonths), [csvCooldownMonths])
+  useEffect(() => setStored('csvRetentionDays', csvRetentionDays), [csvRetentionDays])
+  useEffect(() => setStored('lastCsvUploadDate', lastCsvUploadDate), [lastCsvUploadDate])
   useEffect(() => setStored('keyword_gap', keywordGapList), [keywordGapList])
   useEffect(() => setStored('user', currentUser), [currentUser])
   useEffect(() => setStored('keywords', keywords), [keywords])
@@ -683,6 +695,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNonaktifkanPenggunaOpen,
         csvCooldownMonths,
         setCsvCooldownMonths,
+        csvRetentionDays,
+        setCsvRetentionDays,
+        lastCsvUploadDate,
+        setLastCsvUploadDate,
         newKeywordsBadgeCount,
         setNewKeywordsBadgeCount,
         newKeywordGapBadgeCount,

@@ -567,6 +567,19 @@ export const BriefPage: React.FC = () => {
       return
     }
 
+    const isApprovedItem = item.status.toLowerCase().includes('disetujui')
+
+    // Jika arahan artikel sudah disetujui, semua editor dapat langsung membuka dan membacanya tanpa dikunci
+    if (isApprovedItem) {
+      setActiveBriefId(item.id)
+      setActiveItemTitle(item.title)
+      setBriefTitle(`Panduan Lengkap: ${item.title}`)
+      setActiveMainKeyword(item.mainKeyword)
+      setActiveSupportingKeywords(item.supportingKeywords)
+      setViewMode('detail')
+      return
+    }
+
     const currentUserName = currentUser?.name || 'Budi Santoso'
     if (
       item.editor !== '-' &&
@@ -847,7 +860,9 @@ export const BriefPage: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {filteredBriefs.map((item) => {
+                    const isApprovedItem = item.status.toLowerCase().includes('disetujui')
                     const isLockedByOther =
+                      !isApprovedItem &&
                       item.processStatus === 'selesai' &&
                       item.editor !== '-' &&
                       !item.editor.toLowerCase().includes((currentUser?.name || '').toLowerCase()) &&
@@ -896,24 +911,20 @@ export const BriefPage: React.FC = () => {
                         {/* Kolom Status Proses */}
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           {item.processStatus === 'selesai' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                               Selesai
                             </span>
                           ) : item.processStatus === 'diproses' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                              <Sparkles className="w-3 h-3 animate-spin text-blue-600" />
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                               Diproses
                             </span>
                           ) : item.processStatus === 'antre' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                              <Clock className="w-3 h-3 text-amber-600" />
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                               Antre
                             </span>
                           ) : (
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                                <ShieldAlert className="w-3 h-3 text-rose-600" />
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
                                 Gagal
                               </span>
                               {currentUser?.role === 'admin' && (
@@ -968,6 +979,18 @@ export const BriefPage: React.FC = () => {
                         <td className="py-3.5 px-4 text-center">
                           {item.processStatus !== 'selesai' ? (
                             <span className="text-slate-400 font-normal italic">-</span>
+                          ) : isApprovedItem ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleRowClick(item)
+                              }}
+                              className="p-1.5 border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
+                              title="Lihat Arahan Artikel (Disetujui)"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
                           ) : (
                             <button
                               type="button"
@@ -1407,6 +1430,9 @@ export const BriefPage: React.FC = () => {
   // =========================================================================
   // 2. DETAIL VIEW: EDIT ARAHAN ARTIKEL (Matching Image 11)
   // =========================================================================
+  const currentActiveItem = briefList.find((b) => b.id === activeBriefId || b.title === activeItemTitle)
+  const isApproved = Boolean(currentActiveItem?.status?.toLowerCase().includes('disetujui'))
+
   return (
     <div className="space-y-6">
       {/* 1. Milestone Stepper: Step 4 Active */}
@@ -1457,7 +1483,13 @@ export const BriefPage: React.FC = () => {
             <button
               type="button"
               onClick={handleRegenerateWithAI}
-              className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              disabled={isApproved}
+              className={`h-10 px-4 text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs ${
+                isApproved
+                  ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                  : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
+              }`}
+              title={isApproved ? 'Arahan artikel telah disetujui, tombol ini dinonaktifkan' : 'Buat ulang arahan dengan AI'}
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Buat Ulang Arahan dengan AI</span>
@@ -1967,20 +1999,28 @@ export const BriefPage: React.FC = () => {
             <button
               type="button"
               onClick={handleApprove}
-              className="w-full h-10 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
+              disabled={isApproved}
+              className={`w-full h-10 text-xs font-bold rounded-lg transition-colors shadow-xs ${
+                isApproved
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-not-allowed flex items-center justify-center gap-1.5'
+                  : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
+              }`}
+              title={isApproved ? 'Arahan artikel ini sudah disetujui' : 'Setujui Arahan Artikel'}
             >
-              Setujui Arahan Artikel
+              {isApproved ? 'Arahan Artikel Telah Disetujui' : 'Setujui Arahan Artikel'}
             </button>
 
             {/* Lepas Arahan Button */}
-            <button
-              type="button"
-              onClick={() => setIsReleaseConfirmOpen(true)}
-              className="w-full h-10 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Lepas Arahan Artikel</span>
-            </button>
+            {!isApproved && (
+              <button
+                type="button"
+                onClick={() => setIsReleaseConfirmOpen(true)}
+                className="w-full h-10 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Lepas Arahan Artikel</span>
+              </button>
+            )}
 
             <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">
               Brief yang disetujui akan otomatis masuk antrean produksi Draf AI Claude 3.5 Sonnet
