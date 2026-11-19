@@ -14,6 +14,7 @@ export const ClusterPage: React.FC = () => {
     setIsResolusiBentrokOpen,
     setIsTolakClusterOpen,
     setCurrentPage,
+    setActiveClusterForBrief,
   } = useApp()
   const { showSuccess } = useToast()
 
@@ -98,7 +99,14 @@ export const ClusterPage: React.FC = () => {
     }
   }
 
-  const handleCreateBrief = () => {
+  const handleCreateBrief = (topicData: {
+    title: string
+    mainKeyword: string
+    supportingKeywords: string[]
+    volume?: string
+    intent?: string
+  }) => {
+    setActiveClusterForBrief(topicData)
     setCurrentPage('brief')
   }
 
@@ -434,7 +442,22 @@ export const ClusterPage: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={handleCreateBrief}
+              onClick={() =>
+                handleCreateBrief({
+                  title: card1Title,
+                  mainKeyword: 'cara investasi reksadana',
+                  supportingKeywords: [
+                    'reksadana pemula',
+                    'modal kecil',
+                    'keuntungan reksadana',
+                    ...(isMerged
+                      ? ['panduan reksadana 2026', 'belajar reksadana online']
+                      : []),
+                  ],
+                  volume: isMerged ? '90.000 / bln' : card1Vol,
+                  intent: card1Intent,
+                })
+              }
               className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               Buat Arahan
@@ -616,7 +639,15 @@ export const ClusterPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={handleCreateBrief}
+                onClick={() =>
+                  handleCreateBrief({
+                    title: 'Panduan Reksadana 2026',
+                    mainKeyword: 'panduan reksadana 2026',
+                    supportingKeywords: card2Supporting.map((k) => k.split('(')[0].trim()),
+                    volume: '45.000 / bln',
+                    intent: 'Informasional',
+                  })
+                }
                 className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
               >
                 Buat Arahan
@@ -699,7 +730,15 @@ export const ClusterPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={handleCreateBrief}
+                onClick={() =>
+                  handleCreateBrief({
+                    title: newSplitTopicTitle,
+                    mainKeyword: selectedSplitKeywords[0]?.split('(')[0]?.trim() || 'reksadana bibit',
+                    supportingKeywords: selectedSplitKeywords.map((k) => k.split('(')[0].trim()),
+                    volume: '22.000 / bln',
+                    intent: 'Transaksional',
+                  })
+                }
                 className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
               >
                 Buat Arahan

@@ -9,6 +9,7 @@ import {
   AuditLogItem,
   NotificationItem,
   KeywordGapItem,
+  ActiveClusterBriefData,
 } from '../types'
 import {
   INITIAL_USERS,
@@ -142,6 +143,10 @@ interface AppContextType {
   csvCooldownMonths: number
   setCsvCooldownMonths: (months: number) => void
 
+  // Cluster to Brief Transition Context
+  activeClusterForBrief: ActiveClusterBriefData | null
+  setActiveClusterForBrief: (data: ActiveClusterBriefData | null) => void
+
   // New import badges
   newKeywordsBadgeCount: number
   setNewKeywordsBadgeCount: (count: number) => void
@@ -261,6 +266,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [csvCooldownMonths, setCsvCooldownMonths] = useState<number>(() =>
     getStored('csvCooldownMonths', 3)
   )
+
+  // Cluster to Brief Transition Context
+  const [activeClusterForBrief, setActiveClusterForBrief] = useState<ActiveClusterBriefData | null>(null)
 
   // Badge notification counts for newly imported CSVs
   const [newKeywordsBadgeCount, setNewKeywordsBadgeCount] = useState<number>(0)
@@ -681,6 +689,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setNewKeywordGapBadgeCount,
         keywordGapList,
         addKeywordGapItems,
+        activeClusterForBrief,
+        setActiveClusterForBrief,
       }}
     >
       {children}

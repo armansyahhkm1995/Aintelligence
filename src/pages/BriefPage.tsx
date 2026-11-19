@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import {
@@ -187,6 +187,8 @@ export const BriefPage: React.FC = () => {
     setIsTolakBriefOpen,
     setCurrentPage,
     currentUser,
+    activeClusterForBrief,
+    setActiveClusterForBrief,
   } = useApp()
   const { showSuccess, showWarning } = useToast()
 
@@ -276,6 +278,76 @@ export const BriefPage: React.FC = () => {
   const [openLevelId, setOpenLevelId] = useState<string | null>(null)
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
   const [selectedVersion, setSelectedVersion] = useState<'v2' | 'v1'>('v2')
+
+  // Topic parameter states from Cluster
+  const [activeMainKeyword, setActiveMainKeyword] = useState<string>('cara investasi reksadana')
+  const [activeSupportingKeywords, setActiveSupportingKeywords] = useState<string[]>([
+    'reksadana pemula',
+    'modal kecil',
+    'keuntungan reksadana',
+  ])
+  const [activeVolume, setActiveVolume] = useState<string>('45.000 / bln')
+  const [activeIntent, setActiveIntent] = useState<string>('Informasional')
+
+  // Handle transition when user clicks "Buat Arahan" on Kelompok Topik (ClusterPage)
+  useEffect(() => {
+    if (activeClusterForBrief) {
+      const data = activeClusterForBrief
+      const currentUserName = currentUser?.name || 'Budi Prasetyo (Admin)'
+      const newBriefId = `BRF-${Date.now().toString().slice(-3)}`
+
+      // Ensure it is in the brief table list as claimed/owned by current user
+      setBriefList((prev) => {
+        const existing = prev.find((b) => b.title.toLowerCase() === data.title.toLowerCase())
+        if (existing) {
+          return prev.map((b) =>
+            b.id === existing.id
+              ? { ...b, editor: currentUserName, status: `Diambil oleh ${currentUserName}` }
+              : b
+          )
+        }
+        const newRow: BriefTableRow = {
+          id: newBriefId,
+          title: data.title,
+          mainKeyword: data.mainKeyword,
+          supportingKeywords: data.supportingKeywords,
+          processStatus: 'selesai',
+          editor: currentUserName,
+          status: `Diambil oleh ${currentUserName}`,
+        }
+        return [newRow, ...prev]
+      })
+
+      setActiveBriefId(newBriefId)
+      setActiveItemTitle(data.title)
+      setBriefTitle(`Panduan Lengkap: ${data.title}`)
+      setActiveMainKeyword(data.mainKeyword)
+      setActiveSupportingKeywords(data.supportingKeywords)
+      if (data.volume) setActiveVolume(data.volume)
+      if (data.intent) setActiveIntent(data.intent)
+      setTargetAudience(`Masyarakat dan pembaca yang mencari panduan terpercaya seputar ${data.title.toLowerCase()}`)
+      setAngle(
+        `Fokus liputan mendalam mengenai ${data.title.toLowerCase()}, regulasi resmi, serta panduan praktis dan terpercaya bagi masyarakat.`
+      )
+      setMainQuestions([
+        `Apa saja syarat dan ketentuan mendasar seputar ${data.mainKeyword}?`,
+        `Bagaimana langkah-langkah pelaksanaan dan prosedur resmi terbaru 2026?`,
+        `Apa saja tips mitigasi risiko dan rujukan kebijakan resmi yang berlaku?`,
+      ])
+      setHeadings([
+        { id: 'bh-0', level: 'H1', text: `Panduan Lengkap: ${data.title}` },
+        { id: 'bh-1', level: 'H2', text: `Mengenal ${data.title} dan Urgensinya` },
+        { id: 'bh-2', level: 'H3', text: 'Regulasi dan Dasar Kebijakan Resmi Terkini' },
+        { id: 'bh-3', level: 'H3', text: 'Syarat dan Persiapan Awal yang Wajib Dipenuhi' },
+        { id: 'bh-4', level: 'H2', text: 'Langkah Praktis dan Tahapan Pelaksanaan Lengkap' },
+        { id: 'bh-5', level: 'H3', text: 'Tips Mitigasi Risiko dan Solusi Kendala di Lapangan' },
+        { id: 'bh-6', level: 'H2', text: 'Kesimpulan dan Rekomendasi Redaksi RRI' },
+      ])
+      setViewMode('detail')
+      showSuccess('Arahan Baru Dimuat', `Arahan artikel untuk kelompok topik "${data.title}" berhasil dimuat dan siap ditinjau.`)
+      setActiveClusterForBrief(null)
+    }
+  }, [activeClusterForBrief, currentUser, setActiveClusterForBrief, showSuccess])
 
   const handleDragStart = (idx: number) => {
     if (headings[idx]?.level === 'H1') return
@@ -515,6 +587,9 @@ export const BriefPage: React.FC = () => {
     // Already owned by currentUser
     setActiveBriefId(item.id)
     setActiveItemTitle(item.title)
+    setBriefTitle(`Panduan Lengkap: ${item.title}`)
+    setActiveMainKeyword(item.mainKeyword)
+    setActiveSupportingKeywords(item.supportingKeywords)
     setViewMode('detail')
   }
 
@@ -534,6 +609,9 @@ export const BriefPage: React.FC = () => {
     )
     setActiveBriefId(itemToClaim.id)
     setActiveItemTitle(itemToClaim.title)
+    setBriefTitle(`Panduan Lengkap: ${itemToClaim.title}`)
+    setActiveMainKeyword(itemToClaim.mainKeyword)
+    setActiveSupportingKeywords(itemToClaim.supportingKeywords)
     setIsClaimModalOpen(false)
     setItemToClaim(null)
     setViewMode('detail')
@@ -1796,6 +1874,45 @@ export const BriefPage: React.FC = () => {
 
         {/* Right Column (lg:col-span-4): Sidebar Action Cards */}
         <div className="lg:col-span-4 space-y-5">
+          {/* Card Info Parameter Topik & Kata Kunci dari Cluster */}
+          <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-900">Parameter Topik & Kata Kunci</h3>
+              {activeIntent && (
+                <span className="px-2 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-[10px] font-semibold">
+                  {activeIntent}
+                </span>
+              )}
+            </div>
+            <div className="space-y-2.5">
+              <div>
+                <span className="text-[11px] font-semibold text-slate-500 block mb-1">Kata Kunci Pilar:</span>
+                <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
+                  {activeMainKeyword}
+                </span>
+              </div>
+              <div>
+                <span className="text-[11px] font-semibold text-slate-500 block mb-1">Kata Kunci Pendukung:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeSupportingKeywords.map((kw, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 text-[11px] bg-slate-50"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {activeVolume && (
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <span>Estimasi Volume SEO:</span>
+                  <strong className="text-slate-800">{activeVolume}</strong>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Card 1: Keputusan Redaksi */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
             <h3 className="text-xs font-bold text-slate-900">Keputusan Redaksi</h3>

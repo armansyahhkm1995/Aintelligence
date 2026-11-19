@@ -57,6 +57,14 @@ export interface ClusterKeywordRef {
   kd: number
 }
 
+export interface ActiveClusterBriefData {
+  title: string
+  mainKeyword: string
+  supportingKeywords: string[]
+  volume?: string
+  intent?: string
+}
+
 export interface ClusterItem {
   id: string
   name: string
