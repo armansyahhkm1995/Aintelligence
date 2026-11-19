@@ -111,12 +111,14 @@ export const ClusterPage: React.FC = () => {
       setIsAiRegenerated(true)
       setAiNewsletter({
         title: 'Hasil Pengelompokan Topik Otomatis oleh AI',
-        message: 'AI berhasil memetakan ulang kata kunci menjadi 45 kelompok topik terstruktur. Judul topik diperbarui menjadi: "Cara Investasi Reksadana Uang untuk Generasi-Z" • Intent: Komersial • Prediksi Vol: 60.000 (+15K) • KD: 26% (Mudah). Sebanyak 38 kelompok aman untuk diproduksi, 4 kelompok terdeteksi kanibalisasi internal, dan 3 butuh resolusi editor.',
+        message:
+          'AI berhasil memetakan kata kunci menjadi 45 kelompok topik terstruktur: 38 kelompok aman untuk diproduksi dan 4 kelompok terdeteksi kanibalisasi internal.',
       })
     } else {
       setAiNewsletter({
-        title: 'Analisis Kelompok Topik AI Selesai',
-        message: 'Struktur topik sudah sepenuhnya sinkron dengan kata kunci tervalidasi. Tidak ada perubahan intent atau volume yang diperlukan.',
+        title: 'Hasil Pengelompokan Topik Otomatis oleh AI',
+        message:
+          'AI berhasil memetakan kata kunci menjadi 45 kelompok topik terstruktur: 38 kelompok aman untuk diproduksi dan 4 kelompok terdeteksi kanibalisasi internal.',
       })
     }
   }
