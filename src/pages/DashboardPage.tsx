@@ -936,7 +936,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* CARD 2: AKTIVITAS TERBARU (EDITOR NON-SUPER ADMIN)                        */}
+      {/* CARD 2: AKTIVITAS TERBARU (EDITOR REDAKSI)                                */}
       {/* ========================================================================= */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-4">
         {/* Header Row */}
@@ -950,48 +950,26 @@ export const DashboardPage: React.FC = () => {
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Riwayat pengerjaan, persetujuan arahan, dan publikasi draf oleh editor non-super admin.
+            Riwayat pengerjaan, persetujuan arahan, dan penyalinan draf berita oleh tim editor.
           </p>
         </div>
 
         {/* List of recent editor activities */}
         <div className="divide-y divide-slate-100 border border-slate-100 rounded-md overflow-hidden">
-          {/* Item 1 */}
+          {/* Item 1: Salin Draf Berita */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">
-                  Persetujuan Arahan
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#A7F3D0]">
+                  Salin Draf Berita
                 </span>
-                <span className="text-xs text-slate-400">10 menit yang lalu</span>
+                <span className="text-xs text-slate-400">12 menit yang lalu</span>
               </div>
               <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Menyetujui Arahan Artikel: Panduan Reksadana 2026
+                Menyalin Draf Berita: Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
               </h3>
               <p className="text-xs text-slate-500">
-                Disetujui untuk lanjut ke proses pembuatan draf otomatis AI tanpa revisi outline.
-              </p>
-            </div>
-            <div className="text-right shrink-0">
-              <div className="text-xs font-semibold text-slate-800">Siti Rahmawati</div>
-              <div className="text-[11px] text-slate-400">Role: Editor</div>
-            </div>
-          </div>
-
-          {/* Item 2 */}
-          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
-                  Ekspor CMS
-                </span>
-                <span className="text-xs text-slate-400">35 menit yang lalu</span>
-              </div>
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Mengekspor Draf Artikel: Tips Menabung Saham untuk Pemula
-              </h3>
-              <p className="text-xs text-slate-500">
-                Draf artikel versi 2.0 berhasil diekspor ke portal CMS RRI Digital dengan skor SEO 92.
+                Teks naskah berita berhasil disalin ke clipboard untuk siap dipublikasikan ke CMS portal berita RRI.
               </p>
             </div>
             <div className="text-right shrink-0">
@@ -1000,46 +978,68 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Item 3 */}
+          {/* Item 2: Persetujuan Arahan */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-amber-200">
-                  Penyuntingan Draf
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">
+                  Persetujuan Arahan
                 </span>
-                <span className="text-xs text-slate-400">1 jam yang lalu</span>
+                <span className="text-xs text-slate-400">25 menit yang lalu</span>
               </div>
               <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Menyunting Paragraf Lead: Update Harga Emas Antam Hari Ini
+                Menyetujui Arahan Artikel: Cara Mengurus Kartu Keluarga dan Persyaratannya
               </h3>
               <p className="text-xs text-slate-500">
-                Menambahkan konfirmasi harga beli kembali (buyback) dari butik Logam Mulia resmi.
+                Disetujui untuk lanjut ke proses pembuatan draf otomatis AI tanpa perubahan outline.
               </p>
             </div>
             <div className="text-right shrink-0">
-              <div className="text-xs font-semibold text-slate-800">Dewi Lestari</div>
+              <div className="text-xs font-semibold text-slate-800">Budi Santoso</div>
               <div className="text-[11px] text-slate-400">Role: Editor</div>
             </div>
           </div>
 
-          {/* Item 4 */}
+          {/* Item 3: Buat Ulang Arahan */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
-                  Catatan Revisi
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-amber-200">
+                  Buat Ulang Arahan
                 </span>
-                <span className="text-xs text-slate-400">2 jam yang lalu</span>
+                <span className="text-xs text-slate-400">45 menit yang lalu</span>
               </div>
               <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Meminta Verifikasi Data: Pilihan Asuransi Kesehatan Keluarga 2026
+                Meminta Buat Ulang Arahan: Strategi Investasi Reksadana Saham bagi Pemula
               </h3>
               <p className="text-xs text-slate-500">
-                Membutuhkan konfirmasi premi dasar BPJS Kesehatan kelas 1-3 terbaru.
+                Meminta regenerasi outline arahan editorial dengan fokus pengayaan sudut pandang literasi keuangan daerah.
               </p>
             </div>
             <div className="text-right shrink-0">
               <div className="text-xs font-semibold text-slate-800">Siti Rahmawati</div>
+              <div className="text-[11px] text-slate-400">Role: Editor</div>
+            </div>
+          </div>
+
+          {/* Item 4: Tambah Pertanyaan Utama dengan AI */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                  Pertanyaan Utama AI
+                </span>
+                <span className="text-xs text-slate-400">1 jam yang lalu</span>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                Menambah Pertanyaan Utama dengan AI: Syarat dan Dokumen Pembuatan Paspor 2026
+              </h3>
+              <p className="text-xs text-slate-500">
+                Menambahkan 2 pertanyaan investigasi baru menggunakan asisten AI (total 8/10 pertanyaan terpasang).
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-xs font-semibold text-slate-800">Dewi Lestari</div>
               <div className="text-[11px] text-slate-400">Role: Editor</div>
             </div>
           </div>
