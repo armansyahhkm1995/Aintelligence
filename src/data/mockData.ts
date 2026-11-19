@@ -7,6 +7,7 @@ import {
   FilterRule,
   AuditLogItem,
   NotificationItem,
+  KeywordGapItem,
 } from '../types'
 
 export const INITIAL_USERS: User[] = [
@@ -372,4 +373,22 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     timeAgo: '12 Okt 2026, 14:00',
     type: 'error',
   },
+]
+
+export const INITIAL_KEYWORD_GAP: KeywordGapItem[] = [
+  { id: 'kg-1', keyword: 'ligue 1', intent: ['n/a'], detikRank: 25, liputan6Rank: 12, volume: '6.1M', kd: 76, cpc: '0.08', com: '0', results: '10' },
+  { id: 'kg-2', keyword: 'klasemen liga 1', intent: ['n/a'], detikRank: 9, liputan6Rank: 24, volume: '5M', kd: 43, cpc: '0.40', com: '0.33', results: '10' },
+  { id: 'kg-3', keyword: 'piala dunia', intent: ['I', 'T'], detikRank: 13, liputan6Rank: 24, volume: '4.1M', kd: 52, cpc: '0.07', com: '0.33', results: '10' },
+  { id: 'kg-4', keyword: 'google gemini', intent: ['N', 'T'], detikRank: 51, liputan6Rank: 25, volume: '3.4M', kd: 52, cpc: '0.01', com: '0.08', results: '553K' },
+  { id: 'kg-5', keyword: 'la liga', intent: ['I', 'T'], detikRank: 18, liputan6Rank: 68, volume: '3.4M', kd: 59, cpc: '0.03', com: '0.33', results: '6K' },
+  { id: 'kg-6', keyword: 'sscasn', intent: ['n/a'], detikRank: 7, liputan6Rank: 11, volume: '3.4M', kd: 44, cpc: '0.00', com: '0', results: '6' },
+  { id: 'kg-7', keyword: 'twitter', intent: ['N'], detikRank: 28, liputan6Rank: 33, volume: '3.4M', kd: 70, cpc: '0.00', com: '0.33', results: '5' },
+  { id: 'kg-8', keyword: 'arsenal', intent: ['I', 'T'], detikRank: 23, liputan6Rank: 30, volume: '2.7M', kd: 59, cpc: '0.05', com: '0.01', results: '10' },
+  { id: 'kg-9', keyword: 'liga champion', intent: ['I', 'T'], detikRank: 8, liputan6Rank: 25, volume: '2.7M', kd: 78, cpc: '0.21', com: '0.33', results: '10' },
+  { id: 'kg-10', keyword: 'liga inggris', intent: ['I', 'T'], detikRank: 4, liputan6Rank: 16, volume: '2.7M', kd: 53, cpc: '0.00', com: '0.33', results: '10' },
+  { id: 'kg-11', keyword: 'bansos kemensos 2026', intent: ['I'], detikRank: 6, liputan6Rank: 15, volume: '1.8M', kd: 45, cpc: '0.12', com: '0.15', results: '8' },
+  { id: 'kg-12', keyword: 'cek saldo jht bpjs', intent: ['N', 'T'], detikRank: 11, liputan6Rank: 19, volume: '1.5M', kd: 38, cpc: '0.05', com: '0.20', results: '10' },
+  { id: 'kg-13', keyword: 'reksadana bibit ojk', intent: ['C'], detikRank: 14, liputan6Rank: 22, volume: '1.2M', kd: 41, cpc: '0.35', com: '0.45', results: '12' },
+  { id: 'kg-14', keyword: 'gempa hari ini bmkg', intent: ['I'], detikRank: 3, liputan6Rank: 8, volume: '2.4M', kd: 35, cpc: '0.02', com: '0.05', results: '5' },
+  { id: 'kg-15', keyword: 'prakiraan cuaca bmkg', intent: ['I'], detikRank: 5, liputan6Rank: 10, volume: '2.1M', kd: 32, cpc: '0.01', com: '0.02', results: '6' },
 ]

@@ -138,3 +138,16 @@ export interface NotificationItem {
   timeAgo: string
   type: 'success' | 'error'
 }
+
+export interface KeywordGapItem {
+  id: string
+  keyword: string
+  intent: string[] // e.g. ['n/a'], ['I', 'T'], ['N', 'T'], ['N']
+  detikRank: number
+  liputan6Rank: number
+  volume: string // e.g. '6.1M', '5M'
+  kd: number // e.g. 76
+  cpc: string // e.g. '0.08'
+  com: string // e.g. '0.33'
+  results: string // e.g. '10', '553K'
+}

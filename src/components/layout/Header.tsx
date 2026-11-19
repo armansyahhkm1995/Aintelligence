@@ -6,13 +6,14 @@ const PAGE_NAMES: Record<AppPage, string> = {
   dashboard: 'Ringkasan',
   impor: 'Impor CSV Semrush',
   keyword: 'Kata Kunci',
+  keyword_gap: 'Perbandingan Kata Kunci (Keyword Gap)',
   cluster: 'Kelompok Topik',
   brief: 'Arahan Artikel',
   draft: 'Draf Artikel',
   settings: 'Pengaturan Redaksi',
   users: 'Manajemen Pengguna',
   auditlog: 'Audit Log',
-  antrean: 'Antrean Tugas',
+  konfigurasi: 'Konfigurasi Token LLM',
 }
 
 export const Header: React.FC = () => {

@@ -17,6 +17,8 @@ import {
   ShieldAlert,
   LogOut,
   User,
+  Clock,
+  CheckCircle2,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -26,6 +28,7 @@ interface DraftTableRow {
   title: string
   seoScore: number
   version: string
+  processStatus: 'antre' | 'diproses' | 'selesai' | 'gagal'
   editor: string
   status: string
 }
@@ -137,6 +140,7 @@ const INITIAL_DRAFT_TABLE: DraftTableRow[] = [
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     seoScore: 94,
     version: 'Versi 2',
+    processStatus: 'selesai',
     editor: 'Siti Rahmawati',
     status: 'Diambil oleh Siti Rahmawati',
   },
@@ -145,30 +149,61 @@ const INITIAL_DRAFT_TABLE: DraftTableRow[] = [
     title: 'Panduan Registrasi Identitas Kependudukan Digital (IKD)',
     seoScore: 91,
     version: 'Versi 2',
+    processStatus: 'selesai',
     editor: '-',
     status: 'Tersedia',
   },
   {
     id: 'DFT-003',
+    title: 'Update Harga Emas Antam Hari Ini dan Proyeksi Pasar',
+    seoScore: 88,
+    version: 'Versi 1',
+    processStatus: 'diproses',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'DFT-004',
+    title: 'Strategi Ketahanan Pangan Nasional Berkelanjutan',
+    seoScore: 85,
+    version: 'Versi 1',
+    processStatus: 'antre',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'DFT-005',
+    title: 'Regulasi Insentif Kendaraan Listrik dan Subsidi Energi',
+    seoScore: 78,
+    version: 'Versi 1',
+    processStatus: 'gagal',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'DFT-006',
     title: 'Prosedur Pindah Domisili Antar Provinsi Tanpa Surat Pengantar RT',
     seoScore: 89,
     version: 'Versi 1',
+    processStatus: 'selesai',
     editor: 'Dewi Lestari',
     status: 'Diambil oleh Dewi Lestari',
   },
   {
-    id: 'DFT-004',
+    id: 'DFT-007',
     title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
     seoScore: 94,
     version: 'Versi 2',
+    processStatus: 'selesai',
     editor: '-',
     status: 'Tersedia',
   },
   {
-    id: 'DFT-005',
+    id: 'DFT-008',
     title: 'Strategi Investasi Reksadana Saham bagi Pemula',
     seoScore: 88,
     version: 'Versi 1',
+    processStatus: 'selesai',
     editor: 'Ahmad Fauzi',
     status: 'Diambil oleh Ahmad Fauzi',
   },
@@ -226,6 +261,14 @@ export const DraftPage: React.FC = () => {
   )
 
   const handleRowClick = (item: DraftTableRow) => {
+    if (item.processStatus !== 'selesai') {
+      showWarning(
+        'Naskah Belum Tersedia',
+        `Draf artikel "${item.title}" saat ini masih dalam antrean (${item.processStatus.toUpperCase()}) dan belum siap dikerjakan oleh editor.`
+      )
+      return
+    }
+
     const currentUserName = currentUser?.name || 'Budi Santoso'
     if (
       item.editor !== '-' &&
@@ -708,14 +751,15 @@ export const DraftPage: React.FC = () => {
           {/* Table */}
           <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[750px]">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                    <th className="py-3 px-4 font-semibold w-[36%]">Judul Artikel</th>
-                    <th className="py-3 px-4 font-semibold w-[16%]">Skor SEO</th>
-                    <th className="py-3 px-4 font-semibold w-[12%]">Versi Draft</th>
-                    <th className="py-3 px-4 font-semibold w-[18%]">Editor</th>
-                    <th className="py-3 px-4 font-semibold w-[10%]">Status</th>
+                    <th className="py-3 px-4 font-semibold w-[28%]">Judul Artikel</th>
+                    <th className="py-3 px-4 font-semibold w-[14%]">Skor SEO</th>
+                    <th className="py-3 px-4 font-semibold w-[11%]">Versi Draft</th>
+                    <th className="py-3 px-4 font-semibold w-[13%]">Status Proses</th>
+                    <th className="py-3 px-4 font-semibold w-[14%]">Editor</th>
+                    <th className="py-3 px-4 font-semibold w-[12%]">Ketersediaan</th>
                     <th className="py-3 px-4 font-semibold text-center w-[8%]">Aksi</th>
                   </tr>
                 </thead>
@@ -723,6 +767,7 @@ export const DraftPage: React.FC = () => {
                   {filteredDrafts.map((item) => {
                     const currentUserName = currentUser?.name || 'Budi Santoso'
                     const isLockedByOther =
+                      item.processStatus === 'selesai' &&
                       item.editor !== '-' &&
                       !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
                       !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
@@ -732,7 +777,9 @@ export const DraftPage: React.FC = () => {
                         key={item.id}
                         onClick={() => handleRowClick(item)}
                         className={`transition-colors cursor-pointer group ${
-                          isLockedByOther
+                          item.processStatus !== 'selesai'
+                            ? 'bg-slate-50/40 hover:bg-slate-50'
+                            : isLockedByOther
                             ? 'bg-amber-50/30 hover:bg-amber-50/60'
                             : 'hover:bg-slate-50/70'
                         }`}
@@ -755,8 +802,37 @@ export const DraftPage: React.FC = () => {
                         <td className="py-3.5 px-4 text-slate-700 font-medium">
                           {item.version}
                         </td>
-                        <td className="py-3.5 px-4">
-                          {item.editor !== '-' ? (
+
+                        {/* Kolom Status Proses */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.processStatus === 'selesai' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              Selesai
+                            </span>
+                          ) : item.processStatus === 'diproses' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                              <Sparkles className="w-3 h-3 animate-spin text-blue-600" />
+                              Diproses
+                            </span>
+                          ) : item.processStatus === 'antre' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                              <Clock className="w-3 h-3 text-amber-600" />
+                              Antre
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                              <ShieldAlert className="w-3 h-3 text-rose-600" />
+                              Gagal
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Kolom Editor */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="text-slate-400 font-normal italic">-</span>
+                          ) : item.editor !== '-' ? (
                             <div className="flex items-center gap-1.5">
                               <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">
                                 {item.editor.charAt(0)}
@@ -769,8 +845,14 @@ export const DraftPage: React.FC = () => {
                             <span className="text-slate-400 font-medium">-</span>
                           )}
                         </td>
-                        <td className="py-3.5 px-4">
-                          {item.status === 'Tersedia' ? (
+
+                        {/* Kolom Ketersediaan */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-rose-50 text-rose-700 border-rose-200">
+                              Belum Tersedia
+                            </span>
+                          ) : item.status === 'Tersedia' ? (
                             <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold">
                               Tersedia
                             </span>
@@ -780,22 +862,28 @@ export const DraftPage: React.FC = () => {
                             </span>
                           )}
                         </td>
+
+                        {/* Kolom Aksi */}
                         <td className="py-3.5 px-4 text-center">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleRowClick(item)
-                            }}
-                            className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
-                              isLockedByOther
-                                ? 'border-amber-200 hover:bg-amber-100 text-amber-700'
-                                : 'border-slate-200 hover:bg-slate-100 text-slate-600'
-                            }`}
-                            title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Draf Artikel'}
-                          >
-                            {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
-                          </button>
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="text-slate-400 font-normal italic">-</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleRowClick(item)
+                              }}
+                              className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
+                                isLockedByOther
+                                  ? 'border-amber-200 hover:bg-amber-100 text-amber-700'
+                                  : 'border-slate-200 hover:bg-slate-100 text-slate-600'
+                              }`}
+                              title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Draf Artikel'}
+                            >
+                              {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     )
@@ -1466,18 +1554,6 @@ export const DraftPage: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={handleExportDraftMD}
-                      className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Download className="w-4 h-4 text-slate-500" />
-                        <span>Ekspor sebagai MD (.md)</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-mono">Markdown</span>
-                    </button>
-
-                    <button
-                      type="button"
                       onClick={handleExportDraftPDF}
                       className="w-full text-left px-3.5 py-2 hover:bg-rose-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
                     >
@@ -1491,15 +1567,6 @@ export const DraftPage: React.FC = () => {
                 </>
               )}
             </div>
-
-            {/* Kirim ke Editool Button */}
-            <button
-              type="button"
-              onClick={publishDraftToEditools}
-              className="w-full h-10 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
-            >
-              Kirim ke Editool
-            </button>
 
             {/* Lepas Draft Button */}
             <button

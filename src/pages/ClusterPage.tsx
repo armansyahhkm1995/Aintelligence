@@ -55,6 +55,12 @@ export const ClusterPage: React.FC = () => {
   const [card1Kd, setCard1Kd] = useState('32%')
   const [isAiRegenerated, setIsAiRegenerated] = useState(false)
 
+  // Flag / Newsletter banner state for AI cluster generation
+  const [aiNewsletter, setAiNewsletter] = useState<{
+    title: string
+    message: string
+  } | null>(null)
+
   // Supporting keywords state for Card 2 with separation mode
   const [card2Supporting, setCard2Supporting] = useState([
     'belajar reksadana online (Vol 22.000) (KD 28%)',
@@ -103,15 +109,15 @@ export const ClusterPage: React.FC = () => {
       setCard1Vol('60.000 / bln')
       setCard1Kd('26%')
       setIsAiRegenerated(true)
-      showSuccess(
-        'Kelompok Topik Diperbarui AI',
-        'Judul baru: "Cara Investasi Reksadana Uang untuk Generasi-Z" • Intent: Komersial • Prediksi Vol: 60.000 (+15K) • KD: 26% (Mudah)'
-      )
+      setAiNewsletter({
+        title: 'Hasil Pengelompokan Topik Otomatis oleh AI',
+        message: 'AI berhasil memetakan ulang kata kunci menjadi 45 kelompok topik terstruktur. Judul topik diperbarui menjadi: "Cara Investasi Reksadana Uang untuk Generasi-Z" • Intent: Komersial • Prediksi Vol: 60.000 (+15K) • KD: 26% (Mudah). Sebanyak 38 kelompok aman untuk diproduksi, 4 kelompok terdeteksi kanibalisasi internal, dan 3 butuh resolusi editor.',
+      })
     } else {
-      showSuccess(
-        'Analisis AI Selesai',
-        'Struktur topik sudah sinkron dengan kata kunci tervalidasi. Tidak ada perubahan intent atau volume.'
-      )
+      setAiNewsletter({
+        title: 'Analisis Kelompok Topik AI Selesai',
+        message: 'Struktur topik sudah sepenuhnya sinkron dengan kata kunci tervalidasi. Tidak ada perubahan intent atau volume yang diperlukan.',
+      })
     }
   }
 
@@ -212,6 +218,38 @@ export const ClusterPage: React.FC = () => {
 
       {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={3} />
+
+      {/* Flag / Newsletter Banner AI (Pengganti Toast saat klik Buat Kelompok dengan AI) */}
+      {aiNewsletter && (
+        <div className="bg-gradient-to-r from-blue-50 via-indigo-50/60 to-blue-50 border border-blue-200 rounded-xl p-4 shadow-xs relative flex items-start justify-between gap-4 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-blue-100 text-[#1866EF] shrink-0 mt-0.5">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className="text-xs font-bold text-slate-900">
+                  {aiNewsletter.title}
+                </h4>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1866EF] text-white">
+                  Pembaruan AI
+                </span>
+              </div>
+              <p className="text-xs text-slate-700 mt-1 leading-relaxed">
+                {aiNewsletter.message}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAiNewsletter(null)}
+            className="text-slate-400 hover:text-slate-700 p-1.5 rounded-md hover:bg-white/80 transition-colors cursor-pointer shrink-0"
+            title="Tutup pemberitahuan"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* 4. Filter Container matching Image 2 */}
       <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">

@@ -308,13 +308,13 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* COMP-TodoList-Editor: Daftar Antrean Editor */}
+      {/* COMP-TodoList-Editor: Daftar Tugas */}
       <div className="bg-white border border-[#DBEAFE] rounded-md p-5 shadow-xs space-y-5">
         {/* Header Row */}
         <div>
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-900">
-              Daftar Antrean Editor
+              Daftar Tugas
             </h2>
             <span className="bg-[#FFFBEB] text-[#B45309] text-xs font-medium px-2 py-0.5 rounded border border-amber-200">
               7 Butuh Tindakan

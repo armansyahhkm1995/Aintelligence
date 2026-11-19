@@ -4,13 +4,14 @@ import {
   LayoutDashboard,
   UploadCloud,
   Search,
+  GitCompare,
   Network,
   FileCheck2,
   FileEdit,
   Sliders,
   Users2,
   History,
-  Clock,
+  Cpu,
   ChevronRight,
   LogOut,
   X,
@@ -18,7 +19,16 @@ import {
 import rriLogo from '../../assets/rri-logo.svg'
 
 export const Sidebar: React.FC = () => {
-  const { currentPage, setCurrentPage, logout, isMobileNavOpen, setIsMobileNavOpen, currentUser } = useApp()
+  const {
+    currentPage,
+    setCurrentPage,
+    logout,
+    isMobileNavOpen,
+    setIsMobileNavOpen,
+    currentUser,
+    newKeywordsBadgeCount,
+    newKeywordGapBadgeCount,
+  } = useApp()
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -36,6 +46,7 @@ export const Sidebar: React.FC = () => {
     { id: 'dashboard', label: 'Ringkasan', icon: LayoutDashboard },
     { id: 'impor', label: 'Impor CSV Semrush', icon: UploadCloud },
     { id: 'keyword', label: 'Kata Kunci', icon: Search },
+    { id: 'keyword_gap', label: 'Perbandingan Kata Kunci', icon: GitCompare },
     { id: 'cluster', label: 'Kelompok Topik', icon: Network },
     { id: 'brief', label: 'Arahan Artikel', icon: FileCheck2 },
     { id: 'draft', label: 'Draf Artikel', icon: FileEdit },
@@ -45,7 +56,7 @@ export const Sidebar: React.FC = () => {
     { id: 'settings', label: 'Pengaturan Redaksi', icon: Sliders },
     { id: 'users', label: 'Manajemen Pengguna', icon: Users2 },
     { id: 'auditlog', label: 'Audit Log', icon: History },
-    { id: 'antrean', label: 'Antrean Tugas', icon: Clock },
+    { id: 'konfigurasi', label: 'Konfigurasi', icon: Cpu },
   ]
 
   const handleNavClick = (id: AppPage) => {
@@ -94,7 +105,12 @@ export const Sidebar: React.FC = () => {
           </div>
           <nav className="space-y-0.5">
             {pipelineNavItems
-              .filter((item) => !(item.id === 'impor' && currentUser?.role === 'editor'))
+              .filter((item) => {
+                if (currentUser?.role === 'editor') {
+                  return item.id === 'brief' || item.id === 'draft'
+                }
+                return true
+              })
               .map((item) => {
                 const Icon = item.icon
               const isActive = currentPage === item.id
@@ -112,11 +128,23 @@ export const Sidebar: React.FC = () => {
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                     <span className="truncate">{item.label}</span>
                   </div>
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 shrink-0 ${
-                      isActive ? 'text-white/80' : 'text-slate-400'
-                    }`}
-                  />
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {item.id === 'keyword' && newKeywordsBadgeCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EF4444] text-white">
+                        +{newKeywordsBadgeCount}
+                      </span>
+                    )}
+                    {item.id === 'keyword_gap' && newKeywordGapBadgeCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EF4444] text-white">
+                        +{newKeywordGapBadgeCount}
+                      </span>
+                    )}
+                    <ChevronRight
+                      className={`w-3.5 h-3.5 shrink-0 ${
+                        isActive ? 'text-white/80' : 'text-slate-400'
+                      }`}
+                    />
+                  </div>
                 </button>
               )
             })}

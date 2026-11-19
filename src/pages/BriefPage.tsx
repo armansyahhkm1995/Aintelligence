@@ -22,6 +22,7 @@ import {
   ShieldAlert,
   LogOut,
   User,
+  Clock,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -31,6 +32,7 @@ interface BriefTableRow {
   title: string
   mainKeyword: string
   supportingKeywords: string[]
+  processStatus: 'antre' | 'diproses' | 'selesai' | 'gagal'
   editor: string
   status: string
 }
@@ -116,38 +118,61 @@ const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+    processStatus: 'selesai',
     editor: 'Budi Santoso',
     status: 'Disetujui oleh Budi Santoso',
   },
   {
     id: 'BRF-002',
-    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
-    mainKeyword: 'cara investasi reksadana',
-    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+    title: 'Panduan Registrasi IKD Secara Online',
+    mainKeyword: 'registrasi ikd online',
+    supportingKeywords: ['ikd kemendagri', 'syarat ktp digital', 'aktivasi e-ktp'],
+    processStatus: 'selesai',
     editor: '-',
     status: 'Tersedia',
   },
   {
     id: 'BRF-003',
-    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
+    title: 'Update Harga Emas Antam Hari Ini dan Proyeksi Pasar',
+    mainKeyword: 'harga emas hari ini',
+    supportingKeywords: ['emas antam 2026', 'prediksi harga emas', 'jual beli emas'],
+    processStatus: 'diproses',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'BRF-004',
+    title: 'Strategi Ketahanan Pangan Nasional Berkelanjutan',
+    mainKeyword: 'ketahanan pangan 2027',
+    supportingKeywords: ['program pangan rri', 'swasembada beras', 'distribusi pupuk'],
+    processStatus: 'antre',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'BRF-005',
+    title: 'Regulasi Insentif Kendaraan Listrik dan Subsidi Energi',
+    mainKeyword: 'subsidi motor listrik',
+    supportingKeywords: ['insentif ev 2026', 'konversi listrik', 'tarif daya pln'],
+    processStatus: 'gagal',
+    editor: '-',
+    status: 'Belum Tersedia',
+  },
+  {
+    id: 'BRF-006',
+    title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
+    processStatus: 'selesai',
     editor: 'Siti Rahmawati',
     status: 'Diambil oleh Siti Rahmawati',
   },
   {
-    id: 'BRF-004',
-    title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
-    mainKeyword: 'cara investasi reksadana',
-    supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
-    editor: '-',
-    status: 'Tersedia',
-  },
-  {
-    id: 'BRF-005',
+    id: 'BRF-007',
     title: 'Strategi Investasi Reksadana Saham bagi Pemula',
     mainKeyword: 'reksadana saham tips',
     supportingKeywords: ['risiko reksadana saham', 'top reksadana', 'investasi saham'],
+    processStatus: 'selesai',
     editor: 'Ahmad Fauzi',
     status: 'Dibuat ulang oleh Ahmad Fauzi',
   },
@@ -446,14 +471,29 @@ export const BriefPage: React.FC = () => {
   ]
 
   const handleAddAIQuestion = () => {
+    if (mainQuestions.length >= 10) {
+      showWarning(
+        'Batas Maksimal Tercapai',
+        'Anda hanya dapat menambahkan maksimal 10 pertanyaan utama. Hapus salah satu pertanyaan jika ingin menambah yang baru.'
+      )
+      return
+    }
     const nextQ =
       AI_QUESTION_POOL.find((q) => !mainQuestions.includes(q)) ||
-      'Bagaimana strategi alokasi dana darurat sebelum membeli reksadana pada kuartal ini?'
+      `Bagaimana mitigasi risiko investasi reksadana pada volatilitas pasar ${mainQuestions.length + 1}?`
     setMainQuestions((prev) => [...prev, nextQ])
     showSuccess('Pertanyaan Utama AI', 'AI berhasil merumuskan pertanyaan pembaca baru berdasarkan kelompok topik.')
   }
 
   const handleRowClick = (item: BriefTableRow) => {
+    if (item.processStatus !== 'selesai') {
+      showWarning(
+        'Naskah Belum Tersedia',
+        `Arahan artikel "${item.title}" saat ini masih dalam antrean (${item.processStatus.toUpperCase()}) dan belum siap dikerjakan oleh editor.`
+      )
+      return
+    }
+
     const currentUserName = currentUser?.name || 'Budi Santoso'
     if (
       item.editor !== '-' &&
@@ -706,20 +746,22 @@ export const BriefPage: React.FC = () => {
           {/* Table */}
           <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[800px]">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                    <th className="py-3 px-4 font-semibold w-[26%]">Judul Artikel</th>
-                    <th className="py-3 px-4 font-semibold w-[18%]">Kata Kunci Utama</th>
-                    <th className="py-3 px-4 font-semibold w-[20%]">Kata Kunci Pendukung</th>
-                    <th className="py-3 px-4 font-semibold w-[14%]">Editor</th>
-                    <th className="py-3 px-4 font-semibold w-[14%]">Status</th>
-                    <th className="py-3 px-4 font-semibold text-center w-[8%]">Aksi</th>
+                    <th className="py-3 px-4 font-semibold w-[24%]">Judul Artikel</th>
+                    <th className="py-3 px-4 font-semibold w-[16%]">Kata Kunci Utama</th>
+                    <th className="py-3 px-4 font-semibold w-[18%]">Kata Kunci Pendukung</th>
+                    <th className="py-3 px-4 font-semibold w-[13%]">Status Proses</th>
+                    <th className="py-3 px-4 font-semibold w-[12%]">Editor</th>
+                    <th className="py-3 px-4 font-semibold w-[11%]">Ketersediaan</th>
+                    <th className="py-3 px-4 font-semibold text-center w-[6%]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {filteredBriefs.map((item) => {
                     const isLockedByOther =
+                      item.processStatus === 'selesai' &&
                       item.editor !== '-' &&
                       !item.editor.toLowerCase().includes((currentUser?.name || '').toLowerCase()) &&
                       !(currentUser?.name || '').toLowerCase().includes(item.editor.toLowerCase())
@@ -729,7 +771,9 @@ export const BriefPage: React.FC = () => {
                         key={item.id}
                         onClick={() => handleRowClick(item)}
                         className={`transition-colors cursor-pointer group ${
-                          isLockedByOther
+                          item.processStatus !== 'selesai'
+                            ? 'bg-slate-50/40 hover:bg-slate-50'
+                            : isLockedByOther
                             ? 'bg-amber-50/30 hover:bg-amber-50/60'
                             : 'hover:bg-slate-50/70'
                         }`}
@@ -761,9 +805,37 @@ export const BriefPage: React.FC = () => {
                             ))}
                           </div>
                         </td>
+
+                        {/* Kolom Status Proses */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.processStatus === 'selesai' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              Selesai
+                            </span>
+                          ) : item.processStatus === 'diproses' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                              <Sparkles className="w-3 h-3 animate-spin text-blue-600" />
+                              Diproses
+                            </span>
+                          ) : item.processStatus === 'antre' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                              <Clock className="w-3 h-3 text-amber-600" />
+                              Antre
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                              <ShieldAlert className="w-3 h-3 text-rose-600" />
+                              Gagal
+                            </span>
+                          )}
+                        </td>
+
                         {/* Kolom Editor */}
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          {item.editor !== '-' ? (
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="text-slate-400 font-normal italic">-</span>
+                          ) : item.editor !== '-' ? (
                             <div className="flex items-center gap-1.5 font-medium text-slate-800">
                               <div className="w-5 h-5 rounded-full bg-blue-100 text-[#1866EF] font-bold text-[10px] flex items-center justify-center shrink-0">
                                 {item.editor.charAt(0)}
@@ -774,9 +846,14 @@ export const BriefPage: React.FC = () => {
                             <span className="text-slate-400 font-normal italic">-</span>
                           )}
                         </td>
-                        {/* Kolom Status */}
-                        <td className="py-3.5 px-4">
-                          {item.status === 'Tersedia' ? (
+
+                        {/* Kolom Ketersediaan */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-rose-50 text-rose-700 border-rose-200">
+                              Belum Tersedia
+                            </span>
+                          ) : item.status === 'Tersedia' ? (
                             <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]">
                               Tersedia
                             </span>
@@ -786,22 +863,28 @@ export const BriefPage: React.FC = () => {
                             </span>
                           )}
                         </td>
+
+                        {/* Kolom Aksi */}
                         <td className="py-3.5 px-4 text-center">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleRowClick(item)
-                            }}
-                            className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
-                              isLockedByOther
-                                ? 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                : 'border-slate-200 hover:bg-slate-100 text-slate-600'
-                            }`}
-                            title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Arahan Artikel'}
-                          >
-                            {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
-                          </button>
+                          {item.processStatus !== 'selesai' ? (
+                            <span className="text-slate-400 font-normal italic">-</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleRowClick(item)
+                              }}
+                              className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
+                                isLockedByOther
+                                  ? 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                  : 'border-slate-200 hover:bg-slate-100 text-slate-600'
+                              }`}
+                              title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Arahan Artikel'}
+                            >
+                              {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     )
@@ -1320,16 +1403,22 @@ export const BriefPage: React.FC = () => {
           {/* Card 3: Pertanyaan Utama (Sebelumnya: Pertanyaan Pembaca Terjawab, dipindahkan ke bawah Sasaran Pembaca) */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-900 block">
-                Pertanyaan Utama
-              </label>
+              <div>
+                <label className="text-xs font-bold text-slate-900 block">
+                  Pertanyaan Utama ({mainQuestions.length}/10)
+                </label>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Anda hanya dapat menambahkan maksimal sebanyak 10 pertanyaan utama.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={handleAddAIQuestion}
-                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+                disabled={mainQuestions.length >= 10}
+                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1 disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Tambah dgn AI</span>
               </button>
             </div>
             <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-lg text-xs text-slate-700 space-y-2">
@@ -1717,18 +1806,6 @@ export const BriefPage: React.FC = () => {
                         <span>Ekspor sebagai Docs (.doc)</span>
                       </div>
                       <span className="text-[10px] text-slate-400 font-mono">Word</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleExportMD}
-                      className="w-full text-left px-3.5 py-2 hover:bg-slate-50 text-slate-800 font-medium flex items-center justify-between cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Download className="w-4 h-4 text-slate-500" />
-                        <span>Ekspor sebagai MD (.md)</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-mono">Markdown</span>
                     </button>
 
                     <button

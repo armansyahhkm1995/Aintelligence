@@ -10,7 +10,8 @@ import { BriefPage } from '../../pages/BriefPage'
 import { DraftPage } from '../../pages/DraftPage'
 import { SettingsPage } from '../../pages/SettingsPage'
 import { AuditLogPage } from '../../pages/AuditLogPage'
-import { AntreanTugasPage } from '../../pages/AntreanTugasPage'
+import { ConfigurationPage } from '../../pages/ConfigurationPage'
+import { KeywordGapPage } from '../../pages/KeywordGapPage'
 import { UsersPage } from '../../pages/UsersPage'
 import { LoginPage } from '../../pages/LoginPage'
 import { ErrorBoundary } from '../common/ErrorBoundary'
@@ -32,10 +33,10 @@ import { EditClusterDrawer } from '../drawers/EditClusterDrawer'
 export const AppLayout: React.FC = () => {
   const { currentPage, setCurrentPage, isAuthenticated, currentUser } = useApp()
 
-  // Redirect editor away from admin pages if navigated directly
+  // Redirect editor away from all pages except brief and draft
   useEffect(() => {
-    if (currentUser?.role === 'editor' && ['impor', 'settings', 'users', 'auditlog', 'antrean'].includes(currentPage)) {
-      setCurrentPage('dashboard')
+    if (currentUser?.role === 'editor' && currentPage !== 'brief' && currentPage !== 'draft') {
+      setCurrentPage('brief')
     }
   }, [currentUser, currentPage, setCurrentPage])
 
@@ -51,6 +52,8 @@ export const AppLayout: React.FC = () => {
         return <ImporCSVPage />
       case 'keyword':
         return <KeywordPage />
+      case 'keyword_gap':
+        return <KeywordGapPage />
       case 'cluster':
         return <ClusterPage />
       case 'brief':
@@ -61,8 +64,8 @@ export const AppLayout: React.FC = () => {
         return <SettingsPage />
       case 'auditlog':
         return <AuditLogPage />
-      case 'antrean':
-        return <AntreanTugasPage />
+      case 'konfigurasi':
+        return <ConfigurationPage />
       case 'users':
         return <UsersPage />
       default:

@@ -8,6 +8,7 @@ import {
   FilterRule,
   AuditLogItem,
   NotificationItem,
+  KeywordGapItem,
 } from '../types'
 import {
   INITIAL_USERS,
@@ -18,6 +19,7 @@ import {
   INITIAL_RULES,
   INITIAL_AUDIT_LOGS,
   INITIAL_NOTIFICATIONS,
+  INITIAL_KEYWORD_GAP,
 } from '../data/mockData'
 import { useToast } from './ToastContext'
 
@@ -25,12 +27,13 @@ export type AppPage =
   | 'dashboard'
   | 'impor'
   | 'keyword'
+  | 'keyword_gap'
   | 'cluster'
   | 'brief'
   | 'draft'
   | 'settings'
   | 'auditlog'
-  | 'antrean'
+  | 'konfigurasi'
   | 'users'
 
 interface AppContextType {
@@ -138,6 +141,14 @@ interface AppContextType {
   // CSV Upload Settings (Batas Kedaluwarsa)
   csvCooldownMonths: number
   setCsvCooldownMonths: (months: number) => void
+
+  // New import badges
+  newKeywordsBadgeCount: number
+  setNewKeywordsBadgeCount: (count: number) => void
+  newKeywordGapBadgeCount: number
+  setNewKeywordGapBadgeCount: (count: number) => void
+  keywordGapList: KeywordGapItem[]
+  addKeywordGapItems: (items: KeywordGapItem[]) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -251,8 +262,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     getStored('csvCooldownMonths', 3)
   )
 
+  // Badge notification counts for newly imported CSVs
+  const [newKeywordsBadgeCount, setNewKeywordsBadgeCount] = useState<number>(0)
+  const [newKeywordGapBadgeCount, setNewKeywordGapBadgeCount] = useState<number>(0)
+
+  // Keyword Gap List
+  const [keywordGapList, setKeywordGapList] = useState<KeywordGapItem[]>(() =>
+    getStored('keyword_gap', INITIAL_KEYWORD_GAP)
+  )
+
+  const addKeywordGapItems = (items: KeywordGapItem[]) => {
+    setKeywordGapList((prev) => {
+      const updated = [...items, ...prev]
+      setStored('keyword_gap', updated)
+      return updated
+    })
+  }
+
+  // Clear badges when visiting relevant page
+  useEffect(() => {
+    if (currentPage === 'keyword') {
+      setNewKeywordsBadgeCount(0)
+    } else if (currentPage === 'keyword_gap') {
+      setNewKeywordGapBadgeCount(0)
+    }
+  }, [currentPage])
+
   // Persist
   useEffect(() => setStored('csvCooldownMonths', csvCooldownMonths), [csvCooldownMonths])
+  useEffect(() => setStored('keyword_gap', keywordGapList), [keywordGapList])
   useEffect(() => setStored('user', currentUser), [currentUser])
   useEffect(() => setStored('keywords', keywords), [keywords])
   useEffect(() => setStored('clusters', clusters), [clusters])
@@ -637,6 +675,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNonaktifkanPenggunaOpen,
         csvCooldownMonths,
         setCsvCooldownMonths,
+        newKeywordsBadgeCount,
+        setNewKeywordsBadgeCount,
+        newKeywordGapBadgeCount,
+        setNewKeywordGapBadgeCount,
+        keywordGapList,
+        addKeywordGapItems,
       }}
     >
       {children}
