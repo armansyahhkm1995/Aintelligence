@@ -20,10 +20,15 @@ export const SettingsPage: React.FC = () => {
     setRuleToDelete,
     setRuleToEdit,
     editRule,
+    csvCooldownMonths,
+    setCsvCooldownMonths,
   } = useApp()
   const { showSuccess } = useToast()
 
-  const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya'>('filter')
+  const [activeTab, setActiveTab] = useState<'filter' | 'bukugaya' | 'csv'>('filter')
+  const [tempCooldownMonths, setTempCooldownMonths] = useState<number>(csvCooldownMonths || 3)
+  const [checkFirst20, setCheckFirst20] = useState(true)
+  const [autoRejectDuplicate, setAutoRejectDuplicate] = useState(true)
 
   // Search & Filters for Tab 1
   const [searchRule, setSearchRule] = useState('')
@@ -139,12 +144,12 @@ export const SettingsPage: React.FC = () => {
 
       {/* COMP-TodoList-Editor: 949px Standard Container */}
       <div className="bg-white border border-[#DBEAFE] rounded-[6px] p-5 shadow-xs space-y-5">
-        {/* Segmented Pill Tab Navigation: Aturan Filter Keyword & Buku Gaya */}
-        <div className="border border-[#DBEAFE] rounded-[6px] p-1 flex sm:grid sm:grid-cols-2 gap-1 bg-white select-none overflow-x-auto max-w-full">
+        {/* Segmented Pill Tab Navigation: 3 Tabs */}
+        <div className="border border-[#DBEAFE] rounded-[6px] p-1 grid grid-cols-1 sm:grid-cols-3 gap-1 bg-white select-none">
           <button
             type="button"
             onClick={() => setActiveTab('filter')}
-            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+            className={`h-[36px] px-3 rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
               activeTab === 'filter'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -156,13 +161,25 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('bukugaya')}
-            className={`h-[36px] px-3 sm:px-1 shrink-0 sm:shrink rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+            className={`h-[36px] px-3 rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
               activeTab === 'bukugaya'
                 ? 'bg-[#1866EF] text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             Buku Gaya
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('csv')}
+            className={`h-[36px] px-3 rounded-[4px] text-xs font-semibold transition-all flex items-center justify-center whitespace-nowrap cursor-pointer ${
+              activeTab === 'csv'
+                ? 'bg-[#1866EF] text-white shadow-xs'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            Pengaturan Unggah CSV
           </button>
         </div>
 
@@ -555,6 +572,141 @@ export const SettingsPage: React.FC = () => {
                 className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs"
               >
                 Simpan Perubahan
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* TAB 3: Pengaturan Unggah CSV (Batas Kedaluwarsa & Revalidasi) */}
+        {/* ======================================================== */}
+        {activeTab === 'csv' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 leading-snug">
+                Pengaturan Unggah & Validasi CSV Semrush
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Konfigurasi jeda waktu unggah ulang berkas CSV serupa serta parameter deteksi duplikasi kata kunci untuk menjamin kebaruan tren redaksional.
+              </p>
+            </div>
+
+            {/* Section 1: Jeda Waktu Unggah Ulang Berkas CSV Serupa */}
+            <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 space-y-4">
+              <div>
+                <h3 className="text-xs font-bold text-slate-900">
+                  Jenjang Waktu Jeda Unggah Ulang Berkas CSV Serupa (Batas Kedaluwarsa Tren)
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Tentukan jeda waktu minimum kapan suatu berkas CSV dengan kumpulan kata kunci serupa baru diizinkan untuk diunggah kembali ke sistem. Berkas serupa yang diunggah sebelum jeda waktu terlewati akan otomatis ditolak guna mencegah penulisan konten berbasis tren yang sudah lampau.
+                </p>
+              </div>
+
+              {/* Radio options */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { value: 1, label: '1 Bulan', desc: 'Siklus tren sangat cepat' },
+                  { value: 3, label: '3 Bulan (Rekomendasi)', desc: 'Ideal untuk evaluasi kuartal redaksi' },
+                  { value: 6, label: '6 Bulan', desc: 'Siklus tren jangka panjang (semester)' },
+                ].map((opt) => {
+                  const isSelected = tempCooldownMonths === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setTempCooldownMonths(opt.value)}
+                      className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-[#1866EF] bg-[#EFF6FF] text-[#1866EF] ring-1 ring-[#1866EF]'
+                          : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-xs">{opt.label}</span>
+                        <span
+                          className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                            isSelected ? 'border-[#1866EF] bg-[#1866EF]' : 'border-slate-300'
+                          }`}
+                        >
+                          {isSelected && <span className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">{opt.desc}</p>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Section 2: Validasi Duplikasi 20 Kata Kunci Pertama */}
+            <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 space-y-4">
+              <div>
+                <h3 className="text-xs font-bold text-slate-900">
+                  Metode Validasi Duplikasi & Pengecekan Isi Berkas
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Sistem tidak hanya memeriksa nama berkas, melainkan mencocokkan sampel 20 kata kunci pertama guna mendeteksi berkas lama yang hanya diubah namanya.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={checkFirst20}
+                    onChange={(e) => setCheckFirst20(e.target.checked)}
+                    className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF]"
+                  />
+                  <div>
+                    <span className="text-xs font-semibold text-slate-800 block">
+                      Revalidasi Sampel 20 Kata Kunci Pertama (Ringan & Cepat)
+                    </span>
+                    <span className="text-[11px] text-slate-400 block">
+                      Membandingkan 20 kata kunci pertama dengan riwayat berkas sebelumnya. Jika kecocokan &ge; 80% dalam rentang jeda waktu ({tempCooldownMonths} bulan), sistem akan memicu alert penolakan duplikasi.
+                    </span>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoRejectDuplicate}
+                    onChange={(e) => setAutoRejectDuplicate(e.target.checked)}
+                    className="mt-0.5 rounded border-slate-300 text-[#1866EF] focus:ring-[#1866EF]"
+                  />
+                  <div>
+                    <span className="text-xs font-semibold text-slate-800 block">
+                      Tolak Otomatis Berkas Duplikat & Catat ke Audit Log
+                    </span>
+                    <span className="text-[11px] text-slate-400 block">
+                      Memberikan peringatan penolakan instan pada form unggah CSV dan mencatat upaya pengunggahan berkas kedaluwarsa ke riwayat audit log redaksi.
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setTempCooldownMonths(csvCooldownMonths)}
+                className="h-[36px] px-5 border border-[#DBEAFE] hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-[6px] transition-colors cursor-pointer"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCsvCooldownMonths(tempCooldownMonths)
+                  showSuccess(
+                    'Pengaturan Unggah CSV',
+                    `Jeda waktu unggah ulang CSV berhasil diatur menjadi ${tempCooldownMonths} bulan dengan validasi 20 kata kunci pertama.`
+                  )
+                }}
+                className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs cursor-pointer"
+              >
+                Simpan Pengaturan CSV
               </button>
             </div>
           </div>

@@ -18,6 +18,10 @@ import {
   Eye,
   History,
   X,
+  Lock,
+  ShieldAlert,
+  LogOut,
+  User,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -27,7 +31,8 @@ interface BriefTableRow {
   title: string
   mainKeyword: string
   supportingKeywords: string[]
-  status: 'Disetujui' | 'Draf' | 'Ditolak'
+  editor: string
+  status: string
 }
 
 interface BriefVersionItem {
@@ -111,35 +116,40 @@ const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
-    status: 'Disetujui',
+    editor: 'Budi Santoso',
+    status: 'Disetujui oleh Budi Santoso',
   },
   {
     id: 'BRF-002',
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
-    status: 'Draf',
+    editor: '-',
+    status: 'Tersedia',
   },
   {
     id: 'BRF-003',
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
-    status: 'Disetujui',
+    editor: 'Siti Rahmawati',
+    status: 'Diambil oleh Siti Rahmawati',
   },
   {
     id: 'BRF-004',
     title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
     mainKeyword: 'cara investasi reksadana',
     supportingKeywords: ['reksadana pemula', 'modal kecil', 'keuntungan reksadana'],
-    status: 'Draf',
+    editor: '-',
+    status: 'Tersedia',
   },
   {
     id: 'BRF-005',
     title: 'Strategi Investasi Reksadana Saham bagi Pemula',
     mainKeyword: 'reksadana saham tips',
     supportingKeywords: ['risiko reksadana saham', 'top reksadana', 'investasi saham'],
-    status: 'Disetujui',
+    editor: 'Ahmad Fauzi',
+    status: 'Dibuat ulang oleh Ahmad Fauzi',
   },
 ]
 
@@ -150,6 +160,7 @@ export const BriefPage: React.FC = () => {
     approveBrief,
     setIsTolakBriefOpen,
     setCurrentPage,
+    currentUser,
   } = useApp()
   const { showSuccess, showWarning } = useToast()
 
@@ -157,6 +168,13 @@ export const BriefPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'table' | 'detail' | 'versions' | 'compare'>('table')
   const [activeBriefVersionId, setActiveBriefVersionId] = useState<string>('bv-3')
   const [selectedCompareBriefVersion, setSelectedCompareBriefVersion] = useState<BriefVersionItem>(BRIEF_VERSIONS[1])
+  const [activeBriefId, setActiveBriefId] = useState<string>('BRF-001')
+
+  // War Ticket / Lock states
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false)
+  const [itemToClaim, setItemToClaim] = useState<BriefTableRow | null>(null)
+  const [isLockAlertOpen, setIsLockAlertOpen] = useState(false)
+  const [lockedItemInfo, setLockedItemInfo] = useState<{ title: string; editor: string } | null>(null)
 
   const handleToggleBriefVersion = (versionId: string) => {
     if (activeBriefVersionId === versionId) {
@@ -176,7 +194,7 @@ export const BriefPage: React.FC = () => {
 
   // Table filters & search
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'Semua' | 'Disetujui' | 'Draf' | 'Ditolak'>('Semua')
+  const [statusFilter, setStatusFilter] = useState<'Semua' | 'Tersedia' | 'Diambil' | 'Disetujui' | 'Dibuat ulang'>('Semua')
   const [briefList, setBriefList] = useState<BriefTableRow[]>(INITIAL_BRIEF_TABLE)
   const [activePage, setActivePage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -282,7 +300,15 @@ export const BriefPage: React.FC = () => {
 
   const handleApprove = () => {
     approveBrief()
-    showSuccess('Arahan Artikel', 'Arahan artikel berhasil disetujui dan dialirkan ke antrean Draf AI.')
+    const currentUserName = currentUser?.name || 'Budi Santoso (Editor)'
+    setBriefList((prev) =>
+      prev.map((b) =>
+        b.id === activeBriefId || b.title === activeItemTitle
+          ? { ...b, status: `Disetujui oleh ${currentUserName}` }
+          : b
+      )
+    )
+    showSuccess('Arahan Artikel', `Arahan artikel berhasil disetujui oleh ${currentUserName} dan dialirkan ke antrean Draf AI.`)
   }
 
   const handleCancelApproval = () => {
@@ -290,7 +316,15 @@ export const BriefPage: React.FC = () => {
   }
 
   const handleRegenerateWithAI = () => {
-    showSuccess('AI Assistant', 'AI sedang menyusun ulang arahan artikel...')
+    const currentUserName = currentUser?.name || 'Budi Santoso (Editor)'
+    setBriefList((prev) =>
+      prev.map((b) =>
+        b.id === activeBriefId || b.title === activeItemTitle
+          ? { ...b, status: `Dibuat ulang oleh ${currentUserName}` }
+          : b
+      )
+    )
+    showSuccess('AI Assistant', `Arahan artikel berhasil dibuat ulang oleh ${currentUserName}.`)
   }
 
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
@@ -402,13 +436,194 @@ export const BriefPage: React.FC = () => {
     showSuccess('Ekspor PDF', 'Membuka jendela cetak untuk menyimpan Arahan Artikel sebagai PDF.')
   }
 
+  const AI_QUESTION_POOL = [
+    'Bagaimana tahapan verifikasi izin manajer investasi dan APERD resmi di portal OJK?',
+    'Berapa batas saldo minimal untuk memulai diversifikasi portofolio reksadana pasar uang?',
+    'Apa konsekuensi risiko fluktuasi NAB harian terhadap modal awal investor pemula?',
+    'Berapa lama proses penyelesaian transaksi pencairan (T+1 hingga T+7) ke rekening bank nasabah?',
+    'Bagaimana perhitungan pengenaan pajak imbal hasil reksadana sesuai UU P2SK terbaru?',
+  ]
+
+  const handleAddAIQuestion = () => {
+    const nextQ =
+      AI_QUESTION_POOL.find((q) => !mainQuestions.includes(q)) ||
+      'Bagaimana strategi alokasi dana darurat sebelum membeli reksadana pada kuartal ini?'
+    setMainQuestions((prev) => [...prev, nextQ])
+    showSuccess('Pertanyaan Utama AI', 'AI berhasil merumuskan pertanyaan pembaca baru berdasarkan kelompok topik.')
+  }
+
+  const handleRowClick = (item: BriefTableRow) => {
+    const currentUserName = currentUser?.name || 'Budi Santoso'
+    if (
+      item.editor !== '-' &&
+      !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
+      !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
+    ) {
+      setLockedItemInfo({ title: item.title, editor: item.editor })
+      setIsLockAlertOpen(true)
+      return
+    }
+
+    if (item.editor === '-') {
+      setItemToClaim(item)
+      setIsClaimModalOpen(true)
+      return
+    }
+
+    // Already owned by currentUser
+    setActiveBriefId(item.id)
+    setActiveItemTitle(item.title)
+    setViewMode('detail')
+  }
+
+  const handleConfirmClaim = () => {
+    if (!itemToClaim) return
+    const currentUserName = currentUser?.name || 'Budi Santoso (Editor)'
+    setBriefList((prev) =>
+      prev.map((b) =>
+        b.id === itemToClaim.id
+          ? {
+              ...b,
+              editor: currentUserName,
+              status: `Diambil oleh ${currentUserName}`,
+            }
+          : b
+      )
+    )
+    setActiveBriefId(itemToClaim.id)
+    setActiveItemTitle(itemToClaim.title)
+    setIsClaimModalOpen(false)
+    setItemToClaim(null)
+    setViewMode('detail')
+    showSuccess(
+      'Arahan Artikel Diklaim',
+      `Anda berhasil mengunci arahan artikel ini (${currentUserName}). Editor lain tidak dapat mengambilnya.`
+    )
+  }
+
+  const handleReleaseBrief = () => {
+    setBriefList((prev) =>
+      prev.map((b) =>
+        b.id === activeBriefId || b.title === activeItemTitle
+          ? { ...b, editor: '-', status: 'Tersedia' }
+          : b
+      )
+    )
+    setViewMode('table')
+    showSuccess(
+      'Arahan Artikel Dilepas',
+      'Arahan artikel berhasil dilepas kembali ke antrean untuk editor lain.'
+    )
+  }
+
+  const renderClaimModal = () => {
+    if (!isClaimModalOpen || !itemToClaim) return null
+    return (
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-6">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1866EF] flex items-center justify-center mb-4">
+              <Lock className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Ambil & Kunci Arahan Artikel?
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Arahan artikel <strong className="text-slate-800 font-semibold">"{itemToClaim.title}"</strong> saat ini berstatus <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Tersedia</span>.
+            </p>
+            <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl mb-4 text-[11px] text-blue-900 leading-relaxed">
+              <p className="font-semibold mb-1">Mekanisme War Ticket Editor:</p>
+              Ketika Anda mengambil arahan ini, sistem akan menguncinya atas nama Anda (<span className="font-bold">{currentUser?.name || 'Budi Santoso'}</span>). Editor lain tidak dapat masuk atau mengeditnya sampai Anda mengklik tombol <strong>Lepas Arahan Artikel</strong>.
+            </div>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsClaimModalOpen(false)
+                  setItemToClaim(null)
+                }}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmClaim}
+                className="px-4 py-2 text-xs font-bold text-white bg-[#1866EF] hover:bg-blue-600 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Ambil & Kunci Arahan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
+      </div>
+    )
+  }
+
+  const renderLockAlertModal = () => {
+    if (!isLockAlertOpen || !lockedItemInfo) return null
+    return (
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-6">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Arahan Artikel Sedang Dikerjakan
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Arahan <strong className="text-slate-800 font-semibold">"{lockedItemInfo.title}"</strong> saat ini telah diambil dan dikunci oleh:
+            </p>
+            <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl mb-5 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-amber-200 text-amber-800 font-bold flex items-center justify-center text-xs">
+                {lockedItemInfo.editor.charAt(0)}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-900">{lockedItemInfo.editor}</p>
+                <p className="text-[10px] text-amber-700 font-medium">Sedang meninjau / menyusun kerangka</p>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-500 mb-5 leading-relaxed">
+              Sesuai aturan antrean redaksi RRI (War Ticket), Anda baru dapat mengambil atau melihat arahan ini setelah editor tersebut melepaskannya.
+            </p>
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLockAlertOpen(false)
+                  setLockedItemInfo(null)
+                }}
+                className="px-5 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-sm transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
+      </div>
+    )
+  }
+
   // Filtered rows for table view
   const filteredBriefs = briefList.filter((row) => {
     const matchSearch =
       row.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.mainKeyword.toLowerCase().includes(searchQuery.toLowerCase())
+      row.mainKeyword.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.editor.toLowerCase().includes(searchQuery.toLowerCase())
     const matchStatus =
-      statusFilter === 'Semua' ? true : row.status === statusFilter
+      statusFilter === 'Semua'
+        ? true
+        : row.status.toLowerCase().includes(statusFilter.toLowerCase())
     return matchSearch && matchStatus
   })
 
@@ -456,9 +671,10 @@ export const BriefPage: React.FC = () => {
                 className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
               >
                 <option value="Semua">Pilih: Semua Status</option>
+                <option value="Tersedia">Tersedia</option>
+                <option value="Diambil">Diambil Editor</option>
                 <option value="Disetujui">Disetujui</option>
-                <option value="Draf">Draf</option>
-                <option value="Ditolak">Ditolak</option>
+                <option value="Dibuat ulang">Dibuat Ulang</option>
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -467,78 +683,113 @@ export const BriefPage: React.FC = () => {
           {/* Table */}
           <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[700px]">
+              <table className="w-full text-left text-xs min-w-[800px]">
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                    <th className="py-3 px-4 font-semibold w-[32%]">Judul Artikel</th>
-                    <th className="py-3 px-4 font-semibold w-[22%]">Kata Kunci Utama</th>
-                    <th className="py-3 px-4 font-semibold w-[24%]">Kata Kunci Pendukung</th>
-                    <th className="py-3 px-4 font-semibold w-[12%]">Status</th>
-                    <th className="py-3 px-4 font-semibold text-center w-[10%]">Aksi</th>
+                    <th className="py-3 px-4 font-semibold w-[26%]">Judul Artikel</th>
+                    <th className="py-3 px-4 font-semibold w-[18%]">Kata Kunci Utama</th>
+                    <th className="py-3 px-4 font-semibold w-[20%]">Kata Kunci Pendukung</th>
+                    <th className="py-3 px-4 font-semibold w-[14%]">Editor</th>
+                    <th className="py-3 px-4 font-semibold w-[14%]">Status</th>
+                    <th className="py-3 px-4 font-semibold text-center w-[8%]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
-                  {filteredBriefs.map((item) => (
-                    <tr
-                      key={item.id}
-                      onClick={() => {
-                        setActiveItemTitle(item.title)
-                        setViewMode('detail')
-                      }}
-                      className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
-                    >
-                      <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
-                        {item.title}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
-                          {item.mainKeyword}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex flex-col gap-1 items-start">
-                          {item.supportingKeywords.map((kw, i) => (
-                            <span
-                              key={i}
-                              className="px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 text-[11px] bg-slate-50"
-                            >
-                              {kw}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span
-                          className={`inline-block px-3 py-0.5 rounded-full text-xs font-semibold border ${
-                            item.status === 'Disetujui'
-                              ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
-                              : item.status === 'Draf'
-                              ? 'bg-slate-100 text-slate-700 border-slate-200'
-                              : 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
-                          }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setActiveItemTitle(item.title)
-                            setViewMode('detail')
-                          }}
-                          className="p-1.5 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
-                          title="Sunting Arahan Artikel"
-                        >
-                          <Edit className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredBriefs.map((item) => {
+                    const isLockedByOther =
+                      item.editor !== '-' &&
+                      !item.editor.toLowerCase().includes((currentUser?.name || '').toLowerCase()) &&
+                      !(currentUser?.name || '').toLowerCase().includes(item.editor.toLowerCase())
+
+                    return (
+                      <tr
+                        key={item.id}
+                        onClick={() => handleRowClick(item)}
+                        className={`transition-colors cursor-pointer group ${
+                          isLockedByOther
+                            ? 'bg-amber-50/30 hover:bg-amber-50/60'
+                            : 'hover:bg-slate-50/70'
+                        }`}
+                      >
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
+                          <div className="flex items-center gap-2">
+                            {isLockedByOther && (
+                              <span title={`Sedang dikunci oleh ${item.editor}`}>
+                                <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                              </span>
+                            )}
+                            <span>{item.title}</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
+                            {item.mainKeyword}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className="flex flex-col gap-1 items-start">
+                            {item.supportingKeywords.map((kw, i) => (
+                              <span
+                                key={i}
+                                className="px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 text-[11px] bg-slate-50"
+                              >
+                                {kw}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        {/* Kolom Editor */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {item.editor !== '-' ? (
+                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                              <div className="w-5 h-5 rounded-full bg-blue-100 text-[#1866EF] font-bold text-[10px] flex items-center justify-center shrink-0">
+                                {item.editor.charAt(0)}
+                              </div>
+                              <span className="truncate max-w-[120px]">{item.editor}</span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 font-normal italic">-</span>
+                          )}
+                        </td>
+                        {/* Kolom Status */}
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                              item.status === 'Tersedia'
+                                ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
+                                : item.status.includes('Disetujui')
+                                ? 'bg-blue-50 text-[#1866EF] border-blue-200'
+                                : item.status.includes('Dibuat ulang')
+                                ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                : 'bg-[#FFFBEB] text-[#B45309] border-[#FDE68A]'
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleRowClick(item)
+                            }}
+                            className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
+                              isLockedByOther
+                                ? 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                : 'border-slate-200 hover:bg-slate-100 text-slate-600'
+                            }`}
+                            title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Arahan Artikel'}
+                          >
+                            {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
                   {filteredBriefs.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-slate-400">
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
                         Tidak ada arahan artikel yang cocok dengan pencarian.
                       </td>
                     </tr>
@@ -623,6 +874,10 @@ export const BriefPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
       </div>
     )
   }
@@ -745,6 +1000,10 @@ export const BriefPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
       </div>
     )
   }
@@ -935,6 +1194,10 @@ export const BriefPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
       </div>
     )
   }
@@ -1043,7 +1306,7 @@ export const BriefPage: React.FC = () => {
               </label>
               <button
                 type="button"
-                onClick={() => setMainQuestions([...mainQuestions, ''])}
+                onClick={handleAddAIQuestion}
                 className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -1474,13 +1737,14 @@ export const BriefPage: React.FC = () => {
               Setujui Arahan Artikel
             </button>
 
-            {/* Tolak Button */}
+            {/* Lepas Arahan Button */}
             <button
               type="button"
-              onClick={() => setIsTolakBriefOpen(true)}
-              className="w-full h-10 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-bold rounded-lg transition-colors cursor-pointer"
+              onClick={handleReleaseBrief}
+              className="w-full h-10 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
-              Tolak Arahan Artikel
+              <LogOut className="w-4 h-4" />
+              <span>Lepas Arahan Artikel</span>
             </button>
 
             <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">
@@ -1489,6 +1753,92 @@ export const BriefPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Claim / Lock Confirmation Modal */}
+      {isClaimModalOpen && itemToClaim && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1866EF] flex items-center justify-center mb-4">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">
+                Ambil & Kunci Arahan Artikel?
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                Arahan artikel <strong className="text-slate-800 font-semibold">"{itemToClaim.title}"</strong> saat ini berstatus <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Tersedia</span>.
+              </p>
+              <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl mb-4 text-[11px] text-blue-900 leading-relaxed">
+                <p className="font-semibold mb-1">Mekanisme War Ticket Editor:</p>
+                Ketika Anda mengambil arahan ini, sistem akan menguncinya atas nama Anda (<span className="font-bold">{currentUser?.name || 'Budi Santoso'}</span>). Editor lain tidak dapat masuk atau mengeditnya sampai Anda mengklik tombol <strong>Lepas Arahan Artikel</strong>.
+              </div>
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsClaimModalOpen(false)
+                    setItemToClaim(null)
+                  }}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmClaim}
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#1866EF] hover:bg-blue-600 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Ambil & Kunci Arahan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lock Alert Modal (when brief is claimed by another editor) */}
+      {isLockAlertOpen && lockedItemInfo && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">
+                Arahan Artikel Sedang Dikerjakan
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                Arahan <strong className="text-slate-800 font-semibold">"{lockedItemInfo.title}"</strong> saat ini telah diambil dan dikunci oleh:
+              </p>
+              <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl mb-5 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-200 text-amber-800 font-bold flex items-center justify-center text-xs">
+                  {lockedItemInfo.editor.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900">{lockedItemInfo.editor}</p>
+                  <p className="text-[10px] text-amber-700 font-medium">Sedang meninjau / menyusun kerangka</p>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-500 mb-5 leading-relaxed">
+                Sesuai aturan antrean redaksi RRI (War Ticket), Anda baru dapat mengambil atau melihat arahan ini setelah editor tersebut melepaskannya.
+              </p>
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLockAlertOpen(false)
+                    setLockedItemInfo(null)
+                  }}
+                  className="px-5 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-sm transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

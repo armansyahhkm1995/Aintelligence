@@ -34,7 +34,7 @@ export const AppLayout: React.FC = () => {
 
   // Redirect editor away from admin pages if navigated directly
   useEffect(() => {
-    if (currentUser?.role === 'editor' && ['settings', 'users', 'auditlog', 'antrean'].includes(currentPage)) {
+    if (currentUser?.role === 'editor' && ['impor', 'settings', 'users', 'auditlog', 'antrean'].includes(currentPage)) {
       setCurrentPage('dashboard')
     }
   }, [currentUser, currentPage, setCurrentPage])

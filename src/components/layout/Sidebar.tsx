@@ -93,8 +93,10 @@ export const Sidebar: React.FC = () => {
             PIPELINE PRODUKSI
           </div>
           <nav className="space-y-0.5">
-            {pipelineNavItems.map((item) => {
-              const Icon = item.icon
+            {pipelineNavItems
+              .filter((item) => !(item.id === 'impor' && currentUser?.role === 'editor'))
+              .map((item) => {
+                const Icon = item.icon
               const isActive = currentPage === item.id
               return (
                 <button

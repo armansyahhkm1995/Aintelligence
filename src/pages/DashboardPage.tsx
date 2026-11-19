@@ -15,6 +15,10 @@ import {
   Trash2,
   ExternalLink,
   ChevronRight,
+  Lock,
+  ShieldAlert,
+  User,
+  Clock,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
@@ -87,6 +91,237 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Audit Kepemilikan & Status Penguncian Editor (War Ticket Rule) */}
+      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1866EF] flex items-center justify-center shrink-0">
+              <Lock className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">
+                Audit Kepemilikan Naskah & Status Kunci Editor
+              </h2>
+              <p className="text-xs text-slate-500">
+                Pemantauan real-time status kepemilikan arahan artikel dan draf berita dalam sistem antrean redaksi.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="bg-blue-50 text-[#1866EF] text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              6 Naskah Dikunci
+            </span>
+            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
+              2 Naskah Tersedia
+            </span>
+          </div>
+        </div>
+
+        {/* Subheader Banner (War Ticket Explanation) */}
+        <div className="p-3.5 bg-gradient-to-r from-blue-50/80 via-blue-50/40 to-slate-50 border border-blue-200 rounded-xl flex items-start gap-3">
+          <ShieldAlert className="w-4 h-4 text-[#1866EF] shrink-0 mt-0.5" />
+          <div className="text-xs text-slate-700 leading-relaxed">
+            <strong className="text-slate-900 font-semibold block mb-0.5">
+              Aturan War Ticket & Penguncian Otomatis Redaksi:
+            </strong>
+            Setiap kali editor masuk ke tampilan detail suatu Arahan Artikel atau Draf Berita, sistem secara otomatis mengunci naskah tersebut atas nama editor yang bersangkutan. Naskah yang terkunci tidak dapat dibuka atau diubah oleh editor lain sampai pemilik naskah menekan tombol <span className="font-semibold text-amber-800 bg-amber-100/70 px-1 py-0.5 rounded">Lepas Arahan / Draft Artikel</span>.
+          </div>
+        </div>
+
+        {/* Dual Grid: Arahan Artikel vs Draf Artikel */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+          {/* Kolom 1: Arahan Artikel (Brief) */}
+          <div className="border border-slate-200 rounded-lg p-4 space-y-3 bg-slate-50/40">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#1866EF]"></span>
+                <span className="text-xs font-bold text-slate-900">Arahan Artikel Terkini</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentPage('brief')}
+                className="text-[11px] font-semibold text-[#1866EF] hover:underline cursor-pointer flex items-center gap-0.5"
+              >
+                <span>Lihat Semua</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {[
+                {
+                  id: 'BRF-001',
+                  title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
+                  editor: 'Budi Santoso',
+                  status: 'Disetujui oleh Budi Santoso',
+                  statusType: 'approved',
+                  time: '10 menit lalu',
+                },
+                {
+                  id: 'BRF-003',
+                  title: 'Syarat dan Dokumen Pembuatan Paspor Elektronik 2026',
+                  editor: 'Siti Rahmawati',
+                  status: 'Diambil oleh Siti Rahmawati',
+                  statusType: 'claimed',
+                  time: '25 menit lalu',
+                },
+                {
+                  id: 'BRF-005',
+                  title: 'Strategi Investasi Reksadana Saham bagi Pemula',
+                  editor: 'Ahmad Fauzi',
+                  status: 'Dibuat ulang oleh Ahmad Fauzi',
+                  statusType: 'regen',
+                  time: '45 menit lalu',
+                },
+                {
+                  id: 'BRF-004',
+                  title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
+                  editor: '-',
+                  status: 'Tersedia',
+                  statusType: 'available',
+                  time: 'Siap diambil',
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setCurrentPage('brief')}
+                  className="p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-3 hover:border-blue-300 hover:shadow-2xs transition-all cursor-pointer"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-slate-900 truncate">
+                      {item.title}
+                    </p>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-1">
+                      {item.editor !== '-' ? (
+                        <span className="flex items-center gap-1 font-medium text-slate-700">
+                          <User className="w-3 h-3 text-slate-400" />
+                          {item.editor}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 italic">Belum ada editor</span>
+                      )}
+                      <span>•</span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        {item.time}
+                      </span>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
+                      item.statusType === 'available'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : item.statusType === 'approved'
+                        ? 'bg-purple-50 text-purple-700 border-purple-200'
+                        : item.statusType === 'regen'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                        : 'bg-blue-50 text-blue-700 border-blue-200'
+                    }`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Kolom 2: Draf Artikel (Draft) */}
+          <div className="border border-slate-200 rounded-lg p-4 space-y-3 bg-slate-50/40">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="text-xs font-bold text-slate-900">Draf Artikel Terkini</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentPage('draft')}
+                className="text-[11px] font-semibold text-[#1866EF] hover:underline cursor-pointer flex items-center gap-0.5"
+              >
+                <span>Lihat Semua</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {[
+                {
+                  id: 'DFT-001',
+                  title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
+                  editor: 'Siti Rahmawati',
+                  status: 'Diambil oleh Siti Rahmawati',
+                  statusType: 'claimed',
+                  time: '15 menit lalu',
+                },
+                {
+                  id: 'DFT-003',
+                  title: 'Prosedur Pindah Domisili Antar Provinsi Tanpa Surat Pengantar RT',
+                  editor: 'Dewi Lestari',
+                  status: 'Diambil oleh Dewi Lestari',
+                  statusType: 'claimed',
+                  time: '30 menit lalu',
+                },
+                {
+                  id: 'DFT-005',
+                  title: 'Strategi Investasi Reksadana Saham bagi Pemula',
+                  editor: 'Ahmad Fauzi',
+                  status: 'Diambil oleh Ahmad Fauzi',
+                  statusType: 'claimed',
+                  time: '50 menit lalu',
+                },
+                {
+                  id: 'DFT-004',
+                  title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
+                  editor: '-',
+                  status: 'Tersedia',
+                  statusType: 'available',
+                  time: 'Siap diambil',
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setCurrentPage('draft')}
+                  className="p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between gap-3 hover:border-blue-300 hover:shadow-2xs transition-all cursor-pointer"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-slate-900 truncate">
+                      {item.title}
+                    </p>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-1">
+                      {item.editor !== '-' ? (
+                        <span className="flex items-center gap-1 font-medium text-slate-700">
+                          <User className="w-3 h-3 text-slate-400" />
+                          {item.editor}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 italic">Belum ada editor</span>
+                      )}
+                      <span>•</span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        {item.time}
+                      </span>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
+                      item.statusType === 'available'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-blue-50 text-blue-700 border-blue-200'
+                    }`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* COMP-TodoList-Editor: Daftar Antrean Editor */}

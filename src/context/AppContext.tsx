@@ -134,6 +134,10 @@ interface AppContextType {
   setIsHapusPenggunaOpen: (open: boolean) => void
   isNonaktifkanPenggunaOpen: boolean
   setIsNonaktifkanPenggunaOpen: (open: boolean) => void
+
+  // CSV Upload Settings (Batas Kedaluwarsa)
+  csvCooldownMonths: number
+  setCsvCooldownMonths: (months: number) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -243,8 +247,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isNonaktifkanPenggunaOpen, setIsNonaktifkanPenggunaOpen] = useState(false)
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
+  const [csvCooldownMonths, setCsvCooldownMonths] = useState<number>(() =>
+    getStored('csvCooldownMonths', 3)
+  )
 
   // Persist
+  useEffect(() => setStored('csvCooldownMonths', csvCooldownMonths), [csvCooldownMonths])
   useEffect(() => setStored('user', currentUser), [currentUser])
   useEffect(() => setStored('keywords', keywords), [keywords])
   useEffect(() => setStored('clusters', clusters), [clusters])
@@ -627,6 +635,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsHapusPenggunaOpen,
         isNonaktifkanPenggunaOpen,
         setIsNonaktifkanPenggunaOpen,
+        csvCooldownMonths,
+        setCsvCooldownMonths,
       }}
     >
       {children}

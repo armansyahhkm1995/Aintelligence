@@ -7,12 +7,16 @@ import {
   Sparkles,
   Edit,
   ChevronUp,
+  Clock,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
 interface KeywordRow {
   id: string
+  entryDate: string
+  entryTime: string
+  entryTimestamp: number
   keywordName: string
   vol: string
   kd: number
@@ -29,7 +33,61 @@ interface KeywordRow {
 const INITIAL_KEYWORDS: KeywordRow[] = [
   {
     id: 'KWD-01',
-    keywordName: 'Kata kunci tentang judi',
+    entryDate: '19 Nov 2026',
+    entryTime: '08:15 WIB',
+    entryTimestamp: 1794964500000,
+    keywordName: 'cara investasi reksadana pemula 2026',
+    vol: '45.000',
+    kd: 28,
+    intent: 'Informasional',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    keywordRisk: 'Musiman',
+    evergreenScore: 94,
+    overlapScore: 10,
+    decision: 'Layak',
+    decisionReason: 'tren viral stabil',
+  },
+  {
+    id: 'KWD-02',
+    entryDate: '19 Nov 2026',
+    entryTime: '07:45 WIB',
+    entryTimestamp: 1794962700000,
+    keywordName: 'cara daftar bansos kemensos online 2027',
+    vol: '33.100',
+    kd: 48,
+    intent: 'Informasional',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    keywordRisk: 'Musiman',
+    evergreenScore: 92,
+    overlapScore: 12,
+    decision: 'Layak',
+    decisionReason: 'intent stabil',
+  },
+  {
+    id: 'KWD-03',
+    entryDate: '18 Nov 2026',
+    entryTime: '16:30 WIB',
+    entryTimestamp: 1794907800000,
+    keywordName: 'cek desil bansos dtks jateng online',
+    vol: '14.200',
+    kd: 42,
+    intent: 'Komersial',
+    topic: 'Bansos & Sosial',
+    contentType: 'Panduan layanan',
+    keywordRisk: 'Non-evergreen',
+    evergreenScore: 40,
+    overlapScore: 68,
+    decision: 'Perlu Ditinjau',
+    decisionReason: 'topik perlu tinjauan',
+  },
+  {
+    id: 'KWD-04',
+    entryDate: '18 Nov 2026',
+    entryTime: '14:10 WIB',
+    entryTimestamp: 1794899400000,
+    keywordName: 'situs judi online terblokir kominfo',
     vol: '8.100',
     kd: 32,
     intent: 'Informasional',
@@ -42,60 +100,21 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
     decisionReason: 'intent stabil',
   },
   {
-    id: 'KWD-02',
-    keywordName: 'Kata kunci tentang judi',
-    vol: '8.100',
-    kd: 32,
-    intent: 'Transaksional',
+    id: 'KWD-05',
+    entryDate: '17 Nov 2026',
+    entryTime: '11:20 WIB',
+    entryTimestamp: 1794802800000,
+    keywordName: 'pinjol legal terdaftar ojk bunga rendah',
+    vol: '19.500',
+    kd: 36,
+    intent: 'Komersial',
     topic: 'Ketenagakerjaan',
     contentType: 'Panduan layanan',
     keywordRisk: 'Berisiko',
-    evergreenScore: 65,
-    overlapScore: 65,
-    decision: 'Tidak Layak',
-    decisionReason: 'topik perlu tinjauan',
-  },
-  {
-    id: 'KWD-03',
-    keywordName: 'Kata kunci tentang judi',
-    vol: '8.100',
-    kd: 32,
-    intent: 'Komersial',
-    topic: 'Perbankan & Fintech',
-    contentType: 'Panduan layanan',
-    keywordRisk: 'Non-evergreen',
-    evergreenScore: 25,
-    overlapScore: 25,
-    decision: 'Perlu Ditinjau',
-    decisionReason: 'layak evergreen',
-  },
-  {
-    id: 'KWD-04',
-    keywordName: 'cara daftar bansos kemensos online 2027',
-    vol: '33.100',
-    kd: 48,
-    intent: 'Informasional',
-    topic: 'Bansos & Sosial',
-    contentType: 'Panduan layanan',
-    keywordRisk: 'Musiman',
-    evergreenScore: 94,
-    overlapScore: 12,
+    evergreenScore: 78,
+    overlapScore: 35,
     decision: 'Layak',
-    decisionReason: 'intent stabil',
-  },
-  {
-    id: 'KWD-05',
-    keywordName: 'cek desil bansos dtks jateng online',
-    vol: '14.200',
-    kd: 42,
-    intent: 'Komersial',
-    topic: 'Bansos & Sosial',
-    contentType: 'Panduan layanan',
-    keywordRisk: 'Non-evergreen',
-    evergreenScore: 40,
-    overlapScore: 68,
-    decision: 'Perlu Ditinjau',
-    decisionReason: 'topik perlu tinjauan',
+    decisionReason: 'edukasi regulasi ojk',
   },
 ]
 
@@ -178,7 +197,7 @@ export const KeywordPage: React.FC = () => {
     const matchRule =
       filterRule === 'Semua' ? true : row.keywordRisk === filterRule
     return matchSearch && matchStatus && matchRule
-  })
+  }).sort((a, b) => (b.entryTimestamp || 0) - (a.entryTimestamp || 0))
 
   const isHeaderChecked =
     filteredKeywords.length > 0 && selectedIds.length === filteredKeywords.length
@@ -328,7 +347,13 @@ export const KeywordPage: React.FC = () => {
             <table className="w-full text-left text-xs min-w-[950px]">
               <thead>
                 <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                  <th className="py-3 px-4 font-semibold w-[26%]">
+                  <th className="py-3 px-4 font-semibold w-[14%]">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Tanggal Entry</span>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 font-semibold w-[22%]">
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -343,13 +368,13 @@ export const KeywordPage: React.FC = () => {
                       <span>Kata Kunci</span>
                     </div>
                   </th>
-                  <th className="py-3 px-4 font-semibold w-[14%]">Topik</th>
-                  <th className="py-3 px-4 font-semibold w-[13%]">Jenis Konten</th>
-                  <th className="py-3 px-4 font-semibold w-[12%]">Risiko Kata Kunci</th>
-                  <th className="py-3 px-4 font-semibold w-[9%]">Evergreen</th>
-                  <th className="py-3 px-4 font-semibold w-[9%]">Tumpang Tindih</th>
+                  <th className="py-3 px-4 font-semibold w-[13%]">Topik</th>
+                  <th className="py-3 px-4 font-semibold w-[12%]">Jenis Konten</th>
+                  <th className="py-3 px-4 font-semibold w-[11%]">Risiko Kata Kunci</th>
+                  <th className="py-3 px-4 font-semibold w-[8%]">Evergreen</th>
+                  <th className="py-3 px-4 font-semibold w-[8%]">Tumpang Tindih</th>
                   <th className="py-3 px-4 font-semibold w-[9%]">Keputusan</th>
-                  <th className="py-3 px-4 font-semibold w-[11%]">Alasan</th>
+                  <th className="py-3 px-4 font-semibold w-[10%]">Alasan</th>
                   <th className="py-3 px-4 font-semibold text-center w-[5%]">Aksi</th>
                 </tr>
               </thead>
@@ -359,6 +384,16 @@ export const KeywordPage: React.FC = () => {
                     key={item.id}
                     className="hover:bg-slate-50/70 transition-colors"
                   >
+                    {/* Tanggal Entry */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <div className="font-semibold text-slate-900 text-xs">
+                        {item.entryDate}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-normal">
+                        {item.entryTime}
+                      </div>
+                    </td>
+
                     {/* Kata Kunci with sub-meta */}
                     <td className="py-3.5 px-4">
                       <div className="flex items-start gap-2.5">
@@ -449,7 +484,7 @@ export const KeywordPage: React.FC = () => {
                 ))}
                 {filteredKeywords.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="py-8 text-center text-slate-400">
+                    <td colSpan={10} className="py-8 text-center text-slate-400">
                       Tidak ada kata kunci yang cocok dengan kriteria pencarian.
                     </td>
                   </tr>

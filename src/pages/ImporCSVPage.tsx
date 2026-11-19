@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useToast } from '../context/ToastContext'
-import { Upload, ChevronDown } from 'lucide-react'
+import { useApp } from '../context/AppContext'
+import { Upload, ChevronDown, AlertTriangle, X, ShieldAlert, CheckCircle2, Clock } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
@@ -92,16 +93,48 @@ const HISTORY_DATA: ImportHistoryItem[] = [
 
 export const ImporCSVPage: React.FC = () => {
   const { showSuccess } = useToast()
+  const { csvCooldownMonths } = useApp()
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(10)
   const [activePage, setActivePage] = useState<number>(1)
+  const [isDuplicateAlertOpen, setIsDuplicateAlertOpen] = useState(false)
+  const [duplicateFileInfo, setDuplicateFileInfo] = useState<{
+    fileName: string
+    previousDate: string
+    similarity: number
+    matchedKeywords: string[]
+  } | null>(null)
 
   const handleSimulateFilePick = () => {
     setIsUploading(true)
     setTimeout(() => {
       setIsUploading(false)
-      showSuccess('Impor CSV', 'Berkas semrush_export_nov.csv berhasil diproses oleh sistem AI.')
+      showSuccess(
+        'Impor CSV Selesai',
+        'Berkas semrush_export_desember_2026.csv (842 kata kunci) berhasil divalidasi & diproses oleh AI.'
+      )
     }, 800)
+  }
+
+  const handleSimulateDuplicatePick = () => {
+    setIsUploading(true)
+    setTimeout(() => {
+      setIsUploading(false)
+      setDuplicateFileInfo({
+        fileName: 'semrush_export_januari_reupload.csv',
+        previousDate: 'Januari 2026',
+        similarity: 95,
+        matchedKeywords: [
+          'cara investasi reksadana pemula',
+          'reksadana modal kecil',
+          'keuntungan reksadana ojk',
+          'reksadana pasar uang tips',
+          'cara daftar bansos online kemensos',
+          'syarat buka rekening efek',
+        ],
+      })
+      setIsDuplicateAlertOpen(true)
+    }, 600)
   }
 
   const handleDownloadErrorLog = (fileName: string) => {
@@ -133,18 +166,29 @@ export const ImporCSVPage: React.FC = () => {
       {/* 3. Next Step Banner */}
       <NextStepBanner currentStep={1} />
 
-      {/* 4. Drag & Drop Upload Zone */}
-      <div className="bg-[#EFF6FF] border-2 border-dashed border-[#BFDBFE] rounded-xl p-8 sm:p-10 text-center transition-colors">
-        <div className="flex justify-center mb-3">
-          <Upload className="w-6 h-6 text-slate-700" />
+      {/* 4. Drag & Drop Upload Zone with Revalidation Status */}
+      <div className="bg-[#EFF6FF] border-2 border-dashed border-[#BFDBFE] rounded-xl p-8 sm:p-10 text-center transition-colors space-y-4">
+        {/* Policy pill */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-[#BFDBFE] rounded-full text-[11px] text-[#1866EF] font-semibold shadow-2xs">
+          <Clock className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            Batas Kedaluwarsa: Jeda {csvCooldownMonths} Bulan • Validasi Otomatis Sampel 20 Kata Kunci Pertama
+          </span>
         </div>
-        <h2 className="text-sm font-bold text-slate-900 mb-1">
-          Tarik dan seret file CSV Semrush di sini, atau klik tombol di bawah
-        </h2>
-        <p className="text-xs text-slate-400 max-w-md mx-auto mb-5">
-          Hanya format .CSV yang didukung. Maksimal 50.000 baris / 25 MB.
-        </p>
+
         <div className="flex justify-center">
+          <Upload className="w-7 h-7 text-[#1866EF]" />
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-slate-900 mb-1">
+            Tarik dan seret file CSV Semrush di sini, atau klik tombol di bawah
+          </h2>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            Hanya format .CSV yang didukung. Maksimal 50.000 baris / 25 MB. Sistem otomatis memvalidasi 20 kata kunci teratas.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button
             onClick={handleSimulateFilePick}
             disabled={isUploading}
@@ -152,8 +196,102 @@ export const ImporCSVPage: React.FC = () => {
           >
             {isUploading ? 'Memproses Berkas...' : 'Pilih File CSV dari Komputer'}
           </button>
+
+          <button
+            onClick={handleSimulateDuplicatePick}
+            disabled={isUploading}
+            className="h-10 px-4 bg-white hover:bg-amber-50 text-[#B45309] border border-[#FDE68A] text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5"
+            title="Klik untuk mensimulasikan upload berkas yang isinya sama dengan data lampau"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>Simulasikan Berkas Duplikat</span>
+          </button>
         </div>
       </div>
+
+      {/* Duplicate Alert Modal */}
+      {isDuplicateAlertOpen && duplicateFileInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs select-none">
+          <div className="bg-white rounded-xl border border-red-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Header */}
+            <div className="px-6 py-4 bg-red-50/80 border-b border-red-100 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-red-900">
+                    Peringatan: Berkas CSV Terdeteksi Duplikat!
+                  </h3>
+                  <p className="text-[11px] text-red-600">
+                    Sistem mendeteksi kumpulan kata kunci telah diunggah sebelumnya.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDuplicateAlertOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4 text-xs text-slate-700">
+              <div className="p-3 bg-red-50/40 border border-red-100 rounded-lg space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Berkas yang diunggah:</span>
+                  <strong className="text-slate-900 font-mono">{duplicateFileInfo.fileName}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Kecocokan 20 Kata Kunci Pertama:</span>
+                  <span className="font-bold text-red-700">{duplicateFileInfo.similarity}% Identik</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Riwayat Berkas Sebelumnya:</span>
+                  <span className="font-semibold text-slate-800">Dataset {duplicateFileInfo.previousDate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Aturan Jeda Kedaluwarsa:</span>
+                  <span className="font-semibold text-[#1866EF]">{csvCooldownMonths} Bulan</span>
+                </div>
+              </div>
+
+              <div>
+                <span className="font-bold text-slate-900 block mb-1.5">
+                  Sampel Kata Kunci yang Cocok (Duplikat):
+                </span>
+                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                  {duplicateFileInfo.matchedKeywords.map((kw, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 bg-red-100/60 text-red-800 border border-red-200 rounded text-[11px] font-medium"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                <strong className="text-slate-700 font-semibold">Alasan Penolakan:</strong> Berkas ini berisi kumpulan kata kunci yang pernah diproses dalam rentang kurang dari {csvCooldownMonths} bulan. Untuk menjaga viralitas dan relevansi berita di portal RRI, silakan gunakan berkas CSV hasil riset tren Semrush terbaru.
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsDuplicateAlertOpen(false)}
+                className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+              >
+                Paham & Pilih Berkas Lain
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Metrics Row: 3 Cards Informasi CSV (Gaya Manajemen Pengguna) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

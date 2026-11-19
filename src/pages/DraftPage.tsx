@@ -13,6 +13,10 @@ import {
   Download,
   Eye,
   History,
+  Lock,
+  ShieldAlert,
+  LogOut,
+  User,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -22,6 +26,8 @@ interface DraftTableRow {
   title: string
   seoScore: number
   version: string
+  editor: string
+  status: string
 }
 
 interface DraftVersionItem {
@@ -131,30 +137,40 @@ const INITIAL_DRAFT_TABLE: DraftTableRow[] = [
     title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
     seoScore: 94,
     version: 'Versi 2',
+    editor: 'Siti Rahmawati',
+    status: 'Diambil oleh Siti Rahmawati',
   },
   {
     id: 'DFT-002',
-    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
-    seoScore: 94,
+    title: 'Panduan Registrasi Identitas Kependudukan Digital (IKD)',
+    seoScore: 91,
     version: 'Versi 2',
+    editor: '-',
+    status: 'Tersedia',
   },
   {
     id: 'DFT-003',
-    title: 'Cara Mengurus Kartu Keluarga dan Persyaratannya',
-    seoScore: 94,
-    version: 'Versi 2',
+    title: 'Prosedur Pindah Domisili Antar Provinsi Tanpa Surat Pengantar RT',
+    seoScore: 89,
+    version: 'Versi 1',
+    editor: 'Dewi Lestari',
+    status: 'Diambil oleh Dewi Lestari',
   },
   {
     id: 'DFT-004',
     title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
     seoScore: 94,
     version: 'Versi 2',
+    editor: '-',
+    status: 'Tersedia',
   },
   {
     id: 'DFT-005',
     title: 'Strategi Investasi Reksadana Saham bagi Pemula',
     seoScore: 88,
     version: 'Versi 1',
+    editor: 'Ahmad Fauzi',
+    status: 'Diambil oleh Ahmad Fauzi',
   },
 ]
 
@@ -165,6 +181,7 @@ export const DraftPage: React.FC = () => {
     publishDraftToEditools,
     setIsHapusDraftOpen,
     setCurrentPage,
+    currentUser,
   } = useApp()
   const { showSuccess, showWarning } = useToast()
 
@@ -173,6 +190,12 @@ export const DraftPage: React.FC = () => {
   const [draftVersions, setDraftVersions] = useState<DraftVersionItem[]>(DRAFT_VERSIONS)
   const [activeDraftVersionId, setActiveDraftVersionId] = useState<string>('dv-3')
   const [selectedCompareDraftVersion, setSelectedCompareDraftVersion] = useState<DraftVersionItem>(DRAFT_VERSIONS[1])
+
+  // War Ticket / Lock system states
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false)
+  const [itemToClaim, setItemToClaim] = useState<DraftTableRow | null>(null)
+  const [isLockAlertOpen, setIsLockAlertOpen] = useState(false)
+  const [lockedItemInfo, setLockedItemInfo] = useState<{ title: string; editor: string } | null>(null)
 
   const handleToggleDraftVersion = (versionId: string) => {
     if (activeDraftVersionId === versionId) {
@@ -192,6 +215,7 @@ export const DraftPage: React.FC = () => {
 
   // Table filters & search
   const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'Semua' | 'Tersedia' | 'Diambil'>('Semua')
   const [draftList, setDraftList] = useState<DraftTableRow[]>(INITIAL_DRAFT_TABLE)
   const [activePage, setActivePage] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -199,6 +223,72 @@ export const DraftPage: React.FC = () => {
   const [activeItemTitle, setActiveItemTitle] = useState(
     'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z'
   )
+
+  const handleRowClick = (item: DraftTableRow) => {
+    const currentUserName = currentUser?.name || 'Budi Santoso'
+    if (
+      item.editor !== '-' &&
+      !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
+      !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
+    ) {
+      setLockedItemInfo({ title: item.title, editor: item.editor })
+      setIsLockAlertOpen(true)
+      return
+    }
+
+    if (item.editor === '-') {
+      setItemToClaim(item)
+      setIsClaimModalOpen(true)
+      return
+    }
+
+    // Already owned by currentUser
+    setActiveDraftId(item.id)
+    setActiveItemTitle(item.title)
+    setArticleHeadline(item.title)
+    setViewMode('detail')
+  }
+
+  const handleConfirmClaim = () => {
+    if (!itemToClaim) return
+    const currentUserName = currentUser?.name || 'Budi Santoso (Editor)'
+    setDraftList((prev) =>
+      prev.map((d) =>
+        d.id === itemToClaim.id
+          ? {
+              ...d,
+              editor: currentUserName,
+              status: `Diambil oleh ${currentUserName}`,
+            }
+          : d
+      )
+    )
+    setActiveDraftId(itemToClaim.id)
+    setActiveItemTitle(itemToClaim.title)
+    setArticleHeadline(itemToClaim.title)
+    setIsClaimModalOpen(false)
+    setItemToClaim(null)
+    setViewMode('detail')
+    showSuccess(
+      'Draf Artikel Diklaim',
+      `Anda berhasil mengunci draf artikel ini (${currentUserName}). Editor lain tidak dapat mengambilnya.`
+    )
+  }
+
+  const handleReleaseDraft = () => {
+    setDraftList((prev) =>
+      prev.map((d) =>
+        d.id === activeDraftId || d.title === activeItemTitle
+          ? { ...d, editor: '-', status: 'Tersedia' }
+          : d
+      )
+    )
+    setViewMode('table')
+    showSuccess(
+      'Draf Artikel Dilepas',
+      'Draf artikel berhasil dilepas kembali ke antrean untuk editor lain.'
+    )
+  }
 
   // Detail view states
   const [selectedVersion, setSelectedVersion] = useState<'v2' | 'v1'>('v2')
@@ -430,9 +520,108 @@ export const DraftPage: React.FC = () => {
     showSuccess('AI Assistant', 'AI sedang menyusun ulang draf artikel...')
   }
 
-  const filteredDrafts = draftList.filter((row) =>
-    row.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const renderClaimModal = () => {
+    if (!isClaimModalOpen || !itemToClaim) return null
+    return (
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-6">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1866EF] flex items-center justify-center mb-4">
+              <Lock className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Ambil & Kunci Draf Artikel?
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Draf artikel <strong className="text-slate-800 font-semibold">"{itemToClaim.title}"</strong> saat ini berstatus <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Tersedia</span>.
+            </p>
+            <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl mb-4 text-[11px] text-blue-900 leading-relaxed">
+              <p className="font-semibold mb-1">Mekanisme War Ticket Editor:</p>
+              Ketika Anda mengambil draf artikel ini, sistem akan menguncinya atas nama Anda (<span className="font-bold">{currentUser?.name || 'Budi Santoso'}</span>). Editor lain tidak dapat masuk atau mengeditnya sampai Anda mengklik tombol <strong>Lepas Draft Artikel</strong>.
+            </div>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsClaimModalOpen(false)
+                  setItemToClaim(null)
+                }}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmClaim}
+                className="px-4 py-2 text-xs font-bold text-white bg-[#1866EF] hover:bg-blue-600 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Ambil & Kunci Draf</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderLockAlertModal = () => {
+    if (!isLockAlertOpen || !lockedItemInfo) return null
+    return (
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-6">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Draf Artikel Sedang Dikerjakan
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Draf <strong className="text-slate-800 font-semibold">"{lockedItemInfo.title}"</strong> saat ini telah diambil dan dikunci oleh:
+            </p>
+            <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl mb-5 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-amber-200 text-amber-800 font-bold flex items-center justify-center text-xs">
+                {lockedItemInfo.editor.charAt(0)}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-900">{lockedItemInfo.editor}</p>
+                <p className="text-[10px] text-amber-700 font-medium">Sedang meninjau / menyunting naskah</p>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-500 mb-5 leading-relaxed">
+              Sesuai aturan antrean redaksi RRI (War Ticket), Anda baru dapat mengambil atau melihat draf ini setelah editor tersebut melepaskannya.
+            </p>
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLockAlertOpen(false)
+                  setLockedItemInfo(null)
+                }}
+                className="px-5 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-lg shadow-sm transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const filteredDrafts = draftList.filter((row) => {
+    const matchesSearch =
+      row.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.editor.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesStatus =
+      statusFilter === 'Semua'
+        ? true
+        : statusFilter === 'Tersedia'
+        ? row.status === 'Tersedia'
+        : row.status.startsWith('Diambil')
+    return matchesSearch && matchesStatus
+  })
 
   // =========================================================================
   // 1. TABLE VIEW: 50 DAFTAR DRAFT ARTIKEL (Matching Image 10)
@@ -458,74 +647,131 @@ export const DraftPage: React.FC = () => {
 
         {/* 4. Table Container matching Image 10 */}
         <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
-          {/* Search Header Row: Full width 100% mengikuti div parent */}
-          <div className="relative w-full">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Cari judul artikel ..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
-            />
+          {/* Search Header Row & Status Filter */}
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="relative flex-1 w-full">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Cari judul artikel atau editor..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] text-slate-800"
+              />
+            </div>
+
+            <div className="relative w-full sm:w-[180px] shrink-0">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="w-full h-10 px-3.5 pr-8 text-xs bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:border-[#1866EF] text-slate-700 cursor-pointer"
+              >
+                <option value="Semua">Pilih: Semua Status</option>
+                <option value="Tersedia">Tersedia</option>
+                <option value="Diambil">Diambil Editor</option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
 
           {/* Table */}
           <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[650px]">
+              <table className="w-full text-left text-xs min-w-[750px]">
                 <thead>
                   <tr className="border-b border-[#DBEAFE] text-slate-600 bg-[#F8FAFC]">
-                    <th className="py-3 px-4 font-semibold w-[45%]">Judul Artikel</th>
-                    <th className="py-3 px-4 font-semibold w-[25%]">Skor SEO</th>
-                    <th className="py-3 px-4 font-semibold w-[20%]">Versi Draft</th>
-                    <th className="py-3 px-4 font-semibold text-center w-[10%]">Aksi</th>
+                    <th className="py-3 px-4 font-semibold w-[36%]">Judul Artikel</th>
+                    <th className="py-3 px-4 font-semibold w-[16%]">Skor SEO</th>
+                    <th className="py-3 px-4 font-semibold w-[12%]">Versi Draft</th>
+                    <th className="py-3 px-4 font-semibold w-[18%]">Editor</th>
+                    <th className="py-3 px-4 font-semibold w-[10%]">Status</th>
+                    <th className="py-3 px-4 font-semibold text-center w-[8%]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
-                  {filteredDrafts.map((item) => (
-                    <tr
-                      key={item.id}
-                      onClick={() => {
-                        setActiveDraftId(item.id)
-                        setActiveItemTitle(item.title)
-                        setArticleHeadline(item.title)
-                        setViewMode('detail')
-                      }}
-                      className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
-                    >
-                      <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
-                        {item.title}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="inline-block px-3 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-semibold">
-                          Skor SEO: {item.seoScore}/100
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-700 font-medium">
-                        {item.version}
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setActiveDraftId(item.id)
-                            setActiveItemTitle(item.title)
-                            setArticleHeadline(item.title)
-                            setViewMode('detail')
-                          }}
-                          className="p-1.5 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
-                          title="Buka Editor Draf"
-                        >
-                          <Edit className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredDrafts.map((item) => {
+                    const currentUserName = currentUser?.name || 'Budi Santoso'
+                    const isLockedByOther =
+                      item.editor !== '-' &&
+                      !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
+                      !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
+
+                    return (
+                      <tr
+                        key={item.id}
+                        onClick={() => handleRowClick(item)}
+                        className={`transition-colors cursor-pointer group ${
+                          isLockedByOther
+                            ? 'bg-amber-50/30 hover:bg-amber-50/60'
+                            : 'hover:bg-slate-50/70'
+                        }`}
+                      >
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 group-hover:text-[#1866EF] transition-colors leading-relaxed">
+                          <div className="flex items-center gap-2">
+                            {isLockedByOther && (
+                              <span title={`Sedang dikunci oleh ${item.editor}`}>
+                                <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                              </span>
+                            )}
+                            <span>{item.title}</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className="inline-block px-3 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-semibold">
+                            Skor SEO: {item.seoScore}/100
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-700 font-medium">
+                          {item.version}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          {item.editor !== '-' ? (
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">
+                                {item.editor.charAt(0)}
+                              </span>
+                              <span className="text-slate-800 font-medium text-xs">
+                                {item.editor}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 font-medium">-</span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          {item.status === 'Tersedia' ? (
+                            <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold">
+                              Tersedia
+                            </span>
+                          ) : (
+                            <span className="inline-block px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#1866EF] text-[11px] font-semibold">
+                              {item.status}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleRowClick(item)
+                            }}
+                            className={`p-1.5 border rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center ${
+                              isLockedByOther
+                                ? 'border-amber-200 hover:bg-amber-100 text-amber-700'
+                                : 'border-slate-200 hover:bg-slate-100 text-slate-600'
+                            }`}
+                            title={isLockedByOther ? `Sedang dikerjakan oleh ${item.editor}` : 'Buka Draf Artikel'}
+                          >
+                            {isLockedByOther ? <Lock className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
                   {filteredDrafts.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-8 text-center text-slate-400">
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
                         Tidak ada draf artikel yang cocok dengan pencarian.
                       </td>
                     </tr>
@@ -610,6 +856,10 @@ export const DraftPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Claim & Lock Alert Modals */}
+        {renderClaimModal()}
+        {renderLockAlertModal()}
       </div>
     )
   }
@@ -1071,51 +1321,33 @@ export const DraftPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Category / Type & Helper */}
+            {/* Category / Type */}
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                Artikel (Editor Draf Aktif)
-              </span>
-              <span className="text-[11px] text-slate-400 italic">
-                Klik teks judul atau paragraf untuk mengedit inline
+                Artikel (Naskah Read Only)
               </span>
             </div>
 
-            {/* Article Headline - Inline Editable */}
-            <div className="relative group/title">
-              <textarea
-                value={articleHeadline}
-                onChange={(e) => setArticleHeadline(e.target.value)}
-                rows={Math.max(1, Math.ceil(articleHeadline.length / 50))}
-                className="w-full text-xl font-bold text-slate-900 leading-snug bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
-                placeholder="Tulis judul artikel..."
-                title="Klik untuk mengedit judul artikel secara inline"
-              />
+            {/* Article Headline */}
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 leading-snug">
+                {articleHeadline}
+              </h2>
             </div>
 
-            {/* Lead Paragraph - Inline Editable */}
-            <div className="relative group/lead">
-              <textarea
-                value={leadText}
-                onChange={(e) => setLeadText(e.target.value)}
-                rows={4}
-                className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
-                placeholder="Tulis lead artikel (5W+1H)..."
-                title="Klik untuk mengedit lead artikel secara inline"
-              />
+            {/* Lead Paragraph */}
+            <div>
+              <p className="text-xs text-slate-700 leading-relaxed text-justify">
+                {leadText}
+              </p>
             </div>
 
             {/* Section 1 */}
             <div className="space-y-3 pt-2">
-              <div className="relative group/s1h">
-                <input
-                  type="text"
-                  value={section1Heading}
-                  onChange={(e) => setSection1Heading(e.target.value)}
-                  className="w-full text-sm font-bold text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 font-sans"
-                  placeholder="Heading Bagian 1..."
-                  title="Klik untuk mengedit heading secara inline"
-                />
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {section1Heading}
+                </h3>
               </div>
 
               {/* Yellow Callout 1 */}
@@ -1125,15 +1357,10 @@ export const DraftPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="relative group/s1c">
-                <textarea
-                  value={section1Content}
-                  onChange={(e) => setSection1Content(e.target.value)}
-                  rows={4}
-                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
-                  placeholder="Tulis isi paragraf bagian 1..."
-                  title="Klik untuk mengedit paragraf secara inline"
-                />
+              <div>
+                <p className="text-xs text-slate-700 leading-relaxed text-justify">
+                  {section1Content}
+                </p>
               </div>
 
               {/* Yellow Callout 2 */}
@@ -1146,37 +1373,22 @@ export const DraftPage: React.FC = () => {
 
             {/* Section 2 */}
             <div className="space-y-3 pt-2">
-              <div className="relative group/s2h">
-                <input
-                  type="text"
-                  value={section2Heading}
-                  onChange={(e) => setSection2Heading(e.target.value)}
-                  className="w-full text-sm font-bold text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 font-sans"
-                  placeholder="Heading Bagian 2..."
-                  title="Klik untuk mengedit heading secara inline"
-                />
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {section2Heading}
+                </h3>
               </div>
 
-              <div className="relative group/s2c1">
-                <textarea
-                  value={section2Content1}
-                  onChange={(e) => setSection2Content1(e.target.value)}
-                  rows={3}
-                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
-                  placeholder="Tulis paragraf 1 bagian 2..."
-                  title="Klik untuk mengedit paragraf secara inline"
-                />
+              <div>
+                <p className="text-xs text-slate-700 leading-relaxed text-justify">
+                  {section2Content1}
+                </p>
               </div>
 
-              <div className="relative group/s2c2">
-                <textarea
-                  value={section2Content2}
-                  onChange={(e) => setSection2Content2(e.target.value)}
-                  rows={3}
-                  className="w-full text-xs text-slate-700 leading-relaxed bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent hover:border-slate-300 focus:border-[#1866EF] rounded-lg px-2.5 py-1.5 -mx-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-[#1866EF]/20 resize-y font-sans"
-                  placeholder="Tulis paragraf 2 bagian 2..."
-                  title="Klik untuk mengedit paragraf secara inline"
-                />
+              <div>
+                <p className="text-xs text-slate-700 leading-relaxed text-justify">
+                  {section2Content2}
+                </p>
               </div>
             </div>
           </div>
@@ -1249,26 +1461,27 @@ export const DraftPage: React.FC = () => {
               )}
             </div>
 
-            {/* Simpan Button */}
+            {/* Kirim ke Editool Button */}
             <button
               type="button"
-              onClick={handleSaveDraft}
+              onClick={publishDraftToEditools}
               className="w-full h-10 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
-              Simpan
+              Kirim ke Editool
             </button>
 
-            {/* Hapus Button */}
+            {/* Lepas Draft Button */}
             <button
               type="button"
-              onClick={() => setIsHapusDraftOpen(true)}
-              className="w-full h-10 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-bold rounded-lg transition-colors cursor-pointer"
+              onClick={handleReleaseDraft}
+              className="w-full h-10 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
-              Hapus
+              <LogOut className="w-4 h-4" />
+              <span>Lepas Draft Artikel</span>
             </button>
 
             <p className="text-[11px] text-slate-400 text-center leading-relaxed pt-1">
-              Draf akan otomatis masuk ke antrean uji plagiarisme & buku gaya Editoril.
+              Draf akan otomatis masuk ke antrean uji plagiarisme & buku gaya Editorial.
             </p>
           </div>
 
@@ -1409,6 +1622,10 @@ export const DraftPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Claim & Lock Alert Modals */}
+      {renderClaimModal()}
+      {renderLockAlertModal()}
     </div>
   )
 }

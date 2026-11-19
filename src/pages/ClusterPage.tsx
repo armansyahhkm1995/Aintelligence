@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useToast } from '../context/ToastContext'
 import { ClusterItem } from '../types'
-import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronDown, Sparkles, X, AlertTriangle, GitMerge, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
 
@@ -48,6 +48,13 @@ export const ClusterPage: React.FC = () => {
     'Query spesifik platform (branded APERD). Dipisahkan menjadi artikel tinjauan aplikasi resmi OJK agar tidak bercampur dengan panduan umum.'
   )
 
+  // Card 1 AI states
+  const [card1Title, setCard1Title] = useState('Cara Investasi Reksadana Pemula')
+  const [card1Intent, setCard1Intent] = useState('Informasional')
+  const [card1Vol, setCard1Vol] = useState('45.000 / bln')
+  const [card1Kd, setCard1Kd] = useState('32%')
+  const [isAiRegenerated, setIsAiRegenerated] = useState(false)
+
   // Supporting keywords state for Card 2 with separation mode
   const [card2Supporting, setCard2Supporting] = useState([
     'belajar reksadana online (Vol 22.000) (KD 28%)',
@@ -90,7 +97,22 @@ export const ClusterPage: React.FC = () => {
   }
 
   const handleGenerateClustersWithAI = () => {
-    showSuccess('AI Assistant', 'AI sedang menganalisis dan mengelompokkan kata kunci baru ke dalam cluster...')
+    if (!isAiRegenerated) {
+      setCard1Title('Cara Investasi Reksadana Uang untuk Generasi-Z')
+      setCard1Intent('Komersial')
+      setCard1Vol('60.000 / bln')
+      setCard1Kd('26%')
+      setIsAiRegenerated(true)
+      showSuccess(
+        'Kelompok Topik Diperbarui AI',
+        'Judul baru: "Cara Investasi Reksadana Uang untuk Generasi-Z" • Intent: Komersial • Prediksi Vol: 60.000 (+15K) • KD: 26% (Mudah)'
+      )
+    } else {
+      showSuccess(
+        'Analisis AI Selesai',
+        'Struktur topik sudah sinkron dengan kata kunci tervalidasi. Tidak ada perubahan intent atau volume.'
+      )
+    }
   }
 
   const handleConfirmAbaikan = () => {
@@ -111,6 +133,14 @@ export const ClusterPage: React.FC = () => {
     )
   }
 
+  const handleRestoreMergedTopic = () => {
+    setIsMerged(false)
+    showSuccess(
+      'Topik Berhasil Dikembalikan',
+      'Kelompok topik "Panduan Reksadana 2026" telah dipulihkan. Seluruh kata kunci dan volume pencarian telah dikembalikan.'
+    )
+  }
+
   const handleConfirmSplit = () => {
     setIsSplitted(true)
     setCard2Supporting((prev) => prev.filter((kw) => !selectedSplitKeywords.includes(kw)))
@@ -118,6 +148,15 @@ export const ClusterPage: React.FC = () => {
     showSuccess(
       'Pemecahan Topik Berhasil',
       `Kelompok topik berhasil dipecah. Kelompok topik baru '${newSplitTopicTitle}' berhasil diterbitkan.`
+    )
+  }
+
+  const handleUndoSplit = () => {
+    setIsSplitted(false)
+    setCard2Supporting((prev) => Array.from(new Set([...prev, ...selectedSplitKeywords])))
+    showSuccess(
+      'Pecahan Dibatalkan (Undo)',
+      'Kata kunci pecahan berhasil dikembalikan ke kelompok topik induk Panduan Reksadana 2026.'
     )
   }
 
@@ -276,17 +315,17 @@ export const ClusterPage: React.FC = () => {
                 {isMerged ? 'Topik Pilar (Digabungkan)' : 'Aman'}
               </span>
               <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
-                Informasional
+                {card1Intent}
               </span>
             </div>
 
             <div className="text-xs text-slate-500 font-medium">
               <span className="font-bold text-slate-800">
-                Total Vol: {isMerged ? '90.000 / bln' : '45.000 / bln'}
+                Total Vol: {isMerged ? '90.000 / bln' : card1Vol}
               </span>
               <span className="mx-2 text-slate-300">|</span>
               <span>
-                Rata-rata KD: 32% • ({isMerged ? '6 Keyword' : '4 Keyword'})
+                Rata-rata KD: {card1Kd} • ({isMerged ? '6 Keyword' : '4 Keyword'})
               </span>
             </div>
           </div>
@@ -294,7 +333,7 @@ export const ClusterPage: React.FC = () => {
           {/* Cluster Title */}
           <div>
             <h2 className="text-lg font-bold text-[#1866EF] leading-snug">
-              Cara Investasi Reksadana Pemula
+              {card1Title}
             </h2>
           </div>
 
@@ -459,7 +498,11 @@ export const ClusterPage: React.FC = () => {
                 {card2Supporting.map((kw, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs"
+                    className={`px-3 py-1 rounded-full text-xs font-medium border shadow-2xs ${
+                      isMerged
+                        ? 'bg-slate-100 border-slate-200 text-slate-500 line-through'
+                        : 'bg-white border-slate-200 text-slate-700'
+                    }`}
                   >
                     {kw}
                   </span>
@@ -470,8 +513,18 @@ export const ClusterPage: React.FC = () => {
 
           {/* Bottom Alert & Action Buttons */}
           {isMerged ? (
-            <div className="text-right pt-1">
-              <span className="text-xs text-slate-400 font-medium">Status: Selesai Digabungkan</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+              <span className="text-xs text-slate-500 font-medium">
+                Status: Topik Dicoret (Seluruh kata kunci dilebur ke 'Cara Investasi Reksadana Pemula')
+              </span>
+              <button
+                type="button"
+                onClick={handleRestoreMergedTopic}
+                className="h-9 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 self-end sm:self-auto"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Kembalikan Topik</span>
+              </button>
             </div>
           ) : !isCard2Ignored ? (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
@@ -592,6 +645,15 @@ export const ClusterPage: React.FC = () => {
                 className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               >
                 Tolak
+              </button>
+              <button
+                type="button"
+                onClick={handleUndoSplit}
+                className="h-9 px-3.5 bg-white hover:bg-amber-50 text-amber-800 border border-amber-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                title="Batalkan pemecahan dan kembalikan kata kunci ke kelompok topik induk"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
+                <span>Undo Pecahan</span>
               </button>
               <button
                 type="button"
