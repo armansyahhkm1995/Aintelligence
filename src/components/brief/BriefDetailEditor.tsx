@@ -207,16 +207,47 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column (lg:col-span-8): Content Editor */}
         <div className="lg:col-span-8 space-y-5">
+          {/* Approved Read-Only Banner */}
+          {isApproved && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between gap-3 text-xs text-emerald-800 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                <span className="font-semibold">
+                  Arahan Artikel Ini Telah Disetujui (Mode Baca-Saja / Read-Only).
+                </span>
+                <span className="text-emerald-700 hidden sm:inline">
+                  Seluruh susunan arahan terkunci agar editor lain dapat meninjau rincian alasan persetujuan naskah.
+                </span>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 shrink-0">
+                Disetujui
+              </span>
+            </div>
+          )}
+
           {/* Card 1: Judul Usulan Artikel */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-2">
-            <label className="text-xs font-bold text-slate-900 block">
-              Judul Usulan Artikel
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-900 block">
+                Judul Usulan Artikel
+              </label>
+              {isApproved && (
+                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  Read-Only (Terkunci)
+                </span>
+              )}
+            </div>
             <input
               type="text"
+              readOnly={isApproved}
+              disabled={isApproved}
               value={briefTitle}
               onChange={(e) => setBriefTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF]"
+              className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors ${
+                isApproved
+                  ? 'bg-slate-50 text-slate-800 border-slate-200 cursor-default font-medium'
+                  : 'bg-white text-slate-800 border-slate-200 focus:outline-none focus:border-[#1866EF]'
+              }`}
             />
           </div>
 
@@ -227,10 +258,16 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
             </label>
             <input
               type="text"
+              readOnly={isApproved}
+              disabled={isApproved}
               value={targetAudience}
               onChange={(e) => setTargetAudience(e.target.value)}
               placeholder="Masukkan sasaran pembaca..."
-              className="w-full px-3.5 py-2.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] font-medium"
+              className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors ${
+                isApproved
+                  ? 'bg-slate-50 text-slate-800 border-slate-200 cursor-default font-medium'
+                  : 'bg-white text-slate-800 border-slate-200 focus:outline-none focus:border-[#1866EF] font-medium'
+              }`}
             />
           </div>
 
@@ -245,7 +282,7 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   Daftar pertanyaan yang harus terjawab secara lugas di dalam isi artikel naskah akhir
                 </p>
               </div>
-              {mainQuestions.length < 10 && (
+              {!isApproved && mainQuestions.length < 10 && (
                 <button
                   type="button"
                   onClick={handleAddQuestion}
@@ -265,11 +302,17 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   </span>
                   <input
                     type="text"
+                    readOnly={isApproved}
+                    disabled={isApproved}
                     value={q}
                     onChange={(e) => handleQuestionChange(idx, e.target.value)}
-                    className="flex-1 px-3 py-2 text-xs text-slate-800 bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-[#1866EF]"
+                    className={`flex-1 px-3 py-2 text-xs rounded-lg border ${
+                      isApproved
+                        ? 'bg-slate-50 text-slate-800 border-slate-200 cursor-default'
+                        : 'bg-slate-50/70 text-slate-800 border-slate-200 focus:outline-none focus:bg-white focus:border-[#1866EF]'
+                    }`}
                   />
-                  {mainQuestions.length > 1 && (
+                  {!isApproved && mainQuestions.length > 1 && (
                     <button
                       type="button"
                       onClick={() => handleDeleteQuestion(idx)}
@@ -291,9 +334,15 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
             </label>
             <textarea
               rows={3}
+              readOnly={isApproved}
+              disabled={isApproved}
               value={angleJournalistic}
               onChange={(e) => setAngleJournalistic(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-[#1866EF] leading-relaxed resize-y"
+              className={`w-full px-3.5 py-2.5 text-xs rounded-lg border leading-relaxed resize-y ${
+                isApproved
+                  ? 'bg-slate-50 text-slate-800 border-slate-200 cursor-default'
+                  : 'bg-white text-slate-800 border-slate-200 focus:outline-none focus:border-[#1866EF]'
+              }`}
             />
           </div>
 
@@ -303,37 +352,41 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               <label className="text-xs font-bold text-slate-900 block">
                 Kerangka Naskah
               </label>
-              <button
-                type="button"
-                onClick={handleAddHeading}
-                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah</span>
-              </button>
+              {!isApproved && (
+                <button
+                  type="button"
+                  onClick={handleAddHeading}
+                  className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Tambah</span>
+                </button>
+              )}
             </div>
 
             <div className="space-y-2">
               {headings.map((item, idx) => (
                 <div
                   key={item.id}
-                  draggable={item.level !== 'H1'}
-                  onDragStart={() => handleDragStart(idx)}
-                  onDragOver={(e) => handleDragOver(e, idx)}
-                  onDragEnd={handleDragEnd}
+                  draggable={!isApproved && item.level !== 'H1'}
+                  onDragStart={() => !isApproved && handleDragStart(idx)}
+                  onDragOver={(e) => !isApproved && handleDragOver(e, idx)}
+                  onDragEnd={() => !isApproved && handleDragEnd()}
                   className={`flex items-center gap-2 p-2 border rounded-lg transition-colors group ${
                     item.level === 'H1'
                       ? 'bg-blue-50/50 border-blue-200/90'
+                      : isApproved
+                      ? 'bg-slate-50/70 border-slate-200/80'
                       : 'bg-slate-50/70 hover:bg-slate-50 border-slate-200/80'
                   }`}
                 >
-                  {/* Drag Handle: Hidden for H1 */}
-                  {item.level !== 'H1' ? (
+                  {/* Drag Handle: Hidden for H1 or when isApproved */}
+                  {!isApproved && item.level !== 'H1' ? (
                     <div className="cursor-grab text-slate-400 hover:text-slate-600 px-1">
                       <GripVertical className="w-4 h-4" />
                     </div>
                   ) : (
-                    <div className="w-6 px-1" title="H1 Baku Permanen" />
+                    <div className="w-6 px-1" title={item.level === 'H1' ? 'H1 Baku Permanen' : 'Terkunci'} />
                   )}
 
                   {/* Level Pill */}
@@ -360,13 +413,17 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   {/* Heading Title Input */}
                   <input
                     type="text"
+                    readOnly={isApproved}
+                    disabled={isApproved}
                     value={item.text}
                     onChange={(e) => handleTextChange(item.id, e.target.value)}
-                    className="flex-1 bg-transparent text-xs text-slate-800 font-medium focus:outline-none focus:bg-white px-2 py-1 rounded"
+                    className={`flex-1 text-xs text-slate-800 font-medium px-2 py-1 rounded ${
+                      isApproved ? 'bg-transparent cursor-default' : 'bg-transparent focus:outline-none focus:bg-white'
+                    }`}
                   />
 
                   {/* Level Dropdown Toggle */}
-                  {item.level !== 'H1' && (
+                  {!isApproved && item.level !== 'H1' && (
                     <div className="relative">
                       <button
                         type="button"
@@ -397,8 +454,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                     </div>
                   )}
 
-                  {/* Delete Button: Hidden for H1 */}
-                  {item.level !== 'H1' && (
+                  {/* Delete Button: Hidden for H1 or when isApproved */}
+                  {!isApproved && item.level !== 'H1' && (
                     <button
                       type="button"
                       onClick={() => handleDeleteHeading(item.id)}
@@ -419,14 +476,16 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               <label className="text-xs font-bold text-slate-900 block">
                 Daftar URL/penerbit/sumber pendukung
               </label>
-              <button
-                type="button"
-                onClick={() => setIsAddingSource(true)}
-                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah</span>
-              </button>
+              {!isApproved && (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingSource(true)}
+                  className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Tambah</span>
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {supportingSources.map((ent, i) => (
@@ -435,72 +494,76 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium"
                 >
                   <span>{ent}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSupportingSources(supportingSources.filter((_, idx) => idx !== i))}
-                    className="hover:text-rose-600 transition-colors cursor-pointer"
-                    title="Hapus sumber"
-                  >
-                    <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
-                  </button>
+                  {!isApproved && (
+                    <button
+                      type="button"
+                      onClick={() => setSupportingSources(supportingSources.filter((_, idx) => idx !== i))}
+                      className="hover:text-rose-600 transition-colors cursor-pointer"
+                      title="Hapus sumber"
+                    >
+                      <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
+                    </button>
+                  )}
                 </span>
               ))}
 
-              {isAddingSource ? (
-                <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
-                  <input
-                    type="text"
-                    autoFocus
-                    value={newSourceTitle}
-                    onChange={(e) => setNewSourceTitle(e.target.value)}
-                    placeholder="Nama URL / Judul Sumber..."
-                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
-                  />
-                  <input
-                    type="text"
-                    value={newSourceUrl}
-                    onChange={(e) => setNewSourceUrl(e.target.value)}
-                    placeholder="URL (contoh: ojk.go.id/pasar-modal)"
-                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-52"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (newSourceTitle.trim() || newSourceUrl.trim()) {
-                        const itemText = newSourceUrl.trim()
-                          ? `${newSourceTitle.trim() || 'Sumber'} (${newSourceUrl.trim()})`
-                          : newSourceTitle.trim()
-                        setSupportingSources([...supportingSources, itemText])
+              {!isApproved && (
+                isAddingSource ? (
+                  <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={newSourceTitle}
+                      onChange={(e) => setNewSourceTitle(e.target.value)}
+                      placeholder="Nama URL / Judul Sumber..."
+                      className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
+                    />
+                    <input
+                      type="text"
+                      value={newSourceUrl}
+                      onChange={(e) => setNewSourceUrl(e.target.value)}
+                      placeholder="URL (contoh: ojk.go.id/pasar-modal)"
+                      className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-52"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (newSourceTitle.trim() || newSourceUrl.trim()) {
+                          const itemText = newSourceUrl.trim()
+                            ? `${newSourceTitle.trim() || 'Sumber'} (${newSourceUrl.trim()})`
+                            : newSourceTitle.trim()
+                          setSupportingSources([...supportingSources, itemText])
+                          setNewSourceTitle('')
+                          setNewSourceUrl('')
+                        }
+                        setIsAddingSource(false)
+                      }}
+                      className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
+                    >
+                      Simpan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
                         setNewSourceTitle('')
                         setNewSourceUrl('')
-                      }
-                      setIsAddingSource(false)
-                    }}
-                    className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
-                  >
-                    Simpan
-                  </button>
+                        setIsAddingSource(false)
+                      }}
+                      className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => {
-                      setNewSourceTitle('')
-                      setNewSourceUrl('')
-                      setIsAddingSource(false)
-                    }}
-                    className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    onClick={() => setIsAddingSource(true)}
+                    className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
+                    title="Tambah Sumber Pendukung"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingSource(true)}
-                  className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
-                  title="Tambah Sumber Pendukung"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                )
               )}
             </div>
           </div>
@@ -511,14 +574,16 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               <label className="text-xs font-bold text-slate-900 block">
                 Rekomendasi Tautan Internal Portal RRI
               </label>
-              <button
-                type="button"
-                onClick={() => setIsAddingLink(true)}
-                className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah</span>
-              </button>
+              {!isApproved && (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingLink(true)}
+                  className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Tambah</span>
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {internalLinks.map((link) => (
@@ -534,76 +599,80 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                     <span>{link.title} ({link.url})</span>
                     <ExternalLink className="w-3 h-3 text-[#1D4ED8]" />
                   </a>
-                  <button
-                    type="button"
-                    onClick={() => setInternalLinks(internalLinks.filter((l) => l.id !== link.id))}
-                    className="hover:text-rose-600 transition-colors cursor-pointer ml-1"
-                    title="Hapus tautan internal"
-                  >
-                    <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
-                  </button>
+                  {!isApproved && (
+                    <button
+                      type="button"
+                      onClick={() => setInternalLinks(internalLinks.filter((l) => l.id !== link.id))}
+                      className="hover:text-rose-600 transition-colors cursor-pointer ml-1"
+                      title="Hapus tautan internal"
+                    >
+                      <X className="w-3 h-3 text-[#1D4ED8] hover:text-rose-600" />
+                    </button>
+                  )}
                 </div>
               ))}
 
-              {isAddingLink ? (
-                <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
-                  <input
-                    type="text"
-                    autoFocus
-                    value={newLinkTitle}
-                    onChange={(e) => setNewLinkTitle(e.target.value)}
-                    placeholder="Judul artikel internal..."
-                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
-                  />
-                  <input
-                    type="text"
-                    value={newLinkUrl}
-                    onChange={(e) => setNewLinkUrl(e.target.value)}
-                    placeholder="URL (contoh: rri.co.id/bisnis/512)"
-                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-48"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (newLinkTitle.trim()) {
-                        setInternalLinks([
-                          ...internalLinks,
-                          {
-                            id: `il-${Date.now()}`,
-                            title: newLinkTitle.trim(),
-                            url: newLinkUrl.trim() || 'rri.co.id/berita/artikel',
-                          },
-                        ])
+              {!isApproved && (
+                isAddingLink ? (
+                  <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={newLinkTitle}
+                      onChange={(e) => setNewLinkTitle(e.target.value)}
+                      placeholder="Judul artikel internal..."
+                      className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
+                    />
+                    <input
+                      type="text"
+                      value={newLinkUrl}
+                      onChange={(e) => setNewLinkUrl(e.target.value)}
+                      placeholder="URL (contoh: rri.co.id/bisnis/512)"
+                      className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-48"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (newLinkTitle.trim()) {
+                          setInternalLinks([
+                            ...internalLinks,
+                            {
+                              id: `il-${Date.now()}`,
+                              title: newLinkTitle.trim(),
+                              url: newLinkUrl.trim() || 'rri.co.id/berita/artikel',
+                            },
+                          ])
+                          setNewLinkTitle('')
+                          setNewLinkUrl('')
+                        }
+                        setIsAddingLink(false)
+                      }}
+                      className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
+                    >
+                      Simpan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
                         setNewLinkTitle('')
                         setNewLinkUrl('')
-                      }
-                      setIsAddingLink(false)
-                    }}
-                    className="h-[28px] px-2.5 bg-[#1866EF] text-white text-xs font-semibold rounded hover:bg-blue-600 cursor-pointer"
-                  >
-                    Simpan
-                  </button>
+                        setIsAddingLink(false)
+                      }}
+                      className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => {
-                      setNewLinkTitle('')
-                      setNewLinkUrl('')
-                      setIsAddingLink(false)
-                    }}
-                    className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    onClick={() => setIsAddingLink(true)}
+                    className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
+                    title="Tambah Tautan Internal"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingLink(true)}
-                  className="h-[28px] w-[28px] rounded-full border border-dashed border-[#BFDBFE] hover:bg-blue-50 text-[#1866EF] flex items-center justify-center transition-colors cursor-pointer"
-                  title="Tambah Tautan Internal"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                )
               )}
             </div>
           </div>
