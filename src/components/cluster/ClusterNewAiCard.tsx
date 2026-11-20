@@ -13,7 +13,7 @@ export const ClusterNewAiCard: React.FC<ClusterNewAiCardProps> = ({
   onCreateBrief,
 }) => {
   return (
-    <div className="bg-white border-2 border-[#1866EF]/40 rounded-xl p-6 shadow-sm space-y-4 animate-in fade-in slide-in-from-top-2">
+    <div className="bg-white border-2 border-[#1866EF] ring-4 ring-blue-500/20 rounded-xl p-6 shadow-md space-y-4 animate-in fade-in slide-in-from-top-2">
       {/* Header Row: Badges & Right Meta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
         <div className="flex items-center gap-2">

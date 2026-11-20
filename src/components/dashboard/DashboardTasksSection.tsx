@@ -19,7 +19,7 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             Daftar Tugas
           </h2>
           <span className="bg-[#FFFBEB] text-[#B45309] text-xs font-medium px-2 py-0.5 rounded border border-amber-200">
-            7 Butuh Tindakan
+            8 Butuh Tindakan
           </span>
         </div>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -150,6 +150,47 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
               Tinjau Arahan
             </button>
           </div>
+
+          {/* Brief Row 4 (Tersedia / Belum Diambil) */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
+              <div className="space-y-1 text-xs pt-0.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
+                  <span className="font-semibold text-[#1866EF] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded">
+                    investasi reksadana gen-z
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-slate-500 font-medium">Kata Kunci Pendukung:</span>
+                  <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                    reksadana pemula
+                  </span>
+                  <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                    modal kecil
+                  </span>
+                  <span className="text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                    legal ojk
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onNavigateBrief}
+              className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
+            >
+              Tinjau Arahan
+            </button>
+          </div>
         </div>
       </div>
 
@@ -164,7 +205,7 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
               2. Draft Artikel Siap Diperiksa
             </span>
             <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded border border-green-200">
-              3 Siap Salin
+              4 Siap Salin
             </span>
           </div>
           <span className="text-xs sm:text-sm text-slate-400">Naskah AI siap verifikasi editor</span>
@@ -263,6 +304,48 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
                   <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
                   <span>Butuh Verifikasi Fakta: Konfirmasi nilai statistik resmi OJK terbaru</span>
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onNavigateDraft}
+              className="w-full sm:w-auto px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-sm font-semibold rounded-md transition-colors shadow-xs shrink-0 self-stretch sm:self-center text-center cursor-pointer"
+            >
+              Tinjau Draft
+            </button>
+          </div>
+
+          {/* Draf Row 4 (Tersedia / Belum Diambil) */}
+          <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Panduan Aman Memulai Investasi Reksadana untuk Gen-Z
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
+                <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
+                  Skor SEO: 94/100
+                </span>
+                <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
+                  Versi Draft: Versi 2
+                </span>
+                <span className="bg-slate-50 text-slate-700 text-xs font-medium px-2 py-0.5 rounded border border-slate-200">
+                  Jumlah Kata: 850 Kata
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                  <span>Butuh Verifikasi Fakta: Regulasi APERD & KSEI 2026</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-xs font-medium">
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                  <span>Kutipan Narasumber Dibutuhkan</span>
                 </span>
               </div>
             </div>

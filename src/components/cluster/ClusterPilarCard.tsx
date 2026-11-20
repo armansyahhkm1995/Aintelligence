@@ -25,7 +25,13 @@ export const ClusterPilarCard: React.FC<ClusterPilarCardProps> = ({
   onCreateBrief,
 }) => {
   return (
-    <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-4">
+    <div
+      className={`bg-white rounded-xl p-6 space-y-4 transition-all ${
+        isAiRegenerated
+          ? 'border-2 border-[#1866EF] ring-4 ring-blue-500/20 shadow-md'
+          : 'border border-[#DBEAFE] shadow-xs'
+      }`}
+    >
       {/* Header Row: Badges & Right Meta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
         <div className="flex items-center gap-2">

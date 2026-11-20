@@ -54,7 +54,6 @@ export const ClusterFilterBar: React.FC<ClusterFilterBarProps> = ({
             <option value="">Semua Status</option>
             <option value="Aman">Aman (Siap Brief)</option>
             <option value="Butuh Resolusi">Butuh Resolusi (Kanibalisasi)</option>
-            <option value="Bentrok CMS RRI">Bentrok CMS RRI</option>
           </select>
           <ChevronDown className="absolute right-3 top-3.5 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
         </div>

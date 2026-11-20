@@ -231,9 +231,6 @@ export const ClusterPage: React.FC = () => {
               <h4 className="text-xs font-bold text-slate-900">
                 {aiNewsletter.title}
               </h4>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1866EF] text-white">
-                AI Powered
-              </span>
             </div>
             <p className="text-xs text-slate-600 mt-1 leading-relaxed">
               {aiNewsletter.message}

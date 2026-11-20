@@ -6,8 +6,6 @@ import {
   ChevronDown,
   Sparkles,
   Edit,
-  ChevronUp,
-  Clock,
 } from 'lucide-react'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
 import { NextStepBanner } from '../components/common/NextStepBanner'
@@ -359,16 +357,10 @@ export const KeywordPage: React.FC = () => {
                     />
                   </th>
                   <th className="py-3 px-3 font-semibold w-[14%]">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Tanggal Entry</span>
-                    </div>
+                    <span>Tanggal Masuk</span>
                   </th>
                   <th className="py-3 px-4 font-semibold w-[22%]">
-                    <div className="flex items-center gap-1.5">
-                      <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Kata Kunci</span>
-                    </div>
+                    <span>Kata Kunci</span>
                   </th>
                   <th className="py-3 px-4 font-semibold w-[13%]">Topik</th>
                   <th className="py-3 px-4 font-semibold w-[12%]">Jenis Konten</th>

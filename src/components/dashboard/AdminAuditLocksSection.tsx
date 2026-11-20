@@ -27,9 +27,6 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
             6 Naskah Dikunci
           </span>
-          <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
-            2 Naskah Tersedia
-          </span>
         </div>
       </div>
 
@@ -77,14 +74,6 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Dibuat ulang oleh Ahmad Fauzi',
                 statusType: 'regen',
                 time: '45 menit lalu',
-              },
-              {
-                id: 'BRF-004',
-                title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
-                editor: '-',
-                status: 'Tersedia',
-                statusType: 'available',
-                time: 'Siap diambil',
               },
             ].map((item, idx) => (
               <div
@@ -173,14 +162,6 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Diambil oleh Ahmad Fauzi',
                 statusType: 'claimed',
                 time: '50 menit lalu',
-              },
-              {
-                id: 'DFT-004',
-                title: 'Panduan Aman Memulai Investasi Reksadana untuk Gen-Z',
-                editor: '-',
-                status: 'Tersedia',
-                statusType: 'available',
-                time: 'Siap diambil',
               },
             ].map((item, idx) => (
               <div

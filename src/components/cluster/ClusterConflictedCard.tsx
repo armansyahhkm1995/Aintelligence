@@ -1,13 +1,13 @@
 import React from 'react'
-import { GitMerge, ChevronDown } from 'lucide-react'
+import { GitMerge } from 'lucide-react'
 
 interface ClusterConflictedCardProps {
   isMerged: boolean
   isCard2Ignored: boolean
   card2Supporting: string[]
-  isSplitActionOpen: boolean
-  onToggleSplitAction: () => void
-  onOpenConflictModal: () => void
+  isSplitActionOpen?: boolean
+  onToggleSplitAction?: () => void
+  onOpenConflictModal?: () => void
   onOpenAbaikanModal: () => void
   onOpenMergeModal: () => void
   onOpenSplitModal: () => void
@@ -136,69 +136,8 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
         </div>
       </div>
 
-      {/* Conflict Resolution Buttons */}
-      {!isMerged && !isCard2Ignored && (
-        <div className="p-3.5 bg-amber-50/60 border border-amber-200/80 rounded-xl flex flex-wrap items-center justify-between gap-3">
-          <div className="text-xs text-amber-900 font-medium">
-            Rekomendasi Tindakan: Selesaikan potensi kanibalisasi agar tidak menurunkan ranking SEO artikel.
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onOpenConflictModal}
-              className="h-8 px-3.5 bg-[#B45309] hover:bg-amber-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
-            >
-              Selesaikan Bentrok
-            </button>
-            <button
-              type="button"
-              onClick={onOpenAbaikanModal}
-              className="h-8 px-3.5 bg-white hover:bg-amber-100/60 text-[#B45309] border border-amber-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-            >
-              Abaikan
-            </button>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={onToggleSplitAction}
-                className="h-8 px-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <span>Opsi Lain</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-              </button>
-              {isSplitActionOpen && (
-                <div className="absolute right-0 bottom-full mb-1.5 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-20 text-xs animate-in fade-in zoom-in-95">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onToggleSplitAction()
-                      onOpenMergeModal()
-                    }}
-                    className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-slate-800 font-medium flex items-center gap-2 cursor-pointer transition-colors"
-                  >
-                    <GitMerge className="w-3.5 h-3.5 text-[#1866EF]" />
-                    <span>Gabungkan ke Topik Lain</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onToggleSplitAction()
-                      onOpenSplitModal()
-                    }}
-                    className="w-full text-left px-3.5 py-2 hover:bg-blue-50 text-slate-800 font-medium flex items-center gap-2 cursor-pointer transition-colors"
-                  >
-                    <span className="w-3.5 text-center font-bold text-[#1866EF]">÷</span>
-                    <span>Pecah Menjadi Topik Baru</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Action Buttons Row */}
-      <div className="flex items-center justify-end gap-2.5 pt-1">
+      <div className="flex items-center justify-end gap-2.5 pt-1 flex-wrap">
         {isMerged ? (
           <>
             <button
@@ -207,6 +146,39 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
               className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
             >
               Batalkan Peleburan (Restore)
+            </button>
+            <button
+              type="button"
+              onClick={onReject}
+              className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            >
+              Tolak
+            </button>
+          </>
+        ) : !isCard2Ignored ? (
+          <>
+            <button
+              type="button"
+              onClick={onOpenAbaikanModal}
+              className="h-9 px-4 bg-[#FFFBEB] hover:bg-amber-100 text-[#B45309] border border-[#FDE68A] text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+            >
+              Abaikan
+            </button>
+            <button
+              type="button"
+              onClick={onOpenMergeModal}
+              className="h-9 px-3.5 bg-white hover:bg-blue-50 text-[#1866EF] border border-[#BFDBFE] text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+            >
+              <GitMerge className="w-3.5 h-3.5" />
+              <span>Gabungkan Topik</span>
+            </button>
+            <button
+              type="button"
+              onClick={onOpenSplitModal}
+              className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+            >
+              <span className="font-bold text-[#1866EF]">÷</span>
+              <span>Pecahkan Topik</span>
             </button>
             <button
               type="button"
@@ -235,13 +207,7 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
             <button
               type="button"
               onClick={onCreateBrief}
-              disabled={!isCard2Ignored}
-              className={`h-9 px-5 text-xs font-semibold rounded-lg transition-colors shadow-xs ${
-                !isCard2Ignored
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
-              }`}
-              title={!isCard2Ignored ? 'Harus menyelesaikan bentrok atau mengabaikan terlebih dahulu' : 'Buat Arahan Artikel'}
+              className="h-9 px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               Buat Arahan
             </button>
