@@ -207,36 +207,11 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column (lg:col-span-8): Content Editor */}
         <div className="lg:col-span-8 space-y-5">
-          {/* Approved Read-Only Banner */}
-          {isApproved && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between gap-3 text-xs text-emerald-800 shadow-2xs">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-                <span className="font-semibold">
-                  Arahan Artikel Ini Telah Disetujui (Mode Baca-Saja / Read-Only).
-                </span>
-                <span className="text-emerald-700 hidden sm:inline">
-                  Seluruh susunan arahan terkunci agar editor lain dapat meninjau rincian alasan persetujuan naskah.
-                </span>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 shrink-0">
-                Disetujui
-              </span>
-            </div>
-          )}
-
           {/* Card 1: Judul Usulan Artikel */}
           <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-900 block">
-                Judul Usulan Artikel
-              </label>
-              {isApproved && (
-                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                  Read-Only (Terkunci)
-                </span>
-              )}
-            </div>
+            <label className="text-xs font-bold text-slate-900 block">
+              Judul Usulan Artikel
+            </label>
             <input
               type="text"
               readOnly={isApproved}
