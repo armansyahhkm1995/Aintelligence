@@ -134,56 +134,76 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
               <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600">
                 <th className="py-3 px-4 font-semibold w-[25%]">Nama Aturan</th>
                 <th className="py-3 px-4 font-semibold w-[20%]">Kategori</th>
-                <th className="py-3 px-4 font-semibold w-[30%]">Daftar Kata Kunci</th>
-                <th className="py-3 px-4 font-semibold w-[12%] text-center">Status</th>
-                <th className="py-3 px-4 font-semibold w-[13%] text-center">Aksi</th>
+                <th className="py-3 px-4 font-semibold w-[25%]">Daftar Kata Kunci</th>
+                <th className="py-3 px-4 font-semibold w-[18%] text-center">Status</th>
+                <th className="py-3 px-4 font-semibold w-[12%] text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
-              {filteredRules.map((rule) => (
-                <tr key={rule.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <div className="font-semibold text-slate-900">{rule.name}</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
-                      {rule.description}
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-700">
-                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">
-                      {rule.category}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex flex-wrap gap-1">
-                      {rule.keywords.slice(0, 3).map((kw, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 rounded bg-blue-50 text-[#1866EF] border border-blue-100 text-[11px]"
+              {filteredRules.map((rule) => {
+                const isAktif = rule.status === 'Aktif'
+                return (
+                  <tr key={rule.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-slate-900">{rule.name}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                        {rule.description}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-700">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">
+                        {rule.category}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex flex-wrap gap-1">
+                        {rule.keywords.slice(0, 3).map((kw, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 rounded bg-blue-50 text-[#1866EF] border border-blue-100 text-[11px]"
+                          >
+                            {kw}
+                          </span>
+                        ))}
+                        {rule.keywords.length > 3 && (
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px]">
+                            +{rule.keywords.length - 3} lainnya
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={isAktif}
+                          onClick={() => toggleRuleStatus(rule.id)}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1866EF] focus:ring-offset-2 ${
+                            isAktif ? 'bg-[#1866EF]' : 'bg-slate-200'
+                          }`}
+                          title={isAktif ? 'Klik untuk nonaktifkan aturan' : 'Klik untuk aktifkan aturan'}
                         >
-                          {kw}
-                        </span>
-                      ))}
-                      {rule.keywords.length > 3 && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px]">
-                          +{rule.keywords.length - 3} lainnya
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-center">
-                    <button
-                      type="button"
-                      onClick={() => toggleRuleStatus(rule.id)}
-                      className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-colors cursor-pointer ${
-                        rule.status === 'Aktif'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                          : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'
-                      }`}
-                      title="Klik untuk mengubah status"
-                    >
-                      {rule.status}
-                    </button>
-                  </td>
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                              isAktif ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleRuleStatus(rule.id)}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+                            isAktif
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                              : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'
+                          }`}
+                          title={isAktif ? 'Klik untuk nonaktifkan aturan' : 'Klik untuk aktifkan aturan'}
+                        >
+                          {isAktif ? 'Aktif' : 'Nonaktif'}
+                        </button>
+                      </div>
+                    </td>
                   <td className="py-3.5 px-4 text-center">
                     <div className="flex items-center justify-center gap-1.5">
                       <button
@@ -205,7 +225,8 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
                     </div>
                   </td>
                 </tr>
-              ))}
+              )
+            })}
               {filteredRules.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-slate-400">
