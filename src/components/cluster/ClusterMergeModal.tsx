@@ -73,7 +73,7 @@ export const ClusterMergeModal: React.FC<ClusterMergeModalProps> = ({
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Total Kata Kunci Terakumulasi:</span>
-              <span className="font-bold text-slate-800">6 Keyword (Pilar & Pendukung)</span>
+              <span className="font-bold text-slate-800">6 Kata Kunci (Pilar & Pendukung)</span>
             </div>
           </div>
 

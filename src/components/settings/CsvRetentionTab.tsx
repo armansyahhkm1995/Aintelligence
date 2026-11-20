@@ -68,18 +68,6 @@ export const CsvRetentionTab: React.FC = () => {
                 {csvRetentionDays} Hari
               </span>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-              <span className="text-slate-500">Status Flag Impor CSV:</span>
-              {daysSinceLastUpload >= csvRetentionDays ? (
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
-                  Flag Aktif (Perlu Unggah Dataset Baru)
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  Normal (Dataset Masih Berlaku)
-                </span>
-              )}
-            </div>
           </div>
         </div>
 
@@ -87,10 +75,10 @@ export const CsvRetentionTab: React.FC = () => {
         <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
           <button
             type="button"
-            onClick={() => setTempRetentionDays(7)}
+            onClick={() => setTempRetentionDays(csvRetentionDays)}
             className="h-[36px] px-4 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
           >
-            Reset Default (7 Hari)
+            Batal
           </button>
           <button
             type="button"

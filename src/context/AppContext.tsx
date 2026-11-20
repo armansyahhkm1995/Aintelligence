@@ -423,7 +423,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     )
     addAuditLog(
-      'Koreksi Keyword',
+      'Koreksi Kata Kunci',
       `Mengubah kelayakan massal ${selectedKeywordIds.length} kata kunci menjadi '${newKelayakan}'. Alasan: ${reason || 'Manual override redaksional'}.`
     )
     showSuccess('Manajemen kata kunci', 'Aturan kelayakan berhasil disimpan')
@@ -441,8 +441,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     )
     addAuditLog(
-      'Koreksi Keyword',
-      `Mengubah kelayakan keyword '${kw?.keyword || id}' menjadi '${newKelayakan}'. Alasan: ${reason || 'Koreksi manual editor'}.`
+      'Koreksi Kata Kunci',
+      `Mengubah kelayakan kata kunci '${kw?.keyword || id}' menjadi '${newKelayakan}'. Alasan: ${reason || 'Koreksi manual editor'}.`
     )
     showSuccess('Manajemen kata kunci', 'Aturan kelayakan berhasil disimpan')
     setIsSingleOverrideOpen(false)
@@ -474,7 +474,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const cl = clusters.find((c) => c.id === clusterId)
     setClusters((prev) => prev.filter((c) => c.id !== clusterId))
     addAuditLog(
-      'Koreksi Keyword',
+      'Koreksi Kata Kunci',
       `Menolak cluster '${cl?.name || clusterId}'. Alasan: ${reason || 'Ditolak redaksi'}.`
     )
     showWarning('Cluster Topik', `Cluster '${cl?.name || clusterId}' berhasil ditolak dan dihapus.`)
@@ -526,7 +526,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updatedAt: '02 Nov 2026',
     }
     setRules((prev) => [created, ...prev])
-    addAuditLog('Perubahan Aturan', `Menambahkan aturan filter keyword baru: '${newRule.name}'.`)
+    addAuditLog('Perubahan Aturan', `Menambahkan aturan filter kata kunci baru: '${newRule.name}'.`)
     showSuccess('Pengaturan Redaksi', 'Aturan filter berhasil ditambahkan')
     setIsTambahAturanOpen(false)
   }
@@ -535,7 +535,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setRules((prev) =>
       prev.map((r) => (r.id === id ? { ...r, ...updates, updatedAt: '02 Nov 2026' } : r))
     )
-    addAuditLog('Perubahan Aturan', `Memperbarui aturan filter keyword: '${updates.name || id}'.`)
+    addAuditLog('Perubahan Aturan', `Memperbarui aturan filter kata kunci: '${updates.name || id}'.`)
     showSuccess('Pengaturan Redaksi', 'Aturan filter berhasil diperbarui')
     setIsTambahAturanOpen(false)
     setRuleToEdit(null)
@@ -544,7 +544,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteRule = (id: string) => {
     const target = rules.find((r) => r.id === id)
     setRules((prev) => prev.filter((r) => r.id !== id))
-    addAuditLog('Perubahan Aturan', `Menghapus aturan filter keyword: '${target?.name || id}'.`)
+    addAuditLog('Perubahan Aturan', `Menghapus aturan filter kata kunci: '${target?.name || id}'.`)
     showWarning('Pengaturan Redaksi', 'Aturan filter berhasil dihapus')
     setIsHapusAturanOpen(false)
     setRuleToDelete(null)

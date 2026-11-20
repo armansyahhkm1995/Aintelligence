@@ -32,7 +32,7 @@ export const ClusterNewAiCard: React.FC<ClusterNewAiCardProps> = ({
         <div className="text-xs text-slate-500 font-medium">
           <span className="font-bold text-slate-800">Total Vol: 38.000 / bln</span>
           <span className="mx-2 text-slate-300">|</span>
-          <span>Rata-rata KD: 24% • (4 Keyword)</span>
+          <span>Rata-rata KD: 24% • (4 Kata Kunci)</span>
         </div>
       </div>
 

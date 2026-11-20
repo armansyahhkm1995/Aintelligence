@@ -16,7 +16,7 @@ export const AdminPipelineStepper: React.FC<AdminPipelineStepperProps> = ({ onNa
     {
       step: 'Step 2: Kata Kunci',
       count: '1.250 Layak',
-      sub: 'Dari 3.420 total keyword',
+      sub: 'Dari 3.420 total kata kunci',
       page: 'keyword',
     },
     {

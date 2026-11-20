@@ -25,7 +25,7 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           <span className="bg-blue-50 text-[#1866EF] text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            6 Naskah Dikunci
+            14 Naskah Dikunci
           </span>
         </div>
       </div>
@@ -49,7 +49,7 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
             </button>
           </div>
 
-          <div className="space-y-2">
+          <div className="max-h-[360px] overflow-y-auto pr-1 space-y-2">
             {[
               {
                 id: 'BRF-001',
@@ -74,6 +74,38 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Dibuat ulang oleh Ahmad Fauzi',
                 statusType: 'regen',
                 time: '45 menit lalu',
+              },
+              {
+                id: 'BRF-006',
+                title: 'Panduan Registrasi IKD Secara Online Kemendagri',
+                editor: 'Dewi Lestari',
+                status: 'Diambil oleh Dewi Lestari',
+                statusType: 'claimed',
+                time: '1 jam lalu',
+              },
+              {
+                id: 'BRF-007',
+                title: 'Update Harga Emas Antam Hari Ini dan Proyeksi Pasar',
+                editor: 'Budi Santoso',
+                status: 'Disetujui oleh Budi Santoso',
+                statusType: 'approved',
+                time: '2 jam lalu',
+              },
+              {
+                id: 'BRF-008',
+                title: 'Jadwal Libur Nasional dan Cuti Bersama 2027',
+                editor: 'Rian Pratama',
+                status: 'Diambil oleh Rian Pratama',
+                statusType: 'claimed',
+                time: '3 jam lalu',
+              },
+              {
+                id: 'BRF-009',
+                title: 'Syarat Pendaftaran Akun SNPMB 2027 Jalur SNBP Dibuka',
+                editor: 'Siti Rahmawati',
+                status: 'Disetujui oleh Siti Rahmawati',
+                statusType: 'approved',
+                time: '4 jam lalu',
               },
             ].map((item, idx) => (
               <div
@@ -137,7 +169,7 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
             </button>
           </div>
 
-          <div className="space-y-2">
+          <div className="max-h-[360px] overflow-y-auto pr-1 space-y-2">
             {[
               {
                 id: 'DFT-001',
@@ -162,6 +194,38 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Diambil oleh Ahmad Fauzi',
                 statusType: 'claimed',
                 time: '50 menit lalu',
+              },
+              {
+                id: 'DFT-006',
+                title: 'Panduan Lengkap Mudik Lebaran 2027 Rute Tol Trans-Jawa',
+                editor: 'Budi Santoso',
+                status: 'Diambil oleh Budi Santoso',
+                statusType: 'claimed',
+                time: '1 jam lalu',
+              },
+              {
+                id: 'DFT-007',
+                title: 'Kompilasi Bansos Cair November 2026: Syarat & Cara Cek NIK',
+                editor: 'Rian Pratama',
+                status: 'Diambil oleh Rian Pratama',
+                statusType: 'claimed',
+                time: '2 jam lalu',
+              },
+              {
+                id: 'DFT-008',
+                title: 'Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini',
+                editor: 'Dewi Lestari',
+                status: 'Diambil oleh Dewi Lestari',
+                statusType: 'claimed',
+                time: '3 jam lalu',
+              },
+              {
+                id: 'DFT-009',
+                title: 'Regulasi Insentif Kendaraan Listrik dan Subsidi Energi',
+                editor: 'Ahmad Fauzi',
+                status: 'Diambil oleh Ahmad Fauzi',
+                statusType: 'claimed',
+                time: '4 jam lalu',
               },
             ].map((item, idx) => (
               <div

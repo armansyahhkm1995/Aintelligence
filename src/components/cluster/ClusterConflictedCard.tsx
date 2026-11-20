@@ -61,7 +61,7 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
         <div className="text-xs text-slate-500 font-medium">
           <span className="font-bold text-slate-800">Total Vol: 45.000 / bln</span>
           <span className="mx-2 text-slate-300">|</span>
-          <span>Rata-rata KD: 32% • ({card2Supporting.length + 1} Keyword)</span>
+          <span>Rata-rata KD: 32% • ({card2Supporting.length + 1} Kata Kunci)</span>
         </div>
       </div>
 
@@ -139,22 +139,13 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
       {/* Action Buttons Row */}
       <div className="flex items-center justify-end gap-2.5 pt-1 flex-wrap">
         {isMerged ? (
-          <>
-            <button
-              type="button"
-              onClick={onRestoreMergedTopic}
-              className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
-            >
-              Batalkan Peleburan (Restore)
-            </button>
-            <button
-              type="button"
-              onClick={onReject}
-              className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-            >
-              Tolak
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={onRestoreMergedTopic}
+            className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+          >
+            Kembalikan Topik
+          </button>
         ) : !isCard2Ignored ? (
           <>
             <button
@@ -167,18 +158,16 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
             <button
               type="button"
               onClick={onOpenMergeModal}
-              className="h-9 px-3.5 bg-white hover:bg-blue-50 text-[#1866EF] border border-[#BFDBFE] text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+              className="h-9 px-4 bg-white hover:bg-blue-50 text-[#1866EF] border border-[#BFDBFE] text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
             >
-              <GitMerge className="w-3.5 h-3.5" />
-              <span>Gabungkan Topik</span>
+              Gabungkan Topik
             </button>
             <button
               type="button"
               onClick={onOpenSplitModal}
-              className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+              className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
             >
-              <span className="font-bold text-[#1866EF]">÷</span>
-              <span>Pecahkan Topik</span>
+              Pecahkan Topik
             </button>
             <button
               type="button"

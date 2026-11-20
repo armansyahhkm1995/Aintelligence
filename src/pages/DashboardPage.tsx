@@ -22,7 +22,7 @@ export const DashboardPage: React.FC = () => {
         <p className="text-sm text-slate-400 mt-1">
           {isEditor
             ? 'Ruang kerja editor untuk memantau tugas naskah, keputusan AI, dan riwayat aktivitas redaksi.'
-            : 'Ruang kendali riset keyword, penyusunan brief, dan produksi draf berita otomatis.'}
+            : 'Ruang kendali riset kata kunci, penyusunan brief, dan produksi draf berita otomatis.'}
         </p>
       </div>
 

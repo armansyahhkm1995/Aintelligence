@@ -20,8 +20,8 @@ export const AuditLogPage: React.FC = () => {
           timezone: 'Asia/Jakarta (WIB)',
           user: 'Budi Prasetyo (Anda)',
           role: 'Admin',
-          category: 'Koreksi Keyword',
-          details: "Mengubah kelayakan keyword 'saham' menjadi 'Tidak Layak'. Alasan: Terlalu luas untuk audiens RRI.",
+          category: 'Koreksi Kata Kunci',
+          details: "Mengubah kelayakan kata kunci 'saham' menjadi 'Tidak Layak'. Alasan: Terlalu luas untuk audiens RRI.",
         },
         {
           id: 'LOG-02',
@@ -48,7 +48,7 @@ export const AuditLogPage: React.FC = () => {
           user: 'Budi Prasetyo (Anda)',
           role: 'Editor',
           category: 'Perubahan Aturan',
-          details: "Menambahkan aturan filter keyword baru: 'piala dunia' (Kategori: Musiman).",
+          details: "Menambahkan aturan filter kata kunci baru: 'piala dunia' (Kategori: Musiman).",
         },
         {
           id: 'LOG-05',
@@ -57,7 +57,7 @@ export const AuditLogPage: React.FC = () => {
           user: 'Budi Prasetyo (Anda)',
           role: 'Editor',
           category: 'Unggah CSV',
-          details: "Mengimpor file 'semrush_finansial_q4.csv' (1.250 keyword diproses, 18 tereliminasi otomatis).",
+          details: "Mengimpor file 'semrush_finansial_q4.csv' (1.250 kata kunci diproses, 18 tereliminasi otomatis).",
         },
       ]
 
@@ -110,7 +110,7 @@ export const AuditLogPage: React.FC = () => {
                 }`}
               >
                 <option value="" disabled hidden>Semua Kategori Aktivitas</option>
-                <option value="Koreksi Keyword">Koreksi Keyword</option>
+                <option value="Koreksi Kata Kunci">Koreksi Kata Kunci</option>
                 <option value="Aktivitas Sistem AI">Aktivitas Sistem AI</option>
                 <option value="Persetujuan">Persetujuan</option>
                 <option value="Perubahan Aturan">Perubahan Aturan</option>
@@ -131,6 +131,11 @@ export const AuditLogPage: React.FC = () => {
                 <option value="" disabled hidden>7 Hari Terakhir</option>
                 <option value="7_hari">7 Hari Terakhir</option>
                 <option value="30_hari">30 Hari Terakhir</option>
+                <option value="3_bulan">3 Bulan Terakhir</option>
+                <option value="6_bulan">6 Bulan Terakhir</option>
+                <option value="9_bulan">9 Bulan Terakhir</option>
+                <option value="1_tahun">1 Tahun Terakhir</option>
+                <option value="lebih_1_tahun">Lebih dari 1 Tahun</option>
                 <option value="semua">Semua Waktu</option>
               </select>
               <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />

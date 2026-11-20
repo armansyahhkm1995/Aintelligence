@@ -1,5 +1,4 @@
 import React from 'react'
-import { RotateCcw } from 'lucide-react'
 
 interface ClusterSplitCardProps {
   title: string
@@ -34,7 +33,7 @@ export const ClusterSplitCard: React.FC<ClusterSplitCardProps> = ({
         <div className="text-xs text-slate-500 font-medium">
           <span className="font-bold text-slate-800">Total Vol: 22.000 / bln</span>
           <span className="mx-2 text-slate-300">|</span>
-          <span>Rata-rata KD: 28% • ({selectedSplitKeywords.length} Keyword)</span>
+          <span>Rata-rata KD: 28% • ({selectedSplitKeywords.length} Kata Kunci)</span>
         </div>
       </div>
 
@@ -76,11 +75,10 @@ export const ClusterSplitCard: React.FC<ClusterSplitCardProps> = ({
         <button
           type="button"
           onClick={onUndoSplit}
-          className="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+          className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
           title="Batalkan pemecahan dan kembalikan kata kunci ke kelompok topik induk"
         >
-          <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-          <span>Kembalikan Topik</span>
+          Kembalikan Topik
         </button>
         <button
           type="button"

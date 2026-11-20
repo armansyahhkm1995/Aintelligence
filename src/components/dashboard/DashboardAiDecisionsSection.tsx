@@ -153,7 +153,7 @@ export const DashboardAiDecisionsSection: React.FC<DashboardAiDecisionsSectionPr
                     Aman (Siap Brief)
                   </span>
                 </div>
-                <span className="text-xs text-slate-500 font-semibold">Total Vol: 45.000 / bln • (4 Keyword)</span>
+                <span className="text-xs text-slate-500 font-semibold">Total Vol: 45.000 / bln • (4 Kata Kunci)</span>
               </div>
               <div className="text-xs text-slate-700 space-y-1">
                 <p><strong>Kata Kunci Pilar:</strong> <code className="text-[#1866EF] bg-blue-50 px-1.5 py-0.5 rounded">cara investasi reksadana (Vol 22.000) (KD 28%)</code></p>
@@ -173,7 +173,7 @@ export const DashboardAiDecisionsSection: React.FC<DashboardAiDecisionsSectionPr
                     Butuh Resolusi
                   </span>
                 </div>
-                <span className="text-xs text-slate-500 font-semibold">Total Vol: 45.000 / bln • (3 Keyword)</span>
+                <span className="text-xs text-slate-500 font-semibold">Total Vol: 45.000 / bln • (3 Kata Kunci)</span>
               </div>
               <div className="text-xs text-slate-700 space-y-1">
                 <p><strong>Kata Kunci Pilar:</strong> <code className="text-[#B45309] bg-amber-50 px-1.5 py-0.5 rounded">panduan reksadana 2026 (Vol 22.000) (KD 28%)</code></p>

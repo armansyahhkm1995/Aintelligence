@@ -37,6 +37,9 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-medium px-2 py-0.5 rounded border border-blue-200">
               4 Menunggu
             </span>
+            <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-2 py-0.5 rounded border border-emerald-200">
+              Tersedia
+            </span>
           </div>
           <span className="text-xs sm:text-sm text-slate-400">Target produksi artikel</span>
         </div>
@@ -46,9 +49,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Brief Row 1 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Panduan Lengkap Mudik Lebaran 2027 Rute Tol Trans-Jawa
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Panduan Lengkap Mudik Lebaran 2027 Rute Tol Trans-Jawa
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="space-y-1 text-xs pt-0.5">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
@@ -82,9 +90,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Brief Row 2 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Kompilasi Bansos Cair November 2026: Syarat & Cara Cek NIK
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Kompilasi Bansos Cair November 2026: Syarat & Cara Cek NIK
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="space-y-1 text-xs pt-0.5">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
@@ -118,9 +131,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Brief Row 3 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Update Harga Emas Antam Hari Ini dan Tips Investasi Pemula
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Update Harga Emas Antam Hari Ini dan Tips Investasi Pemula
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="space-y-1 text-xs pt-0.5">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-slate-500 font-medium">Kata Kunci Utama:</span>
@@ -207,6 +225,9 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-medium px-2 py-0.5 rounded border border-green-200">
               4 Siap Salin
             </span>
+            <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-2 py-0.5 rounded border border-emerald-200">
+              Tersedia
+            </span>
           </div>
           <span className="text-xs sm:text-sm text-slate-400">Naskah AI siap verifikasi editor</span>
         </div>
@@ -216,9 +237,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Draf Row 1 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
                 <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                   Skor SEO: 96/100
@@ -253,9 +279,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Draf Row 2 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Strategi Ketahanan Pangan Nasional Hadapi Anomali Cuaca 2027
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Strategi Ketahanan Pangan Nasional Hadapi Anomali Cuaca 2027
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
                 <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                   Skor SEO: 91/100
@@ -286,9 +317,14 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
           {/* Draf Row 3 */}
           <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
             <div className="space-y-1.5">
-              <h3 className="text-sm font-semibold text-slate-900 leading-snug">
-                Katalog Wisata Hidden Gem Dieng Terbaru Pasca Revitalisasi
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug">
+                  Katalog Wisata Hidden Gem Dieng Terbaru Pasca Revitalisasi
+                </h3>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                  Tersedia
+                </span>
+              </div>
               <div className="flex items-center gap-2 flex-wrap text-xs pt-0.5">
                 <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
                   Skor SEO: 94/100

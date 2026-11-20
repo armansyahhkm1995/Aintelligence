@@ -53,7 +53,7 @@ export const ClusterPage: React.FC = () => {
   const [selectedSplitKeywords, setSelectedSplitKeywords] = useState<string[]>([])
   const [newSplitTopicTitle, setNewSplitTopicTitle] = useState('')
   const [splitReason, setSplitReason] = useState(
-    'Memecah keyword spesifik transaksional menjadi artikel panduan mandiri.'
+    'Memecah kata kunci spesifik transaksional menjadi artikel panduan mandiri.'
   )
 
   // State untuk Topic Card 1 (Pilar)

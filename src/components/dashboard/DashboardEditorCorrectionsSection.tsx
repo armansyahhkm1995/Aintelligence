@@ -160,7 +160,7 @@ export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrecti
                 <tr className="hover:bg-slate-50/60 transition-colors">
                   <td className="py-3 px-3.5 align-top">
                     <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
-                      Pisahkan Keyword
+                      Pisahkan Kata Kunci
                     </span>
                   </td>
                   <td className="py-3 px-3.5 align-top">

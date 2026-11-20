@@ -61,7 +61,7 @@ export const ClusterPilarCard: React.FC<ClusterPilarCardProps> = ({
           </span>
           <span className="mx-2 text-slate-300">|</span>
           <span>
-            Rata-rata KD: {kd} • ({isMerged ? '6 Keyword' : '4 Keyword'})
+            Rata-rata KD: {kd} • ({isMerged ? '6 Kata Kunci' : '4 Kata Kunci'})
           </span>
         </div>
       </div>

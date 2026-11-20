@@ -80,7 +80,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
   const [openLevelId, setOpenLevelId] = useState<string | null>(null)
   const [draggedHeadingIdx, setDraggedHeadingIdx] = useState<number | null>(null)
   const [isAddingSource, setIsAddingSource] = useState(false)
-  const [newSourceInput, setNewSourceInput] = useState('')
+  const [newSourceTitle, setNewSourceTitle] = useState('')
+  const [newSourceUrl, setNewSourceUrl] = useState('')
   const [isAddingLink, setIsAddingLink] = useState(false)
   const [newLinkTitle, setNewLinkTitle] = useState('')
   const [newLinkUrl, setNewLinkUrl] = useState('')
@@ -250,8 +251,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   onClick={handleAddQuestion}
                   className="text-xs font-semibold text-[#1866EF] hover:underline cursor-pointer inline-flex items-center gap-1"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Tambah Pertanyaan</span>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Tambah Pertanyaan dengan AI</span>
                 </button>
               )}
             </div>
@@ -446,29 +447,32 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               ))}
 
               {isAddingSource ? (
-                <div className="inline-flex items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
+                <div className="flex flex-wrap items-center gap-1.5 bg-blue-50/60 p-1.5 rounded-lg border border-blue-200">
                   <input
                     type="text"
                     autoFocus
-                    value={newSourceInput}
-                    onChange={(e) => setNewSourceInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newSourceInput.trim()) {
-                        e.preventDefault()
-                        setSupportingSources([...supportingSources, newSourceInput.trim()])
-                        setNewSourceInput('')
-                        setIsAddingSource(false)
-                      }
-                    }}
-                    placeholder="Nama sumber / URL..."
-                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-48"
+                    value={newSourceTitle}
+                    onChange={(e) => setNewSourceTitle(e.target.value)}
+                    placeholder="Nama URL / Judul Sumber..."
+                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-44"
+                  />
+                  <input
+                    type="text"
+                    value={newSourceUrl}
+                    onChange={(e) => setNewSourceUrl(e.target.value)}
+                    placeholder="URL (contoh: ojk.go.id/pasar-modal)"
+                    className="h-[28px] px-2.5 text-xs bg-white border border-blue-300 rounded focus:outline-none w-52"
                   />
                   <button
                     type="button"
                     onClick={() => {
-                      if (newSourceInput.trim()) {
-                        setSupportingSources([...supportingSources, newSourceInput.trim()])
-                        setNewSourceInput('')
+                      if (newSourceTitle.trim() || newSourceUrl.trim()) {
+                        const itemText = newSourceUrl.trim()
+                          ? `${newSourceTitle.trim() || 'Sumber'} (${newSourceUrl.trim()})`
+                          : newSourceTitle.trim()
+                        setSupportingSources([...supportingSources, itemText])
+                        setNewSourceTitle('')
+                        setNewSourceUrl('')
                       }
                       setIsAddingSource(false)
                     }}
@@ -479,7 +483,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setNewSourceInput('')
+                      setNewSourceTitle('')
+                      setNewSourceUrl('')
                       setIsAddingSource(false)
                     }}
                     className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
