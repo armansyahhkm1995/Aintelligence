@@ -13,6 +13,7 @@ import { ClusterNewAiCard } from '../components/cluster/ClusterNewAiCard'
 import { ClusterAbaikanModal } from '../components/cluster/ClusterAbaikanModal'
 import { ClusterMergeModal } from '../components/cluster/ClusterMergeModal'
 import { ClusterSplitModal } from '../components/cluster/ClusterSplitModal'
+import { ClusterTolakModal } from '../components/cluster/ClusterTolakModal'
 
 export const ClusterPage: React.FC = () => {
   const {
@@ -20,16 +21,24 @@ export const ClusterPage: React.FC = () => {
     setActiveCluster,
     setIsEditClusterDrawerOpen,
     setIsResolusiBentrokOpen,
-    setIsTolakClusterOpen,
     setCurrentPage,
     setActiveClusterForBrief,
   } = useApp()
-  const { showSuccess } = useToast()
+  const { showSuccess, showWarning } = useToast()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
   const [filterIntent, setFilterIntent] = useState('')
   const [filterTopic, setFilterTopic] = useState('')
+
+  // State untuk penolakan topik (Tolak Topik)
+  const [isCard1Rejected, setIsCard1Rejected] = useState(false)
+  const [isCard2Rejected, setIsCard2Rejected] = useState(false)
+  const [isTolakModalOpen, setIsTolakModalOpen] = useState(false)
+  const [selectedRejectTopic, setSelectedRejectTopic] = useState('Panduan Reksadana 2026')
+  const [rejectReason, setRejectReason] = useState(
+    'Fokus topik ini tidak sejalan dengan prioritas editorial redaksi triwulan ini.'
+  )
 
   // State untuk resolusi kanibalisasi Card 2
   const [isCard2Ignored, setIsCard2Ignored] = useState(false)
@@ -94,11 +103,32 @@ export const ClusterPage: React.FC = () => {
   }
 
   const handleOpenRejectModal = (name: string) => {
-    const found = clusters.find((c) => c.name.toLowerCase().includes(name.toLowerCase())) || clusters[0]
-    if (found) {
-      setActiveCluster(found)
-      setIsTolakClusterOpen(true)
+    setSelectedRejectTopic(name)
+    setIsTolakModalOpen(true)
+  }
+
+  const handleConfirmReject = () => {
+    if (selectedRejectTopic.includes('Cara Investasi') || selectedRejectTopic === card1Title) {
+      setIsCard1Rejected(true)
+    } else {
+      setIsCard2Rejected(true)
     }
+    setIsTolakModalOpen(false)
+    showWarning('Topik Ditolak', `Kelompok topik '${selectedRejectTopic}' berhasil ditolak dan dicoret.`)
+  }
+
+  const handleRestoreRejectedTopic = (name: string) => {
+    if (name.includes('Cara Investasi') || name === card1Title) {
+      setIsCard1Rejected(false)
+    } else {
+      setIsCard2Rejected(false)
+    }
+    showSuccess('Topik Berhasil Dipulihkan', `Kelompok topik '${name}' telah berhasil dipulihkan dari status ditolak.`)
+  }
+
+  const handleRestoreIgnoredTopic = () => {
+    setIsCard2Ignored(false)
+    showSuccess('Peringatan Kanibalisasi Dipulihkan', 'Kelompok topik "Panduan Reksadana 2026" kembali ke status Butuh Resolusi.')
   }
 
   const handleCreateBrief = (topicData: {
@@ -270,7 +300,10 @@ export const ClusterPage: React.FC = () => {
           kd={card1Kd}
           isMerged={isMerged}
           isAiRegenerated={isAiRegenerated}
-          onReject={() => handleOpenRejectModal('Cara Investasi Reksadana Pemula')}
+          isRejected={isCard1Rejected}
+          rejectReason={rejectReason}
+          onRestoreRejected={() => handleRestoreRejectedTopic(card1Title)}
+          onReject={() => handleOpenRejectModal(card1Title)}
           onEdit={() => handleOpenEditDrawer('Cara Investasi Reksadana Pemula')}
           onCreateBrief={() =>
             handleCreateBrief({
@@ -294,6 +327,9 @@ export const ClusterPage: React.FC = () => {
         <ClusterConflictedCard
           isMerged={isMerged}
           isCard2Ignored={isCard2Ignored}
+          isRejected={isCard2Rejected}
+          rejectReason={rejectReason}
+          abaikanReason={abaikanReason}
           card2Supporting={card2Supporting}
           isSplitActionOpen={isSplitActionOpen}
           onToggleSplitAction={() => setIsSplitActionOpen(!isSplitActionOpen)}
@@ -302,6 +338,8 @@ export const ClusterPage: React.FC = () => {
           onOpenMergeModal={() => setIsMergeModalOpen(true)}
           onOpenSplitModal={() => setIsSplitModalOpen(true)}
           onRestoreMergedTopic={handleRestoreMergedTopic}
+          onRestoreRejectedTopic={() => handleRestoreRejectedTopic('Panduan Reksadana 2026')}
+          onRestoreIgnoredTopic={handleRestoreIgnoredTopic}
           onReject={() => handleOpenRejectModal('Panduan Reksadana 2026')}
           onEdit={() => handleOpenEditDrawer('Panduan Reksadana 2026')}
           onCreateBrief={() =>
@@ -393,6 +431,15 @@ export const ClusterPage: React.FC = () => {
         newSplitTopicTitle={newSplitTopicTitle}
         splitReason={splitReason}
         onSplitReasonChange={setSplitReason}
+      />
+
+      <ClusterTolakModal
+        isOpen={isTolakModalOpen}
+        onClose={() => setIsTolakModalOpen(false)}
+        onConfirm={handleConfirmReject}
+        topicName={selectedRejectTopic}
+        reason={rejectReason}
+        onReasonChange={setRejectReason}
       />
     </div>
   )

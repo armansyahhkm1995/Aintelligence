@@ -1,9 +1,12 @@
 import React from 'react'
-import { GitMerge } from 'lucide-react'
+import { GitMerge, XCircle, CheckCircle2 } from 'lucide-react'
 
 interface ClusterConflictedCardProps {
   isMerged: boolean
   isCard2Ignored: boolean
+  isRejected?: boolean
+  rejectReason?: string
+  abaikanReason?: string
   card2Supporting: string[]
   isSplitActionOpen?: boolean
   onToggleSplitAction?: () => void
@@ -12,6 +15,8 @@ interface ClusterConflictedCardProps {
   onOpenMergeModal: () => void
   onOpenSplitModal: () => void
   onRestoreMergedTopic: () => void
+  onRestoreRejectedTopic?: () => void
+  onRestoreIgnoredTopic?: () => void
   onReject: () => void
   onEdit: () => void
   onCreateBrief: () => void
@@ -20,6 +25,9 @@ interface ClusterConflictedCardProps {
 export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
   isMerged,
   isCard2Ignored,
+  isRejected = false,
+  rejectReason = '',
+  abaikanReason = '',
   card2Supporting,
   isSplitActionOpen,
   onToggleSplitAction,
@@ -28,30 +36,41 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
   onOpenMergeModal,
   onOpenSplitModal,
   onRestoreMergedTopic,
+  onRestoreRejectedTopic,
+  onRestoreIgnoredTopic,
   onReject,
   onEdit,
   onCreateBrief,
 }) => {
   return (
-    <div className="bg-white border border-[#DBEAFE] rounded-xl p-6 shadow-xs space-y-4">
+    <div
+      className={`bg-white rounded-xl p-6 shadow-xs space-y-4 transition-all ${
+        isRejected
+          ? 'border-2 border-rose-300 ring-4 ring-rose-500/10'
+          : isCard2Ignored
+          ? 'border border-emerald-200'
+          : 'border border-[#DBEAFE]'
+      }`}
+    >
       {/* Header Row: Badges & Right Meta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          {isMerged && (
+          {isRejected ? (
+            <span className="px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+              Ditolak
+            </span>
+          ) : isMerged ? (
             <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-semibold">
               Telah Digabung
             </span>
-          )}
-          {!isMerged && (
-            !isCard2Ignored ? (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-xs font-semibold">
-                Butuh Resolusi
-              </span>
-            ) : (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-semibold">
-                Aman (Override)
-              </span>
-            )
+          ) : !isCard2Ignored ? (
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-xs font-semibold">
+              Butuh Resolusi
+            </span>
+          ) : (
+            <span className="px-2.5 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-semibold">
+              Aman (Override)
+            </span>
           )}
           <span className="px-2.5 py-0.5 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] text-[#6D28D9] text-xs font-semibold">
             Informasional
@@ -69,7 +88,7 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
       <div>
         <h2
           className={`text-lg font-bold leading-snug ${
-            isMerged
+            isRejected || isMerged
               ? 'text-slate-400 line-through'
               : isCard2Ignored
               ? 'text-[#1866EF]'
@@ -80,19 +99,45 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
         </h2>
       </div>
 
-      {/* Merged Banner or Yellow Warning Callout */}
-      {isMerged ? (
+      {/* Callout Banner (Rejected, Merged, Warning, or Safe Ignored) */}
+      {isRejected ? (
+        <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 text-xs font-medium text-rose-800 flex items-start gap-2.5">
+          <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <div>
+            Kelompok topik ini telah ditolak oleh redaksi.{' '}
+            {rejectReason ? (
+              <>
+                Alasan: <strong>{rejectReason}</strong>
+              </>
+            ) : (
+              'Tidak diproses ke tahap pembuatan arahan artikel.'
+            )}
+          </div>
+        </div>
+      ) : isMerged ? (
         <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 text-xs font-medium text-[#15803D] flex items-center gap-2">
           <GitMerge className="w-4 h-4 text-[#15803D] shrink-0" />
           <span>
             Kelompok topik ini telah berhasil digabungkan ke <strong>'Cara Investasi Reksadana Pemula'</strong>. Seluruh kata kunci dan potensi traffic (45.000/bln) telah disatukan ke artikel pilar tanpa risiko kanibalisasi internal.
           </span>
         </div>
-      ) : !isCard2Ignored ? (
+      ) : isCard2Ignored ? (
+        <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 text-xs font-medium text-[#15803D] flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+          <span>
+            Peringatan kanibalisasi telah diabaikan (Topik Aman).{' '}
+            {abaikanReason ? (
+              <>
+                Pertimbangan: <strong>{abaikanReason}</strong>
+              </>
+            ) : null}
+          </span>
+        </div>
+      ) : (
         <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-xl p-3.5 text-xs font-medium text-[#B45309]">
           Kanibalisasi Terdeteksi: Cluster ini bersaing di maksud pencarian yang sama dengan cluster 'Cara Investasi Reksadana Pemula'.
         </div>
-      ) : null}
+      )}
 
       {/* Content Box with Pilar & Supporting Keywords */}
       <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/40 space-y-3">
@@ -103,8 +148,8 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
           </div>
           <span
             className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${
-              isMerged
-                ? 'bg-slate-100 border-slate-200 text-slate-500 line-through'
+              isRejected || isMerged
+                ? 'bg-slate-100 border-slate-200 text-slate-400 line-through'
                 : isCard2Ignored
                 ? 'bg-[#EFF6FF] border-[#BFDBFE] text-[#1D4ED8]'
                 : 'bg-[#FFFBEB] border-[#FDE68A] text-[#B45309]'
@@ -124,7 +169,7 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
               <span
                 key={i}
                 className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                  isMerged
+                  isRejected || isMerged
                     ? 'bg-slate-100 border-slate-200 text-slate-400 line-through'
                     : 'bg-white border-slate-200 text-slate-700 shadow-2xs'
                 }`}
@@ -138,7 +183,15 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
 
       {/* Action Buttons Row */}
       <div className="flex items-center justify-end gap-2.5 pt-1 flex-wrap">
-        {isMerged ? (
+        {isRejected ? (
+          <button
+            type="button"
+            onClick={onRestoreRejectedTopic}
+            className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+          >
+            Kembalikan Topik
+          </button>
+        ) : isMerged ? (
           <button
             type="button"
             onClick={onRestoreMergedTopic}
@@ -181,10 +234,10 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
           <>
             <button
               type="button"
-              onClick={onReject}
-              className="h-9 px-4 bg-[#FEF2F2] hover:bg-red-100 text-[#B91C1C] border border-[#FECACA] text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              onClick={onRestoreIgnoredTopic}
+              className="h-9 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
             >
-              Tolak
+              Kembalikan Topik
             </button>
             <button
               type="button"
