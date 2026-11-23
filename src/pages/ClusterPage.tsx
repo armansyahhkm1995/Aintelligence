@@ -285,16 +285,7 @@ export const ClusterPage: React.FC = () => {
         </div>
       )}
 
-      {/* 4. Metric Cards: Total AI, Topik Aman, Flag Kanibalisasi */}
-      <ClusterMetricsCards
-        totalCount={totalTopicCount}
-        safeCount={safeTopicCount}
-        cannibalismCount={cannibalismCount}
-        activeFilter={filterStatus}
-        onFilterSelect={(status) => setFilterStatus(status)}
-      />
-
-      {/* 5. Filter Bar */}
+      {/* 4. Filter Bar */}
       <ClusterFilterBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -305,6 +296,15 @@ export const ClusterPage: React.FC = () => {
         filterTopic={filterTopic}
         onTopicChange={setFilterTopic}
         onClearFilters={handleClearFilters}
+      />
+
+      {/* 5. Information Cards matching KeywordPage style (Total AI, Topik Aman, Flag Kanibalisasi) */}
+      <ClusterMetricsCards
+        totalCount={totalTopicCount}
+        safeCount={safeTopicCount}
+        cannibalismCount={cannibalismCount}
+        activeFilter={filterStatus}
+        onFilterSelect={(status) => setFilterStatus(status)}
       />
 
       {/* 5. Cluster Cards List */}
