@@ -14,6 +14,7 @@ import { ClusterAbaikanModal } from '../components/cluster/ClusterAbaikanModal'
 import { ClusterMergeModal } from '../components/cluster/ClusterMergeModal'
 import { ClusterSplitModal } from '../components/cluster/ClusterSplitModal'
 import { ClusterTolakModal } from '../components/cluster/ClusterTolakModal'
+import { ClusterMetricsCards } from '../components/cluster/ClusterMetricsCards'
 
 export const ClusterPage: React.FC = () => {
   const {
@@ -78,6 +79,13 @@ export const ClusterPage: React.FC = () => {
     'reksadana bibit 2026 (Vol 15.000) (KD 34%)',
     'reksadana online terpercaya (Vol 8.000) (KD 30%)',
   ])
+
+  // Metric counts (Total Topik AI, Topik Aman, Flag Kanibalisasi)
+  const totalTopicCount = isAiRegenerated ? 46 : 50
+  const cannibalismCount = isCard2Ignored || isMerged || isCard2Rejected ? 3 : 4
+  const safeTopicCount = isCard2Ignored
+    ? (isAiRegenerated ? 40 : 43)
+    : (isAiRegenerated ? 39 : 42)
 
   const handleClearFilters = () => {
     setSearchQuery('')
@@ -277,7 +285,16 @@ export const ClusterPage: React.FC = () => {
         </div>
       )}
 
-      {/* 4. Filter Bar */}
+      {/* 4. Metric Cards: Total AI, Topik Aman, Flag Kanibalisasi */}
+      <ClusterMetricsCards
+        totalCount={totalTopicCount}
+        safeCount={safeTopicCount}
+        cannibalismCount={cannibalismCount}
+        activeFilter={filterStatus}
+        onFilterSelect={(status) => setFilterStatus(status)}
+      />
+
+      {/* 5. Filter Bar */}
       <ClusterFilterBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
