@@ -209,8 +209,7 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
                       </div>
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap text-slate-600">
-                      <div className="font-medium text-slate-800">{rule.updatedAt || '02 Nov 2026'}</div>
-                      <div className="text-[11px] text-slate-400">oleh {rule.updatedBy || 'Admin'}</div>
+                      <span className="font-medium text-slate-800">{rule.updatedAt || '02 Nov 2026'}</span>
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <div className="flex items-center justify-center gap-1.5">
