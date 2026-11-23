@@ -297,7 +297,7 @@ export const BriefPage: React.FC = () => {
   }
 
   // Exports
-  const handleExport = (format: 'docs' | 'markdown' | 'pdf') => {
+  const handleExport = (format: 'docs' | 'pdf') => {
     if (format === 'docs') {
       const contentHtml = `
         <html>
@@ -325,19 +325,6 @@ export const BriefPage: React.FC = () => {
       a.download = `arahan-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.doc`
       a.click()
       showSuccess('Ekspor Docs', 'Arahan artikel berhasil diekspor sebagai dokumen Docs (.doc)')
-    } else if (format === 'markdown') {
-      const md = `# ${briefTitle}\n\n**Sasaran Pembaca:**\n${targetAudience}\n\n**Pertanyaan Utama:**\n${mainQuestions
-        .map((q) => `- ${q}`)
-        .join('\n')}\n\n**Sudut Pandang Jurnalistik (Angle):**\n${angleJournalistic}\n\n## Struktur Kerangka Naskah:\n${headings
-        .map((h) => `${h.level === 'H2' ? '##' : '###'} ${h.text}`)
-        .join('\n')}\n\n## Data & Entitas Wajib Dikutip:\n${supportingSources.map((s) => `- ${s}`).join('\n')}`
-      const blob = new Blob([md], { type: 'text/markdown' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `arahan-${briefTitle.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}.md`
-      a.click()
-      showSuccess('Ekspor MD', 'Arahan artikel berhasil diekspor ke file Markdown (.md)')
     } else if (format === 'pdf') {
       const printWindow = window.open('', '_blank')
       if (printWindow) {

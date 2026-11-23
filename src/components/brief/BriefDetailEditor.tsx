@@ -10,7 +10,6 @@ import {
   X,
   ExternalLink,
   FileText,
-  FileCode,
   FileType,
   LogOut,
 } from 'lucide-react'
@@ -45,7 +44,7 @@ interface BriefDetailEditorProps {
   onRegenerateWithAI: () => void
   onApprove: () => void
   onRequestRelease: () => void
-  onExport: (format: 'docs' | 'markdown' | 'pdf') => void
+  onExport: (format: 'docs' | 'pdf') => void
 }
 
 export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
@@ -729,20 +728,6 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                         <span>Ekspor sebagai Google Docs (.docx)</span>
                       </div>
                       <span className="text-[10px] text-slate-400 font-mono">DOCX</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsExportDropdownOpen(false)
-                        onExport('markdown')
-                      }}
-                      className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 flex items-center justify-between font-medium text-slate-700 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <FileCode className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Ekspor sebagai Markdown (.md)</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-mono">MD</span>
                     </button>
                     <button
                       type="button"
