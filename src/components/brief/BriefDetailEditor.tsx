@@ -116,6 +116,7 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
   }
 
   const handleLevelChange = (id: string, newLevel: string) => {
+    if (newLevel === 'H1') return
     setHeadings(headings.map((h) => (h.id === id ? { ...h, level: newLevel } : h)))
     setOpenLevelId(null)
   }
@@ -411,7 +412,7 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
 
                       {openLevelId === item.id && (
                         <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
-                          {['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
+                          {['P', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
                             <button
                               key={lvl}
                               type="button"

@@ -64,6 +64,7 @@ export const BukuGayaTab: React.FC = () => {
   }
 
   const handleSelectLevel = (id: string, lvl: string) => {
+    if (lvl === 'H1') return
     setHeadingTemplates((prev) =>
       prev.map((h) => (h.id === id ? { ...h, level: lvl } : h))
     )
@@ -101,9 +102,14 @@ export const BukuGayaTab: React.FC = () => {
       {/* Section 2: Struktur Baku Heading Artikel */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-semibold text-slate-900 block">
-            Struktur Baku Heading Artikel (Template Output AI)
-          </label>
+          <div>
+            <label className="text-xs font-semibold text-slate-900 block">
+              Struktur Baku Heading Artikel (Template Output AI)
+            </label>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              H1 bersifat tunggal dan permanen pada posisi teratas sebagai judul utama naskah.
+            </p>
+          </div>
 
           <div className="flex items-center gap-2">
             <button
@@ -134,7 +140,7 @@ export const BukuGayaTab: React.FC = () => {
                   <GripVertical className="w-4 h-4" />
                 </div>
               ) : (
-                <div className="w-6 p-1 text-slate-300" title="H1 Baku Permanen" />
+                <div className="w-6 p-1 text-slate-300" title="H1 Baku Permanen di Posisi Teratas" />
               )}
 
               <span
@@ -163,35 +169,50 @@ export const BukuGayaTab: React.FC = () => {
               />
 
               {/* Level Selector Dropdown */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenLevelDropdownId(openLevelDropdownId === h.id ? null : h.id)
-                  }
-                  className="h-[28px] px-2.5 bg-white border border-[#DBEAFE] rounded text-xs font-medium text-slate-700 flex items-center gap-1 hover:bg-slate-50 cursor-pointer"
+              {h.level === 'H1' ? (
+                <div
+                  className="h-[28px] px-2.5 bg-slate-50 border border-slate-200 rounded text-xs font-semibold text-slate-400 flex items-center select-none cursor-not-allowed"
+                  title="H1 Wajib Tunggal dan Permanen di Posisi Teratas"
                 >
-                  <span>{h.level}</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                </button>
+                  <span>H1 (Terkunci)</span>
+                </div>
+              ) : (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenLevelDropdownId(openLevelDropdownId === h.id ? null : h.id)
+                    }
+                    className="h-[28px] px-2.5 bg-white border border-[#DBEAFE] rounded text-xs font-medium text-slate-700 flex items-center gap-1 hover:bg-slate-50 cursor-pointer"
+                  >
+                    <span>{h.level}</span>
+                    <ChevronDown className="w-3 h-3 text-slate-400" />
+                  </button>
 
-                {openLevelDropdownId === h.id && (
-                  <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg z-20 py-1">
-                    {['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
-                      <button
-                        key={lvl}
-                        type="button"
-                        onClick={() => handleSelectLevel(h.id, lvl)}
-                        className={`w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 transition-colors cursor-pointer ${
-                          h.level === lvl ? 'text-[#1866EF] font-bold bg-blue-50/50' : 'text-slate-700'
-                        }`}
-                      >
-                        {lvl}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {openLevelDropdownId === h.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setOpenLevelDropdownId(null)}
+                      />
+                      <div className="absolute right-0 top-full mt-1 w-20 bg-white border border-[#DBEAFE] rounded-[6px] shadow-lg z-20 py-1">
+                        {['P', 'H2', 'H3', 'H4', 'H5', 'H6'].map((lvl) => (
+                          <button
+                            key={lvl}
+                            type="button"
+                            onClick={() => handleSelectLevel(h.id, lvl)}
+                            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 transition-colors cursor-pointer ${
+                              h.level === lvl ? 'text-[#1866EF] font-bold bg-blue-50/50' : 'text-slate-700'
+                            }`}
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {h.level !== 'H1' && (
                 <button
