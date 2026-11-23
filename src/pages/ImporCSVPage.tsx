@@ -20,9 +20,6 @@ export const ImporCSVPage: React.FC = () => {
   const { showSuccess } = useToast()
   const {
     csvCooldownMonths,
-    csvRetentionDays,
-    lastCsvUploadDate,
-    setLastCsvUploadDate,
     setNewKeywordsBadgeCount,
     setNewKeywordGapBadgeCount,
   } = useApp()
@@ -33,19 +30,7 @@ export const ImporCSVPage: React.FC = () => {
   const [isUploadDropdownOpen, setIsUploadDropdownOpen] = useState(false)
   const [selectedImportType, setSelectedImportType] = useState<'keyword' | 'keyword_gap'>('keyword')
   const [previewFileName, setPreviewFileName] = useState<string>('semrush_keywords_export_nov2026.csv')
-
-  const calculateDaysSinceUpload = () => {
-    try {
-      const uploadTime = new Date(lastCsvUploadDate).getTime()
-      const nowTime = new Date(2026, 10, 19).getTime() // 19 Nov 2026
-      const diffTime = Math.max(0, nowTime - uploadTime)
-      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
-    } catch {
-      return 9
-    }
-  }
-  const daysSinceLastUpload = calculateDaysSinceUpload()
-  const isRetentionExceeded = daysSinceLastUpload >= (csvRetentionDays || 7)
+  const [showRetentionBanner, setShowRetentionBanner] = useState<boolean>(true)
 
   const handleSelectImportType = (type: 'keyword' | 'keyword_gap') => {
     setIsUploadDropdownOpen(false)
@@ -53,7 +38,6 @@ export const ImporCSVPage: React.FC = () => {
     setTimeout(() => {
       setIsUploading(false)
       setSelectedImportType(type)
-      setLastCsvUploadDate(new Date(2026, 10, 19).toISOString())
       if (type === 'keyword') {
         setPreviewFileName('semrush_keywords_export_nov2026.csv')
         setNewKeywordsBadgeCount(10)
@@ -103,10 +87,11 @@ export const ImporCSVPage: React.FC = () => {
 
       {/* Full-width 100% Alert Banner / Flag Retensi CSV */}
       <CsvRetentionBanner
-        isVisible={isRetentionExceeded}
-        daysSinceLastUpload={daysSinceLastUpload}
-        retentionDays={csvRetentionDays || 7}
+        isVisible={showRetentionBanner}
+        daysSinceLastUpload={9}
+        retentionDays={7}
         onUploadClick={() => setIsUploadDropdownOpen(true)}
+        onDismiss={() => setShowRetentionBanner(false)}
       />
 
       {/* 4. Drag & Drop Upload Zone */}

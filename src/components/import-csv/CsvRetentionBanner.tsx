@@ -1,24 +1,26 @@
 import React from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 
 interface CsvRetentionBannerProps {
-  isVisible: boolean
-  daysSinceLastUpload: number
-  retentionDays: number
+  isVisible?: boolean
+  daysSinceLastUpload?: number
+  retentionDays?: number
   onUploadClick: () => void
+  onDismiss?: () => void
 }
 
 export const CsvRetentionBanner: React.FC<CsvRetentionBannerProps> = ({
-  isVisible,
-  daysSinceLastUpload,
-  retentionDays,
+  isVisible = true,
+  daysSinceLastUpload = 9,
+  retentionDays = 7,
   onUploadClick,
+  onDismiss,
 }) => {
   if (!isVisible) return null
 
   return (
     <div className="w-full bg-amber-50/90 border border-amber-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
-      <div>
+      <div className="space-y-1">
         <h3 className="text-sm font-bold text-amber-950">
           Pemberitahuan Retensi: Perlu Unggah Dataset Kata Kunci Terbaru
         </h3>
@@ -28,14 +30,26 @@ export const CsvRetentionBanner: React.FC<CsvRetentionBannerProps> = ({
           <strong>{retentionDays} hari</strong>). Perbarui dataset riset secara berkala agar arahan editorial dan tren topik tetap relevan serta akurat.
         </p>
       </div>
-      <button
-        type="button"
-        onClick={onUploadClick}
-        className="shrink-0 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
-      >
-        <Upload className="w-3.5 h-3.5" />
-        Unggah Sekarang
-      </button>
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          onClick={onUploadClick}
+          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <Upload className="w-3.5 h-3.5" />
+          <span>Unggah Sekarang</span>
+        </button>
+        {onDismiss && (
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="p-2 text-amber-700 hover:text-amber-900 hover:bg-amber-100/60 rounded-lg transition-colors cursor-pointer"
+            title="Tutup Pemberitahuan"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
     </div>
   )
 }
