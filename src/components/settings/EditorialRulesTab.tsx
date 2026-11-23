@@ -25,7 +25,10 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
   const toggleRuleStatus = (id: string) => {
     const current = rules.find((r) => r.id === id)
     if (!current) return
-    editRule(id, { status: current.status === 'Aktif' ? 'Nonaktif' : 'Aktif' })
+    editRule(id, {
+      status: current.status === 'Aktif' ? 'Nonaktif' : 'Aktif',
+      updatedAt: '23 Nov 2026',
+    })
     showSuccess('Status Aturan', 'Status aturan filter berhasil diperbarui.')
   }
 
@@ -129,14 +132,15 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
       {/* Rules Table */}
       <div className="border border-[#DBEAFE] rounded-[6px] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs min-w-[700px]">
+          <table className="w-full text-left text-xs min-w-[800px]">
             <thead>
               <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600">
-                <th className="py-3 px-4 font-semibold w-[25%]">Nama Aturan</th>
-                <th className="py-3 px-4 font-semibold w-[20%]">Kategori</th>
-                <th className="py-3 px-4 font-semibold w-[25%]">Daftar Kata Kunci</th>
-                <th className="py-3 px-4 font-semibold w-[18%] text-center">Status</th>
-                <th className="py-3 px-4 font-semibold w-[12%] text-center">Aksi</th>
+                <th className="py-3 px-4 font-semibold w-[22%]">Nama Aturan</th>
+                <th className="py-3 px-4 font-semibold w-[16%]">Kategori</th>
+                <th className="py-3 px-4 font-semibold w-[22%]">Daftar Kata Kunci</th>
+                <th className="py-3 px-4 font-semibold w-[16%] text-center">Status</th>
+                <th className="py-3 px-4 font-semibold w-[14%]">Perubahan Terakhir</th>
+                <th className="py-3 px-4 font-semibold w-[10%] text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -204,32 +208,36 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
                         </button>
                       </div>
                     </td>
-                  <td className="py-3.5 px-4 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => onEditRule(rule)}
-                        className="p-1.5 text-slate-500 hover:text-[#1866EF] hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded transition-colors cursor-pointer"
-                        title="Sunting Aturan"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDeleteRule(rule)}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded transition-colors cursor-pointer"
-                        title="Hapus Aturan"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
+                    <td className="py-3.5 px-4 whitespace-nowrap text-slate-600">
+                      <div className="font-medium text-slate-800">{rule.updatedAt || '02 Nov 2026'}</div>
+                      <div className="text-[11px] text-slate-400">oleh {rule.updatedBy || 'Admin'}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onEditRule(rule)}
+                          className="p-1.5 text-slate-500 hover:text-[#1866EF] hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded transition-colors cursor-pointer"
+                          title="Sunting Aturan"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDeleteRule(rule)}
+                          className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded transition-colors cursor-pointer"
+                          title="Hapus Aturan"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
               {filteredRules.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-400">
+                  <td colSpan={6} className="py-8 text-center text-slate-400">
                     Tidak ada aturan yang sesuai dengan filter.
                   </td>
                 </tr>
