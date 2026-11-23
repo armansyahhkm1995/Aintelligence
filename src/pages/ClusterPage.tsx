@@ -303,8 +303,6 @@ export const ClusterPage: React.FC = () => {
         totalCount={totalTopicCount}
         safeCount={safeTopicCount}
         cannibalismCount={cannibalismCount}
-        activeFilter={filterStatus}
-        onFilterSelect={(status) => setFilterStatus(status)}
       />
 
       {/* 5. Cluster Cards List */}
