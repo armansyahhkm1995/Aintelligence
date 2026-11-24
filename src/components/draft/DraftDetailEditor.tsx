@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { NextStepBanner } from '../common/NextStepBanner'
+import { useApp } from '../../context/AppContext'
 import type { DraftImageRec, DraftVersionItem } from './types'
 
 interface DraftDetailEditorProps {
@@ -71,13 +72,14 @@ export const DraftDetailEditor: React.FC<DraftDetailEditorProps> = ({
   onExportPDF,
   onRequestRelease,
 }) => {
+  const { currentUser } = useApp()
   const [isCopyDropdownOpen, setIsCopyDropdownOpen] = useState(false)
   const [isExportDraftDropdownOpen, setIsExportDraftDropdownOpen] = useState(false)
 
   return (
     <div className="space-y-6">
-      {/* 1. Milestone Stepper: Step 5 Active */}
-      <MilestoneStepper currentStep={5} />
+      {/* 1. Milestone Stepper: Step 5 Active (Hanya untuk Admin, disembunyikan untuk Editor) */}
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={5} />}
 
       {/* 2. Top Title Row with Back Link and Action Buttons */}
       <div className="space-y-2">

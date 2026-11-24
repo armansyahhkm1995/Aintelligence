@@ -2,6 +2,7 @@ import React from 'react'
 import { ChevronLeft, FileText } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { useToast } from '../../context/ToastContext'
+import { useApp } from '../../context/AppContext'
 import type { DraftVersionItem } from './types'
 
 interface DraftCompareViewProps {
@@ -15,6 +16,7 @@ export const DraftCompareView: React.FC<DraftCompareViewProps> = ({
   compareTarget,
   onBackToVersions,
 }) => {
+  const { currentUser } = useApp()
   const { showSuccess } = useToast()
 
   const handleCopyDraft = (version: string, item: DraftVersionItem) => {
@@ -29,7 +31,7 @@ export const DraftCompareView: React.FC<DraftCompareViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Milestone Stepper */}
-      <MilestoneStepper currentStep={5} />
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={5} />}
 
       {/* Back Link & Header */}
       <div className="space-y-2">

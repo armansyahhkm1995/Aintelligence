@@ -120,8 +120,9 @@ export const DraftPage: React.FC = () => {
     const currentUserName = currentUser?.name || 'Budi Santoso'
     if (
       item.editor !== '-' &&
-      !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
-      !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
+      (item.id === 'DFT-001' ||
+        (!item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
+         !currentUserName.toLowerCase().includes(item.editor.toLowerCase())))
     ) {
       setLockedItemInfo({ title: item.title, editor: item.editor })
       setIsLockAlertOpen(true)

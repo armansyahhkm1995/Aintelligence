@@ -1,6 +1,7 @@
 import React from 'react'
 import { ChevronLeft, Eye } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
+import { useApp } from '../../context/AppContext'
 import type { DraftVersionItem } from './types'
 
 interface DraftVersionsViewProps {
@@ -20,10 +21,12 @@ export const DraftVersionsView: React.FC<DraftVersionsViewProps> = ({
   onToggleVersion,
   onSelectCompare,
 }) => {
+  const { currentUser } = useApp()
+
   return (
     <div className="space-y-6">
       {/* Milestone Stepper */}
-      <MilestoneStepper currentStep={5} />
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={5} />}
 
       {/* Back Link & Header */}
       <div className="space-y-2">

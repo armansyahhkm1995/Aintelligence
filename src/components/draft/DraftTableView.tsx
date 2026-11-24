@@ -43,8 +43,8 @@ export const DraftTableView: React.FC<DraftTableViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* 1. Milestone Stepper: Step 5 Active */}
-      <MilestoneStepper currentStep={5} />
+      {/* 1. Milestone Stepper: Step 5 Active (Hanya untuk Admin, disembunyikan untuk Editor) */}
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={5} />}
 
       {/* 2. Page Title and Description */}
       <div>
@@ -109,8 +109,9 @@ export const DraftTableView: React.FC<DraftTableViewProps> = ({
                   const isLockedByOther =
                     item.processStatus === 'selesai' &&
                     item.editor !== '-' &&
-                    !item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
-                    !currentUserName.toLowerCase().includes(item.editor.toLowerCase())
+                    (item.id === 'DFT-001' ||
+                      (!item.editor.toLowerCase().includes(currentUserName.toLowerCase()) &&
+                       !currentUserName.toLowerCase().includes(item.editor.toLowerCase())))
 
                   return (
                     <tr
@@ -204,6 +205,11 @@ export const DraftTableView: React.FC<DraftTableViewProps> = ({
                         ) : item.status === 'Tersedia' ? (
                           <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold">
                             Tersedia
+                          </span>
+                        ) : item.status.startsWith('Diambil') ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200">
+                            <Lock className="w-3 h-3 shrink-0" />
+                            <span>{item.status}</span>
                           </span>
                         ) : (
                           <span className="text-slate-700 font-medium text-xs">

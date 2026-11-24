@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { NextStepBanner } from '../common/NextStepBanner'
+import { useApp } from '../../context/AppContext'
 import type { BriefHeading, BriefVersionItem, InternalLinkItem } from './types'
 
 interface BriefDetailEditorProps {
@@ -76,6 +77,7 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
   onRequestRelease,
   onExport,
 }) => {
+  const { currentUser } = useApp()
   const [openLevelId, setOpenLevelId] = useState<string | null>(null)
   const [draggedHeadingIdx, setDraggedHeadingIdx] = useState<number | null>(null)
   const [isAddingSource, setIsAddingSource] = useState(false)
@@ -143,8 +145,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* 1. Milestone Stepper: Step 4 Active */}
-      <MilestoneStepper currentStep={4} />
+      {/* 1. Milestone Stepper: Step 4 Active (Hanya untuk Admin, disembunyikan untuk Editor) */}
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={4} />}
 
       {/* 2. Top Title Row with Back Link and Action Buttons */}
       <div className="space-y-2">

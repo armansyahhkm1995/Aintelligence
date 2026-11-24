@@ -36,8 +36,8 @@ export const BriefTableView: React.FC<BriefTableViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* 1. Milestone Stepper: Step 4 Active */}
-      <MilestoneStepper currentStep={4} />
+      {/* 1. Milestone Stepper: Step 4 Active (Hanya untuk Admin, disembunyikan untuk Editor) */}
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={4} />}
 
       {/* 2. Page Title and Description */}
       <div>
@@ -105,8 +105,9 @@ export const BriefTableView: React.FC<BriefTableViewProps> = ({
                     !isApprovedItem &&
                     item.processStatus === 'selesai' &&
                     item.editor !== '-' &&
-                    !item.editor.toLowerCase().includes((currentUser?.name || '').toLowerCase()) &&
-                    !(currentUser?.name || '').toLowerCase().includes(item.editor.toLowerCase())
+                    (item.id === 'BRF-008' ||
+                      (!item.editor.toLowerCase().includes((currentUser?.name || '').toLowerCase()) &&
+                       !(currentUser?.name || '').toLowerCase().includes(item.editor.toLowerCase())))
 
                   return (
                     <tr
@@ -207,6 +208,11 @@ export const BriefTableView: React.FC<BriefTableViewProps> = ({
                         ) : item.status === 'Tersedia' ? (
                           <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]">
                             Tersedia
+                          </span>
+                        ) : item.status.startsWith('Diambil') ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200">
+                            <Lock className="w-3 h-3 shrink-0" />
+                            <span>{item.status}</span>
                           </span>
                         ) : (
                           <span className="text-slate-700 font-medium text-xs">

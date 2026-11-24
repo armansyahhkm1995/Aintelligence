@@ -2,6 +2,7 @@ import React from 'react'
 import { ChevronLeft, FileText } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { useToast } from '../../context/ToastContext'
+import { useApp } from '../../context/AppContext'
 import type { BriefVersionItem } from './types'
 
 interface BriefCompareViewProps {
@@ -16,6 +17,7 @@ export const BriefCompareView: React.FC<BriefCompareViewProps> = ({
   onBackToVersions,
 }) => {
   const { showSuccess } = useToast()
+  const { currentUser } = useApp()
 
   const handleCopyBrief = (version: string, title: string) => {
     navigator.clipboard.writeText(title)
@@ -25,7 +27,7 @@ export const BriefCompareView: React.FC<BriefCompareViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Milestone Stepper */}
-      <MilestoneStepper currentStep={4} />
+      {currentUser?.role !== 'editor' && <MilestoneStepper currentStep={4} />}
 
       {/* Back Link & Header */}
       <div className="space-y-2">
