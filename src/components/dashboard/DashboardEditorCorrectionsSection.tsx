@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { CheckCircle2, Copy } from 'lucide-react'
 import { TablePagination } from '../common/TablePagination'
 import { UserRole } from '../../types'
 
@@ -525,14 +524,13 @@ export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrecti
                       </td>
                       <td className="py-3 px-3.5 align-middle">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                             item.actionType === 'Disetujui'
                               ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
                               : 'bg-[#EFF6FF] text-[#1866EF] border-[#BFDBFE]'
                           }`}
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>{item.actionType}</span>
+                          {item.actionType}
                         </span>
                       </td>
                       <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">
@@ -583,9 +581,8 @@ export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrecti
                         <span className="font-bold text-slate-900 leading-snug">{item.title}</span>
                       </td>
                       <td className="py-3 px-3.5 align-middle">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-800 border border-slate-200">
-                          <Copy className="w-3 h-3 text-[#1866EF]" />
-                          <span>{item.copiedPart}</span>
+                        <span className="text-xs font-medium text-slate-800">
+                          {item.copiedPart}
                         </span>
                       </td>
                       <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">

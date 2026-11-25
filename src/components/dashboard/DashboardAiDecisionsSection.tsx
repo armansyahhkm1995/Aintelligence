@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Sparkles } from 'lucide-react'
 import { TablePagination } from '../common/TablePagination'
 import { UserRole } from '../../types'
 
@@ -326,12 +325,7 @@ export const DashboardAiDecisionsSection: React.FC<DashboardAiDecisionsSectionPr
     <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2">
-          <h2 className="text-base font-bold text-slate-900">Daftar Keputusan AI</h2>
-          <span className="p-1 rounded bg-blue-50 text-[#1866EF]">
-            <Sparkles className="w-3.5 h-3.5" />
-          </span>
-        </div>
+        <h2 className="text-base font-bold text-slate-900">Daftar Keputusan AI</h2>
         <p className="text-xs text-slate-500 mt-1 leading-relaxed">
           Log pertimbangan dan formulasi otomatis AI pada 4 modul utama: seleksi kata kunci, pengelompokan topik, perumusan arahan artikel, serta produksi draf berita.
         </p>

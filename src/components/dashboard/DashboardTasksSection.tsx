@@ -180,9 +180,6 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             <span className="bg-[#EFF6FF] text-[#1D4ED8] text-xs font-semibold px-2 py-0.5 rounded border border-blue-200">
               {BRIEF_TASKS.length} Menunggu
             </span>
-            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded border border-emerald-200">
-              Tersedia
-            </span>
           </div>
           <span className="text-xs text-slate-400">Target produksi arahan artikel</span>
         </div>
@@ -265,9 +262,6 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             <span className="bg-[#F0FDF4] text-[#15803D] text-xs font-semibold px-2 py-0.5 rounded border border-green-200">
               {DRAFT_TASKS.length} Siap Diperiksa
             </span>
-            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded border border-emerald-200">
-              Tersedia
-            </span>
           </div>
           <span className="text-xs text-slate-400">Naskah AI siap verifikasi editor</span>
         </div>
@@ -278,12 +272,12 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
             <table className="w-full text-left text-xs min-w-[760px]">
               <thead>
                 <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[30%]">Judul Draft Artikel</th>
+                  <th className="py-3 px-3.5 w-[36%]">Judul Draft Artikel</th>
                   <th className="py-3 px-3.5 w-[12%]">Status</th>
                   <th className="py-3 px-3.5 w-[14%]">Skor SEO (AI)</th>
-                  <th className="py-3 px-3.5 w-[12%]">Versi Draft</th>
-                  <th className="py-3 px-3.5 w-[20%]">Peringatan / Catatan</th>
-                  <th className="py-3 px-3.5 w-[12%] text-center">Aksi</th>
+                  <th className="py-3 px-3.5 w-[14%]">Versi Terbaru</th>
+                  <th className="py-3 px-3.5 w-[10%] text-center">Peringatan</th>
+                  <th className="py-3 px-3.5 w-[14%] text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -305,14 +299,26 @@ export const DashboardTasksSection: React.FC<DashboardTasksSectionProps> = ({
                       </span>
                     </td>
                     <td className="py-3 px-3.5 align-middle">
-                      <span className="inline-block px-2 py-0.5 rounded font-medium text-xs bg-[#EFF6FF] text-[#1D4ED8] border border-blue-200">
+                      <span className="text-xs font-medium text-slate-800">
                         {item.version}
                       </span>
                     </td>
-                    <td className="py-3 px-3.5 align-middle">
-                      <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] text-[11px] font-medium leading-tight">
-                        <AlertTriangle className="w-3 h-3 text-[#B45309] shrink-0" />
-                        <span className="line-clamp-1">{item.warning}</span>
+                    <td className="py-3 px-3.5 align-middle text-center">
+                      <div className="relative inline-flex items-center justify-center group">
+                        <div
+                          title={item.warning}
+                          className="w-7 h-7 rounded-md bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] hover:bg-amber-100 flex items-center justify-center cursor-help transition-colors"
+                        >
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#B45309]" />
+                        </div>
+                        {/* Floating tooltip on hover */}
+                        <div className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center z-30 pointer-events-none min-w-[200px] max-w-[280px]">
+                          <div className="bg-slate-900 text-white text-[11px] font-normal px-2.5 py-1.5 rounded-md shadow-lg leading-snug text-left border border-slate-700">
+                            <span className="font-semibold text-amber-300 block mb-0.5">Catatan Peringatan:</span>
+                            {item.warning}
+                          </div>
+                          <div className="w-2 h-2 bg-slate-900 rotate-45 -mt-1" />
+                        </div>
                       </div>
                     </td>
                     <td className="py-3 px-3.5 align-middle text-center">
