@@ -125,6 +125,7 @@ export const KeywordPage: React.FC = () => {
     setIsBulkOverrideOpen,
     setIsSingleOverrideOpen,
     setTargetKeywordForOverride,
+    isTokenExhausted,
   } = useApp()
   const { showSuccess } = useToast()
 
@@ -220,7 +221,17 @@ export const KeywordPage: React.FC = () => {
         <button
           type="button"
           onClick={handleClassifyWithAI}
-          className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+          disabled={isTokenExhausted}
+          className={`h-10 px-4 text-xs font-semibold rounded-lg transition-colors shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto ${
+            isTokenExhausted
+              ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
+              : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
+          }`}
+          title={
+            isTokenExhausted
+              ? 'Kuota token LLM telah habis. Klasifikasi kata kunci AI dinonaktifkan.'
+              : 'Klasifikasikan Kata Kunci dengan AI'
+          }
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>Klasifikasikan Kata Kunci dengan AI</span>

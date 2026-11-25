@@ -1,8 +1,10 @@
 import React from 'react'
+import { Split } from 'lucide-react'
 
 interface ClusterSplitCardProps {
   title: string
   selectedSplitKeywords: string[]
+  splitReason?: string
   onUndoSplit: () => void
   onReject: () => void
   onEdit: () => void
@@ -12,6 +14,7 @@ interface ClusterSplitCardProps {
 export const ClusterSplitCard: React.FC<ClusterSplitCardProps> = ({
   title,
   selectedSplitKeywords,
+  splitReason = 'Memecah kata kunci spesifik transaksional menjadi artikel panduan mandiri.',
   onUndoSplit,
   onReject,
   onEdit,
@@ -44,20 +47,36 @@ export const ClusterSplitCard: React.FC<ClusterSplitCardProps> = ({
         </h2>
       </div>
 
-      {/* Content Box with Pilar Keyword */}
+      {/* Callout Banner with Reasoning for Splitting */}
+      <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-3.5 text-xs text-slate-700 space-y-1">
+        <div className="flex items-center gap-2 font-bold text-[#1866EF]">
+          <Split className="w-4 h-4" />
+          <span>Hasil Pemecahan Topik Mandiri</span>
+        </div>
+        <p className="text-slate-600 leading-relaxed">
+          Alasan dipecah: <strong>{splitReason}</strong>
+        </p>
+      </div>
+
+      {/* Content Box with Pilar Keyword and Reasons per Keyword */}
       <div className="border border-blue-100 rounded-xl p-4 bg-blue-50/20 space-y-3">
         <div>
-          <div className="text-[11px] font-semibold text-slate-600 mb-1.5">
-            Kata Kunci Dipisahkan dari Panduan Reksadana 2026:
+          <div className="text-[11px] font-semibold text-slate-600 mb-2">
+            Kata Kunci yang Dipecah Menjadi Topik Mandiri Beserta Alasannya:
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="space-y-2">
             {selectedSplitKeywords.map((kw, i) => (
-              <span
-                key={i}
-                className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium"
-              >
-                {kw}
-              </span>
+              <div key={i} className="p-2.5 bg-white border border-blue-200 rounded-lg space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs text-[#1866EF]">{kw}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-[#1866EF] font-semibold">
+                    Topik Baru
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600">
+                  <strong className="text-slate-700">Alasan dipecah:</strong> Kata kunci memiliki intent spesifik untuk panduan aplikasi yang memerlukan outline terpisah dari artikel pilar.
+                </p>
+              </div>
             ))}
           </div>
         </div>

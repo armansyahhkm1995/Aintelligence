@@ -7,6 +7,8 @@ interface ClusterConflictedCardProps {
   isRejected?: boolean
   rejectReason?: string
   abaikanReason?: string
+  targetMergeTopic?: string
+  mergeReason?: string
   card2Supporting: string[]
   isSplitActionOpen?: boolean
   onToggleSplitAction?: () => void
@@ -28,6 +30,8 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
   isRejected = false,
   rejectReason = '',
   abaikanReason = '',
+  targetMergeTopic = 'Cara Investasi Reksadana Pemula',
+  mergeReason = 'Maksud pencarian (search intent) identik dengan artikel pilar, disatukan untuk menghindari kompetisi peringkat kata kunci internal pada domain RRI.',
   card2Supporting,
   isSplitActionOpen,
   onToggleSplitAction,
@@ -115,11 +119,17 @@ export const ClusterConflictedCard: React.FC<ClusterConflictedCardProps> = ({
           </div>
         </div>
       ) : isMerged ? (
-        <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 text-xs font-medium text-[#15803D] flex items-center gap-2">
-          <GitMerge className="w-4 h-4 text-[#15803D] shrink-0" />
-          <span>
-            Kelompok topik ini telah berhasil digabungkan ke <strong>'Cara Investasi Reksadana Pemula'</strong>. Seluruh kata kunci dan potensi traffic (45.000/bln) telah disatukan ke artikel pilar tanpa risiko kanibalisasi internal.
-          </span>
+        <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 text-xs text-[#15803D] space-y-1.5">
+          <div className="flex items-center gap-2 font-bold text-[#15803D]">
+            <GitMerge className="w-4 h-4 text-[#15803D] shrink-0" />
+            <span>Topik Telah Berhasil Digabungkan</span>
+          </div>
+          <div className="text-slate-800 leading-relaxed">
+            Digabungkan ke topik target: <strong className="text-[#1866EF]">'{targetMergeTopic}'</strong>.
+          </div>
+          <div className="text-slate-600 leading-relaxed">
+            Alasan Penggabungan: <strong>{mergeReason}</strong>
+          </div>
         </div>
       ) : isCard2Ignored ? (
         <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 text-xs font-medium text-[#15803D] flex items-center gap-2">

@@ -24,6 +24,7 @@ export const ClusterPage: React.FC = () => {
     setIsResolusiBentrokOpen,
     setCurrentPage,
     setActiveClusterForBrief,
+    isTokenExhausted,
   } = useApp()
   const { showSuccess, showWarning } = useToast()
 
@@ -251,7 +252,17 @@ export const ClusterPage: React.FC = () => {
         <button
           type="button"
           onClick={handleGenerateClustersWithAI}
-          className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+          disabled={isTokenExhausted}
+          className={`h-10 px-4 text-xs font-semibold rounded-lg transition-colors shadow-xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto ${
+            isTokenExhausted
+              ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
+              : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
+          }`}
+          title={
+            isTokenExhausted
+              ? 'Kuota token LLM telah habis. Pembuatan kelompok topik AI dinonaktifkan.'
+              : 'Buat Kelompok dengan AI'
+          }
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>Buat Kelompok dengan AI</span>
@@ -345,6 +356,8 @@ export const ClusterPage: React.FC = () => {
           isRejected={isCard2Rejected}
           rejectReason={rejectReason}
           abaikanReason={abaikanReason}
+          targetMergeTopic={targetMergeTopic}
+          mergeReason={mergeReason}
           card2Supporting={card2Supporting}
           isSplitActionOpen={isSplitActionOpen}
           onToggleSplitAction={() => setIsSplitActionOpen(!isSplitActionOpen)}
@@ -373,6 +386,7 @@ export const ClusterPage: React.FC = () => {
           <ClusterSplitCard
             title={newSplitTopicTitle}
             selectedSplitKeywords={selectedSplitKeywords}
+            splitReason={splitReason}
             onUndoSplit={handleUndoSplit}
             onReject={() => handleOpenRejectModal(newSplitTopicTitle)}
             onEdit={() => handleOpenEditDrawer(newSplitTopicTitle)}

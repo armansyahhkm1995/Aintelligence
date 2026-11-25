@@ -158,6 +158,11 @@ interface AppContextType {
   setNewKeywordGapBadgeCount: (count: number) => void
   keywordGapList: KeywordGapItem[]
   addKeywordGapItems: (items: KeywordGapItem[]) => void
+
+  // Token Quota Management
+  isTokenExhausted: boolean
+  setIsTokenExhausted: (exhausted: boolean) => void
+  toggleTokenExhausted: () => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -288,6 +293,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [keywordGapList, setKeywordGapList] = useState<KeywordGapItem[]>(() =>
     getStored('keyword_gap', INITIAL_KEYWORD_GAP)
   )
+
+  // Token Quota Management
+  const [isTokenExhausted, setIsTokenExhaustedState] = useState<boolean>(() => {
+    return localStorage.getItem('rri_token_exhausted') === 'true'
+  })
+
+  const setIsTokenExhausted = (exhausted: boolean) => {
+    setIsTokenExhaustedState(exhausted)
+    localStorage.setItem('rri_token_exhausted', exhausted ? 'true' : 'false')
+    if (exhausted) {
+      showWarning('Kuota Token Habis', 'Simulasi: Kuota token LLM telah habis. Fitur AI dinonaktifkan.')
+    } else {
+      showSuccess('Kuota Token Aktif', 'Simulasi: Kuota token LLM telah dipulihkan (Aktif).')
+    }
+  }
+
+  const toggleTokenExhausted = () => {
+    setIsTokenExhausted(!isTokenExhausted)
+  }
 
   const addKeywordGapItems = (items: KeywordGapItem[]) => {
     setKeywordGapList((prev) => {
@@ -707,6 +731,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addKeywordGapItems,
         activeClusterForBrief,
         setActiveClusterForBrief,
+        isTokenExhausted,
+        setIsTokenExhausted,
+        toggleTokenExhausted,
       }}
     >
       {children}

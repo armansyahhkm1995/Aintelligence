@@ -25,7 +25,7 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           <span className="bg-blue-50 text-[#1866EF] text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            14 Naskah Dikunci
+            10 Naskah Terkini Terpantau
           </span>
         </div>
       </div>
@@ -90,22 +90,6 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Disetujui oleh Budi Santoso',
                 statusType: 'approved',
                 time: '2 jam lalu',
-              },
-              {
-                id: 'BRF-008',
-                title: 'Jadwal Libur Nasional dan Cuti Bersama 2027',
-                editor: 'Rian Pratama',
-                status: 'Diambil oleh Rian Pratama',
-                statusType: 'claimed',
-                time: '3 jam lalu',
-              },
-              {
-                id: 'BRF-009',
-                title: 'Syarat Pendaftaran Akun SNPMB 2027 Jalur SNBP Dibuka',
-                editor: 'Siti Rahmawati',
-                status: 'Disetujui oleh Siti Rahmawati',
-                statusType: 'approved',
-                time: '4 jam lalu',
               },
             ].map((item, idx) => (
               <div
@@ -210,22 +194,6 @@ export const AdminAuditLocksSection: React.FC<AdminAuditLocksSectionProps> = ({
                 status: 'Diambil oleh Rian Pratama',
                 statusType: 'claimed',
                 time: '2 jam lalu',
-              },
-              {
-                id: 'DFT-008',
-                title: 'Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini',
-                editor: 'Dewi Lestari',
-                status: 'Diambil oleh Dewi Lestari',
-                statusType: 'claimed',
-                time: '3 jam lalu',
-              },
-              {
-                id: 'DFT-009',
-                title: 'Regulasi Insentif Kendaraan Listrik dan Subsidi Energi',
-                editor: 'Ahmad Fauzi',
-                status: 'Diambil oleh Ahmad Fauzi',
-                statusType: 'claimed',
-                time: '4 jam lalu',
               },
             ].map((item, idx) => (
               <div

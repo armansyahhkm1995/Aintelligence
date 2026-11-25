@@ -17,11 +17,12 @@ import { CsvPreviewTable } from '../components/import-csv/CsvPreviewTable'
 import { CsvHistoryTable } from '../components/import-csv/CsvHistoryTable'
 
 export const ImporCSVPage: React.FC = () => {
-  const { showSuccess } = useToast()
+  const { showSuccess, showWarning } = useToast()
   const {
     csvCooldownMonths,
     setNewKeywordsBadgeCount,
     setNewKeywordGapBadgeCount,
+    isTokenExhausted,
   } = useApp()
 
   const [isUploading, setIsUploading] = useState<boolean>(false)
@@ -32,25 +33,105 @@ export const ImporCSVPage: React.FC = () => {
   const [previewFileName, setPreviewFileName] = useState<string>('semrush_keywords_export_nov2026.csv')
   const [showRetentionBanner, setShowRetentionBanner] = useState<boolean>(true)
 
-  const handleSelectImportType = (type: 'keyword' | 'keyword_gap') => {
+  // Tracking metadata berkas yang pernah diimpor untuk mencegah impor berulang kali
+  const [importedFileRegistry, setImportedFileRegistry] = useState<
+    Array<{ fileName: string; sizeBytes: number; uploadDate: string }>
+  >([
+    {
+      fileName: 'semrush_keywords_export_nov2026.csv',
+      sizeBytes: 1420580,
+      uploadDate: '3 Jul 2026, 09:31',
+    },
+    {
+      fileName: 'semrush_keyword_gap_detik_liputan6.csv',
+      sizeBytes: 984500,
+      uploadDate: '3 Jul 2026, 09:31',
+    },
+  ])
+
+  const handleSelectImportType = (type: 'keyword' | 'keyword_gap', forceNewFile: boolean = false) => {
     setIsUploadDropdownOpen(false)
+
+    // 1. Validasi Token Quota
+    if (isTokenExhausted) {
+      showWarning(
+        'Unggah Ditolak (Token Habis)',
+        'Kuota token LLM telah habis. Anda tidak dapat mengunggah berkas CSV hingga kuota token dipulihkan.'
+      )
+      return
+    }
+
+    const targetFileName = forceNewFile
+      ? type === 'keyword'
+        ? `semrush_keywords_update_${Date.now().toString().slice(-4)}.csv`
+        : `semrush_gap_update_${Date.now().toString().slice(-4)}.csv`
+      : type === 'keyword'
+      ? 'semrush_keywords_export_nov2026.csv'
+      : 'semrush_keyword_gap_detik_liputan6.csv'
+
+    const targetFileSize = forceNewFile ? 1520100 : type === 'keyword' ? 1420580 : 984500
+
+    // 2. Validasi Duplikasi Berdasarkan Metadata (Nama Berkas & Ukuran Berkas)
+    const isDuplicate = !forceNewFile && importedFileRegistry.some(
+      (item) => item.fileName.toLowerCase() === targetFileName.toLowerCase() && item.sizeBytes === targetFileSize
+    )
+
+    if (isDuplicate) {
+      setDuplicateFileInfo({
+        fileName: targetFileName,
+        previousDate: '3 Jul 2026, 09:31 (Ukuran: ' + (targetFileSize / 1000000).toFixed(2) + ' MB)',
+        similarity: 100,
+        matchedKeywords:
+          type === 'keyword'
+            ? [
+                'cara daftar bansos kemensos online 2027',
+                'bantuan subsidi upah pekerja kemnaker',
+                'cek desil bansos dtks jateng online',
+                'panduan reksadana 2026',
+                'syarat buat paspor online 2026',
+              ]
+            : ['ligue 1', 'klasemen liga 1', 'piala dunia', 'google gemini', 'la liga'],
+      })
+      setIsDuplicateAlertOpen(true)
+      showWarning(
+        'Berkas Duplikat Terdeteksi',
+        `Berkas '${targetFileName}' dengan metadata yang sama sudah pernah diimpor sebelumnya.`
+      )
+      return
+    }
+
+    // Jika bukan duplikat, lakukan proses impor
     setIsUploading(true)
     setTimeout(() => {
       setIsUploading(false)
       setSelectedImportType(type)
+      setPreviewFileName(targetFileName)
+      setImportedFileRegistry((prev) => [
+        ...prev,
+        {
+          fileName: targetFileName,
+          sizeBytes: targetFileSize,
+          uploadDate: new Date().toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        },
+      ])
+
       if (type === 'keyword') {
-        setPreviewFileName('semrush_keywords_export_nov2026.csv')
         setNewKeywordsBadgeCount(10)
         showSuccess(
           'Impor CSV Kata Kunci Selesai',
-          'Berkas semrush_keywords_export_nov2026.csv berhasil divalidasi. 10 kata kunci baru siap ditinjau di menu Kata Kunci (+10).'
+          `Berkas ${targetFileName} berhasil divalidasi. 10 kata kunci baru siap ditinjau di menu Kata Kunci (+10).`
         )
       } else {
-        setPreviewFileName('semrush_keyword_gap_detik_liputan6.csv')
         setNewKeywordGapBadgeCount(10)
         showSuccess(
           'Impor CSV Perbandingan Kata Kunci Selesai',
-          'Berkas semrush_keyword_gap_detik_liputan6.csv berhasil divalidasi. 10 data gap kata kunci siap ditinjau di menu Perbandingan Kata Kunci (+10).'
+          `Berkas ${targetFileName} berhasil divalidasi. 10 data gap kata kunci siap ditinjau di menu Perbandingan Kata Kunci (+10).`
         )
       }
     }, 600)
@@ -90,7 +171,16 @@ export const ImporCSVPage: React.FC = () => {
         isVisible={showRetentionBanner}
         daysSinceLastUpload={9}
         retentionDays={7}
-        onUploadClick={() => setIsUploadDropdownOpen(true)}
+        onUploadClick={() => {
+          if (isTokenExhausted) {
+            showWarning(
+              'Unggah Ditolak (Token Habis)',
+              'Kuota token LLM telah habis. Anda tidak dapat mengunggah berkas CSV hingga kuota token dipulihkan.'
+            )
+          } else {
+            setIsUploadDropdownOpen(true)
+          }
+        }}
         onDismiss={() => setShowRetentionBanner(false)}
       />
 
@@ -99,7 +189,8 @@ export const ImporCSVPage: React.FC = () => {
         isUploading={isUploading}
         isDropdownOpen={isUploadDropdownOpen}
         setIsDropdownOpen={setIsUploadDropdownOpen}
-        onSelectImportType={handleSelectImportType}
+        onSelectImportType={(type) => handleSelectImportType(type, false)}
+        isTokenExhausted={isTokenExhausted}
       />
 
       {/* Duplicate Alert Modal */}

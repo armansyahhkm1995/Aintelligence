@@ -72,7 +72,7 @@ export const DraftDetailEditor: React.FC<DraftDetailEditorProps> = ({
   onExportPDF,
   onRequestRelease,
 }) => {
-  const { currentUser } = useApp()
+  const { currentUser, isTokenExhausted } = useApp()
   const [isCopyDropdownOpen, setIsCopyDropdownOpen] = useState(false)
   const [isExportDraftDropdownOpen, setIsExportDraftDropdownOpen] = useState(false)
 
@@ -120,7 +120,17 @@ export const DraftDetailEditor: React.FC<DraftDetailEditorProps> = ({
             <button
               type="button"
               onClick={onRegenerateWithAI}
-              className="h-10 px-4 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              disabled={isTokenExhausted}
+              className={`h-10 px-4 text-xs font-semibold rounded-lg transition-colors shadow-xs inline-flex items-center gap-1.5 ${
+                isTokenExhausted
+                  ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
+                  : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
+              }`}
+              title={
+                isTokenExhausted
+                  ? 'Kuota token LLM telah habis. Tidak dapat membuat ulang draf dengan AI.'
+                  : 'Buat Ulang Draft dengan AI'
+              }
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Buat Ulang Draft dengan AI</span>

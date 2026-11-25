@@ -12,10 +12,12 @@ import {
   FileText,
   FileType,
   LogOut,
+  Save,
 } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { NextStepBanner } from '../common/NextStepBanner'
 import { useApp } from '../../context/AppContext'
+import { useToast } from '../../context/ToastContext'
 import type { BriefHeading, BriefVersionItem, InternalLinkItem } from './types'
 
 interface BriefDetailEditorProps {
@@ -77,7 +79,8 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
   onRequestRelease,
   onExport,
 }) => {
-  const { currentUser } = useApp()
+  const { currentUser, isTokenExhausted } = useApp()
+  const { showSuccess } = useToast()
   const [openLevelId, setOpenLevelId] = useState<string | null>(null)
   const [draggedHeadingIdx, setDraggedHeadingIdx] = useState<number | null>(null)
   const [isAddingSource, setIsAddingSource] = useState(false)
@@ -187,13 +190,19 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
             <button
               type="button"
               onClick={onRegenerateWithAI}
-              disabled={isApproved}
+              disabled={isApproved || isTokenExhausted}
               className={`h-10 px-4 text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs ${
-                isApproved
+                isApproved || isTokenExhausted
                   ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
                   : 'bg-[#1866EF] hover:bg-blue-600 text-white cursor-pointer'
               }`}
-              title={isApproved ? 'Arahan artikel telah disetujui, tombol ini dinonaktifkan' : 'Buat ulang arahan dengan AI'}
+              title={
+                isApproved
+                  ? 'Arahan artikel telah disetujui, tombol ini dinonaktifkan'
+                  : isTokenExhausted
+                  ? 'Kuota token LLM telah habis. Tidak dapat membuat ulang arahan dengan AI.'
+                  : 'Buat ulang arahan dengan AI'
+              }
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Buat Ulang Arahan dengan AI</span>
@@ -764,6 +773,19 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               title={isApproved ? 'Arahan artikel ini sudah disetujui' : 'Setujui Arahan Artikel'}
             >
               {isApproved ? 'Arahan Artikel Telah Disetujui' : 'Setujui Arahan Artikel'}
+            </button>
+
+            {/* Simpan Perubahan Button (Secondary button untuk menyimpan hasil edit inline) */}
+            <button
+              type="button"
+              onClick={() => {
+                showSuccess('Perubahan Tersimpan', 'Seluruh suntingan inline pada naskah arahan artikel berhasil disimpan.')
+              }}
+              className="w-full h-10 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+              title="Simpan suntingan inline arahan artikel"
+            >
+              <Save className="w-3.5 h-3.5 text-slate-500" />
+              <span>Simpan Perubahan</span>
             </button>
 
             {/* Lepas Arahan Button */}

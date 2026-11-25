@@ -79,6 +79,15 @@ export const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
     editor: '-',
     status: 'Tersedia',
   },
+{
+    id: 'BRF-008',
+    title: 'Tips dan Simulasi Perhitungan Bunga KPR Subsidi 2027',
+    mainKeyword: 'kpr subsidi 2027',
+    supportingKeywords: ['syarat kpr btn', 'angsuran rumah subsidi', 'simulasi kpr'],
+    processStatus: 'selesai',
+    editor: 'Siti Rahmawati',
+    status: 'Diambil oleh Siti Rahmawati',
+  },
   {
     id: 'BRF-003',
     title: 'Update Harga Emas Antam Hari Ini dan Proyeksi Pasar',
@@ -123,14 +132,5 @@ export const INITIAL_BRIEF_TABLE: BriefTableRow[] = [
     processStatus: 'selesai',
     editor: '-',
     status: 'Tersedia',
-  },
-  {
-    id: 'BRF-008',
-    title: 'Tips dan Simulasi Perhitungan Bunga KPR Subsidi 2027',
-    mainKeyword: 'kpr subsidi 2027',
-    supportingKeywords: ['syarat kpr btn', 'angsuran rumah subsidi', 'simulasi kpr'],
-    processStatus: 'selesai',
-    editor: 'Siti Rahmawati',
-    status: 'Diambil oleh Siti Rahmawati',
   },
 ]
