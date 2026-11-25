@@ -216,11 +216,12 @@ export const EditClusterDrawer: React.FC = () => {
                       <span>Tukar Pilar</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleRemoveSupporting(idx)}
-                      className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="p-1 rounded text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
                       title="Pisahkan/Buang Keyword"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                     </button>
                   </div>
                 </div>

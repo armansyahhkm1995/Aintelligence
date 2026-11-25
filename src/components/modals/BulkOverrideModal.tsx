@@ -100,7 +100,7 @@ export const BulkOverrideModal: React.FC = () => {
                     className="h-[44px] w-[44px] rounded-[6px] border border-[#FEE2E2] bg-white hover:bg-rose-50 flex items-center justify-center shrink-0 cursor-pointer transition-colors"
                     title="Hapus kata kunci dari seleksi massal"
                   >
-                    <Trash2 className="w-4 h-4 text-[#B91C1C]" />
+                    <Trash2 className="w-4 h-4 text-rose-600" />
                   </button>
                 </div>
               ))}

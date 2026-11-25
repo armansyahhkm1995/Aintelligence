@@ -302,10 +302,10 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                     <button
                       type="button"
                       onClick={() => handleDeleteQuestion(idx)}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 rounded cursor-pointer transition-colors"
+                      className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded cursor-pointer transition-colors"
                       title="Hapus pertanyaan"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                     </button>
                   )}
                 </div>
@@ -445,10 +445,10 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
                     <button
                       type="button"
                       onClick={() => handleDeleteHeading(item.id)}
-                      className="p-1 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer"
+                      className="p-1 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded transition-colors cursor-pointer"
                       title="Hapus heading"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                     </button>
                   )}
                 </div>

@@ -218,10 +218,10 @@ export const BukuGayaTab: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleRemoveHeading(h.id)}
-                  className="p-1 rounded border border-[#FECACA] hover:bg-rose-50 text-[#B91C1C] transition-colors cursor-pointer"
+                  className="p-1 rounded border border-rose-200 hover:bg-rose-50 text-rose-600 hover:text-rose-700 transition-colors cursor-pointer"
                   title="Hapus"
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
+                  <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                 </button>
               )}
             </div>

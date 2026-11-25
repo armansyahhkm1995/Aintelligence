@@ -294,10 +294,10 @@ export const UsersPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleDeleteUser(u)}
-                            className="p-1 rounded text-[#B91C1C] hover:text-rose-900 hover:bg-rose-50 transition-colors cursor-pointer"
+                            className="p-1 rounded text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
                             title="Hapus Pengguna"
                           >
-                            <Trash2 className="w-3.5 h-3.5 text-[#B91C1C]" />
+                            <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                           </button>
                         )}
                       </div>

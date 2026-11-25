@@ -224,10 +224,10 @@ export const EditorialRulesTab: React.FC<EditorialRulesTabProps> = ({
                         <button
                           type="button"
                           onClick={() => onDeleteRule(rule)}
-                          className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded transition-colors cursor-pointer"
+                          className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 rounded transition-colors cursor-pointer"
                           title="Hapus Aturan"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                         </button>
                       </div>
                     </td>
