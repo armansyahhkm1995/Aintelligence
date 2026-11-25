@@ -7,9 +7,6 @@ import {
   Trash2,
   Plus,
   Zap,
-  CheckCircle2,
-  AlertTriangle,
-  Layers,
 } from 'lucide-react'
 
 export const EditClusterDrawer: React.FC = () => {

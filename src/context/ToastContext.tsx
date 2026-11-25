@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react'
-import { ToastMessage, ToastType } from '../types'
+import { ToastMessage } from '../types'
 import { CheckCircle2, AlertTriangle, XCircle, Info, X } from 'lucide-react'
 
 interface ToastContextType {

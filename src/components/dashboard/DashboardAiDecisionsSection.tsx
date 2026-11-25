@@ -284,7 +284,7 @@ const DRAFT_DECISIONS: DraftDecisionItem[] = [
 ]
 
 export const DashboardAiDecisionsSection: React.FC<DashboardAiDecisionsSectionProps> = ({
-  userRole = 'admin',
+  userRole: _userRole = 'admin',
 }) => {
   const [activeTab, setActiveTab] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('keyword')
 

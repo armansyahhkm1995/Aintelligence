@@ -285,7 +285,7 @@ const DRAFT_CORRECTIONS: DraftCorrectionItem[] = [
 ]
 
 export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrectionsSectionProps> = ({
-  userRole = 'admin',
+  userRole: _userRole = 'admin',
 }) => {
   const [activeTab, setActiveTab] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('keyword')
 

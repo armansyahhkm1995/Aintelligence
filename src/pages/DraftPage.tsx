@@ -17,7 +17,7 @@ export const DraftPage: React.FC = () => {
 
   // View Mode: 'table' | 'detail' | 'versions' | 'compare'
   const [viewMode, setViewMode] = useState<'table' | 'detail' | 'versions' | 'compare'>('table')
-  const [draftVersions, setDraftVersions] = useState<DraftVersionItem[]>(DRAFT_VERSIONS)
+  const [draftVersions, _setDraftVersions] = useState<DraftVersionItem[]>(DRAFT_VERSIONS)
   const [activeDraftVersionId, setActiveDraftVersionId] = useState<string>('dv-3')
   const [selectedCompareDraftVersion, setSelectedCompareDraftVersion] = useState<DraftVersionItem>(DRAFT_VERSIONS[1])
 

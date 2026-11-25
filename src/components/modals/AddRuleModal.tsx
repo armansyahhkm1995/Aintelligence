@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useApp } from '../../context/AppContext'
-import { Sliders, X, Check, Search } from 'lucide-react'
+import { Sliders, X, Search } from 'lucide-react'
 
 export const AddRuleModal: React.FC = () => {
   const {

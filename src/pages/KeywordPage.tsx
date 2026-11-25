@@ -118,7 +118,6 @@ const INITIAL_KEYWORDS: KeywordRow[] = [
 
 export const KeywordPage: React.FC = () => {
   const {
-    selectedKeywordIds,
     toggleKeywordSelect,
     selectAllKeywords,
     clearKeywordSelect,

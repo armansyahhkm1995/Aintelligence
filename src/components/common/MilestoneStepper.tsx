@@ -67,7 +67,6 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
         {STEPS.map((step, idx) => {
           const isCompleted = step.num < currentStep
           const isActive = step.num === currentStep
-          const isUpcoming = step.num > currentStep
           const stepNumberStr = `0${step.num}`
 
           return (

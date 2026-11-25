@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, ChevronDown, ChevronLeft, ChevronRight, Lock, Eye, Edit, RefreshCw } from 'lucide-react'
+import { Search, ChevronDown, Lock, Eye, Edit, RefreshCw } from 'lucide-react'
 import { MilestoneStepper } from '../common/MilestoneStepper'
 import { NextStepBanner } from '../common/NextStepBanner'
 import { BriefTableRow } from './types'

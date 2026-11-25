@@ -12,7 +12,6 @@ import {
 export const UsersPage: React.FC = () => {
   const {
     users,
-    editUser,
     toggleUserStatus,
     setIsTambahPenggunaOpen,
     setUserToEdit,
