@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { CheckCircle2, Copy, FileText, Check, Sparkles } from 'lucide-react'
+import { CheckCircle2, Copy } from 'lucide-react'
+import { TablePagination } from '../common/TablePagination'
 import { UserRole } from '../../types'
-import { useToast } from '../../context/ToastContext'
 
 interface DashboardEditorCorrectionsSectionProps {
   userRole?: UserRole
@@ -35,13 +35,12 @@ interface BriefCorrectionItem {
   actionType: 'Disetujui' | 'Disimpan (Sunting Inline)'
   editor: string
   time: string
-  notes: string
 }
 
 interface DraftCorrectionItem {
   id: string
   title: string
-  copyOptions: string[]
+  copiedPart: string
   editor: string
   time: string
 }
@@ -176,7 +175,7 @@ const CLUSTER_CORRECTIONS: ClusterCorrectionItem[] = [
     topic: 'Rekayasa Lalu Lintas Tol Cipali',
     volKd: 'Vol: 38.000 | 3 Kata Kunci',
     change: 'Semula AI: Butuh Resolusi → Override Editor: Aman',
-    notes: 'Diterbitkan terpisah karena kebutuhan update kondisi mudik *real-time* per segmen ruas jalan.',
+    notes: 'Diterbitkan terpisah karena kebutuhan update kondisi mudik real-time per segmen ruas jalan.',
     editor: 'Cameron Newton',
     time: '5 jam lalu',
   },
@@ -189,7 +188,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disetujui',
     editor: 'Budi Santoso',
     time: '15 menit lalu',
-    notes: 'Arahan artikel telah disetujui tanpa revisi outline untuk lanjut ke antrean draf AI otomatis.',
   },
   {
     id: 'BRF-CORR-02',
@@ -197,7 +195,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disimpan (Sunting Inline)',
     editor: 'Ahmad Fauzi',
     time: '40 menit lalu',
-    notes: 'Menyimpan penyesuaian sudut pandang lokal dan menambahkan aturan diversifikasi risiko OJK.',
   },
   {
     id: 'BRF-CORR-03',
@@ -205,7 +202,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disetujui',
     editor: 'Siti Rahmawati',
     time: '1 jam lalu',
-    notes: 'Disetujui setelah memastikan poin biaya PNBP paspor 10 tahun tercantum akurat.',
   },
   {
     id: 'BRF-CORR-04',
@@ -213,7 +209,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disimpan (Sunting Inline)',
     editor: 'Dewi Lestari',
     time: '2 jam lalu',
-    notes: 'Menyimpan suntingan daftar pertanyaan utama (5W+1H) terkait kendala scan barcode di Dukcapil.',
   },
   {
     id: 'BRF-CORR-05',
@@ -221,7 +216,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disetujui',
     editor: 'Budi Santoso',
     time: '3 jam lalu',
-    notes: 'Disetujui untuk diproduksi cepat sebagai artikel tren ekonomi pagi.',
   },
   {
     id: 'BRF-CORR-06',
@@ -229,7 +223,6 @@ const BRIEF_CORRECTIONS: BriefCorrectionItem[] = [
     actionType: 'Disetujui',
     editor: 'Rian Pratama',
     time: '4 jam lalu',
-    notes: 'Disetujui berdasarkan rilis resmi SKB 3 Menteri.',
   },
 ]
 
@@ -237,127 +230,98 @@ const DRAFT_CORRECTIONS: DraftCorrectionItem[] = [
   {
     id: 'DFT-CORR-01',
     title: 'Panduan Lengkap Syarat dan Prosedur Klaim JHT BPJS Ketenagakerjaan 2026',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Semua Konten',
     editor: 'Siti Rahmawati',
     time: '10 menit lalu',
   },
   {
     id: 'DFT-CORR-02',
     title: 'Tol Probowangi Seksi 1 Resmi Beroperasi Akhir Pekan Ini',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Paket Metadata SEO',
     editor: 'Dewi Lestari',
     time: '30 menit lalu',
   },
   {
     id: 'DFT-CORR-03',
     title: 'Prosedur Pindah Domisili Antar Provinsi Tanpa Surat Pengantar RT',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Judul Saja',
     editor: 'Budi Santoso',
     time: '1 jam lalu',
   },
   {
     id: 'DFT-CORR-04',
     title: 'Strategi Ketahanan Pangan Nasional Hadapi Anomali Cuaca 2027',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Isi Naskah Saja',
     editor: 'Ahmad Fauzi',
     time: '2 jam lalu',
   },
   {
     id: 'DFT-CORR-05',
     title: 'Regulasi Insentif Kendaraan Listrik dan Subsidi Energi Hijau',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Rekomendasi Prompt Gambar Dari AI',
     editor: 'Rian Pratama',
     time: '3 jam lalu',
   },
   {
     id: 'DFT-CORR-06',
     title: 'Tips dan Simulasi Perhitungan Bunga KPR Subsidi FLPP 2027',
-    copyOptions: [
-      'Salin Semua',
-      'Salin Judul',
-      'Salin Isi',
-      'Salin Paket Metadata SEO',
-      'Salin Rekomendasi Prompt Gambar Dari AI',
-    ],
+    copiedPart: 'Salin Semua Konten',
     editor: 'Siti Rahmawati',
     time: '4 jam lalu',
+  },
+  {
+    id: 'DFT-CORR-07',
+    title: 'Langkah Mitigasi Bencana Gempa Sesar Aktif Pulau Jawa',
+    copiedPart: 'Salin Paket Metadata SEO',
+    editor: 'Budi Santoso',
+    time: '5 jam lalu',
+  },
+  {
+    id: 'DFT-CORR-08',
+    title: 'Pemerintah Siapkan Skema Perlindungan Tenaga Kerja Lepas (Gig Economy)',
+    copiedPart: 'Salin Judul Saja',
+    editor: 'Dewi Lestari',
+    time: '6 jam lalu',
   },
 ]
 
 export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrectionsSectionProps> = ({
   userRole = 'admin',
 }) => {
-  const { showSuccess } = useToast()
   const [activeTab, setActiveTab] = useState<'keyword' | 'cluster' | 'brief' | 'draft'>('keyword')
-  const [copiedDraftId, setCopiedDraftId] = useState<string | null>(null)
 
   // Pagination states for each tab (5 items per page)
   const [keywordPage, setKeywordPage] = useState<number>(1)
+  const [keywordPageSize, setKeywordPageSize] = useState<number>(5)
+
   const [clusterPage, setClusterPage] = useState<number>(1)
+  const [clusterPageSize, setClusterPageSize] = useState<number>(5)
+
   const [briefPage, setBriefPage] = useState<number>(1)
+  const [briefPageSize, setBriefPageSize] = useState<number>(5)
+
   const [draftPage, setDraftPage] = useState<number>(1)
-  const itemsPerPage = 5
+  const [draftPageSize, setDraftPageSize] = useState<number>(5)
 
-  const totalKeywordPages = Math.ceil(KEYWORD_CORRECTIONS.length / itemsPerPage)
   const currentKeywords = KEYWORD_CORRECTIONS.slice(
-    (keywordPage - 1) * itemsPerPage,
-    keywordPage * itemsPerPage
+    (keywordPage - 1) * keywordPageSize,
+    keywordPage * keywordPageSize
   )
 
-  const totalClusterPages = Math.ceil(CLUSTER_CORRECTIONS.length / itemsPerPage)
   const currentClusters = CLUSTER_CORRECTIONS.slice(
-    (clusterPage - 1) * itemsPerPage,
-    clusterPage * itemsPerPage
+    (clusterPage - 1) * clusterPageSize,
+    clusterPage * clusterPageSize
   )
 
-  const totalBriefPages = Math.ceil(BRIEF_CORRECTIONS.length / itemsPerPage)
   const currentBriefs = BRIEF_CORRECTIONS.slice(
-    (briefPage - 1) * itemsPerPage,
-    briefPage * itemsPerPage
+    (briefPage - 1) * briefPageSize,
+    briefPage * briefPageSize
   )
 
-  const totalDraftPages = Math.ceil(DRAFT_CORRECTIONS.length / itemsPerPage)
   const currentDrafts = DRAFT_CORRECTIONS.slice(
-    (draftPage - 1) * itemsPerPage,
-    draftPage * itemsPerPage
+    (draftPage - 1) * draftPageSize,
+    draftPage * draftPageSize
   )
-
-  const handleCopyOption = (draftTitle: string, optionLabel: string, draftId: string) => {
-    navigator.clipboard.writeText(`${optionLabel} untuk naskah: ${draftTitle}`)
-    setCopiedDraftId(`${draftId}-${optionLabel}`)
-    showSuccess('Salin Berhasil', `${optionLabel} berhasil disalin ke clipboard`)
-    setTimeout(() => setCopiedDraftId(null), 2000)
-  }
 
   return (
     <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs space-y-4">
@@ -365,11 +329,11 @@ export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrecti
       <div>
         <h2 className="text-base font-bold text-slate-900">Daftar Koreksi oleh Editor</h2>
         <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-          Rekapitulasi intervensi manual, persetujuan arahan, penyimpanan suntingan, dan aktivitas penyalinan draf berita oleh tim editor redaksi.
+          Rekapitulasi intervensi manusia, persetujuan arahan artikel, dan penyalinan naskah berita oleh editor redaksi RRI.
         </p>
       </div>
 
-      {/* 4 Module Tabs */}
+      {/* 4 Tab Selector */}
       <div className="border border-[#DBEAFE] rounded-lg p-1 grid grid-cols-2 sm:grid-cols-4 gap-1 bg-white select-none">
         <button
           type="button"
@@ -419,340 +383,235 @@ export const DashboardEditorCorrectionsSection: React.FC<DashboardEditorCorrecti
 
       {/* Tab 1: Kata Kunci Table */}
       {activeTab === 'keyword' && (
-        <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[760px]">
-              <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[16%]">Aksi</th>
-                  <th className="py-3 px-3.5 w-[24%]">Item Terkait</th>
-                  <th className="py-3 px-3.5 w-[25%]">Keputusan Semula AI vs Koreksi</th>
-                  <th className="py-3 px-3.5 w-[23%]">Alasan / Catatan Editor</th>
-                  <th className="py-3 px-3.5 w-[12%] text-right">Editor & Waktu</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {currentKeywords.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3 px-3.5 align-top">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8]">
-                        {item.action}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3.5 align-top">
-                      <div className="font-bold text-slate-900 leading-snug">{item.keyword}</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">{item.volKd}</div>
-                    </td>
-                    <td className="py-3 px-3.5 align-top">
-                      <div className="text-slate-400 line-through">Semula AI: {item.aiVsEditor.ai}</div>
-                      <div className="text-[#15803D] font-bold mt-0.5 flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                        <span>Koreksi Editor: {item.aiVsEditor.editor}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3.5 align-top text-slate-700 leading-relaxed">
-                      "{item.notes}"
-                    </td>
-                    <td className="py-3 px-3.5 align-top text-right text-[11px] text-slate-500">
-                      <div className="font-semibold text-slate-800">{item.editor}</div>
-                      <div className="text-slate-400 mt-0.5">{item.time}</div>
-                    </td>
+        <div className="space-y-3">
+          <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[760px]">
+                <thead>
+                  <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
+                    <th className="py-3 px-3.5 w-[14%]">Tindakan</th>
+                    <th className="py-3 px-3.5 w-[24%]">Kata Kunci</th>
+                    <th className="py-3 px-3.5 w-[20%]">AI vs Keputusan Editor</th>
+                    <th className="py-3 px-3.5 w-[28%]">Alasan / Catatan Editor</th>
+                    <th className="py-3 px-3.5 w-[14%] text-right">Editor & Waktu</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {currentKeywords.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-3.5 align-top">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 border border-blue-200 text-[#1866EF]">
+                          {item.action}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3.5 align-top">
+                        <div className="font-bold text-slate-900 leading-snug">{item.keyword}</div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">{item.volKd}</div>
+                      </td>
+                      <td className="py-3 px-3.5 align-top">
+                        <div className="text-[11px] text-slate-500">
+                          AI:{' '}
+                          <span className="font-semibold text-slate-700">{item.aiVsEditor.ai}</span>
+                        </div>
+                        <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">
+                          Editor: {item.aiVsEditor.editor}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3.5 align-top text-slate-600 leading-relaxed">
+                        "{item.notes}"
+                      </td>
+                      <td className="py-3 px-3.5 align-top text-right text-[11px] text-slate-500">
+                        <div className="font-semibold text-slate-800">{item.editor}</div>
+                        <div className="text-slate-400 mt-0.5">{item.time}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-2.5 bg-slate-50/80 border-t border-[#DBEAFE] flex items-center justify-between text-xs">
-            <span className="text-slate-500">
-              Menampilkan{' '}
-              <strong className="text-slate-700">
-                {(keywordPage - 1) * itemsPerPage + 1}–
-                {Math.min(keywordPage * itemsPerPage, KEYWORD_CORRECTIONS.length)}
-              </strong>{' '}
-              dari <strong className="text-slate-700">{KEYWORD_CORRECTIONS.length}</strong> koreksi kata kunci
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setKeywordPage((prev) => Math.max(1, prev - 1))}
-                disabled={keywordPage === 1}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Sebelumnya
-              </button>
-              <span className="px-2 py-1 font-semibold text-slate-800">
-                Hal {keywordPage} dari {totalKeywordPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setKeywordPage((prev) => Math.min(totalKeywordPages, prev + 1))}
-                disabled={keywordPage === totalKeywordPages}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Selanjutnya
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={keywordPage}
+            totalItems={KEYWORD_CORRECTIONS.length}
+            pageSize={keywordPageSize}
+            onPageChange={setKeywordPage}
+            onPageSizeChange={(newSize) => {
+              setKeywordPageSize(newSize)
+              setKeywordPage(1)
+            }}
+          />
         </div>
       )}
 
       {/* Tab 2: Kelompok Topik Table */}
       {activeTab === 'cluster' && (
-        <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[760px]">
-              <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[16%]">Aksi Resolusi</th>
-                  <th className="py-3 px-3.5 w-[24%]">Topik Terkait</th>
-                  <th className="py-3 px-3.5 w-[25%]">Perubahan Struktur Klaster</th>
-                  <th className="py-3 px-3.5 w-[23%]">Alasan / Catatan Resolusi</th>
-                  <th className="py-3 px-3.5 w-[12%] text-right">Editor & Waktu</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {currentClusters.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3 px-3.5 align-top">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 border border-amber-200 text-amber-800">
-                        {item.action}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3.5 align-top">
-                      <div className="font-bold text-slate-900 leading-snug">{item.topic}</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">{item.volKd}</div>
-                    </td>
-                    <td className="py-3 px-3.5 align-top text-slate-700 font-medium">
-                      {item.change}
-                    </td>
-                    <td className="py-3 px-3.5 align-top text-slate-600 leading-relaxed">
-                      "{item.notes}"
-                    </td>
-                    <td className="py-3 px-3.5 align-top text-right text-[11px] text-slate-500">
-                      <div className="font-semibold text-slate-800">{item.editor}</div>
-                      <div className="text-slate-400 mt-0.5">{item.time}</div>
-                    </td>
+        <div className="space-y-3">
+          <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[760px]">
+                <thead>
+                  <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
+                    <th className="py-3 px-3.5 w-[16%]">Aksi Resolusi</th>
+                    <th className="py-3 px-3.5 w-[24%]">Topik Terkait</th>
+                    <th className="py-3 px-3.5 w-[25%]">Perubahan Struktur Klaster</th>
+                    <th className="py-3 px-3.5 w-[23%]">Alasan / Catatan Resolusi</th>
+                    <th className="py-3 px-3.5 w-[12%] text-right">Editor & Waktu</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {currentClusters.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-3.5 align-top">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 border border-amber-200 text-amber-800">
+                          {item.action}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3.5 align-top">
+                        <div className="font-bold text-slate-900 leading-snug">{item.topic}</div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">{item.volKd}</div>
+                      </td>
+                      <td className="py-3 px-3.5 align-top text-slate-700 font-medium">
+                        {item.change}
+                      </td>
+                      <td className="py-3 px-3.5 align-top text-slate-600 leading-relaxed">
+                        "{item.notes}"
+                      </td>
+                      <td className="py-3 px-3.5 align-top text-right text-[11px] text-slate-500">
+                        <div className="font-semibold text-slate-800">{item.editor}</div>
+                        <div className="text-slate-400 mt-0.5">{item.time}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-2.5 bg-slate-50/80 border-t border-[#DBEAFE] flex items-center justify-between text-xs">
-            <span className="text-slate-500">
-              Menampilkan{' '}
-              <strong className="text-slate-700">
-                {(clusterPage - 1) * itemsPerPage + 1}–
-                {Math.min(clusterPage * itemsPerPage, CLUSTER_CORRECTIONS.length)}
-              </strong>{' '}
-              dari <strong className="text-slate-700">{CLUSTER_CORRECTIONS.length}</strong> resolusi topik
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setClusterPage((prev) => Math.max(1, prev - 1))}
-                disabled={clusterPage === 1}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Sebelumnya
-              </button>
-              <span className="px-2 py-1 font-semibold text-slate-800">
-                Hal {clusterPage} dari {totalClusterPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setClusterPage((prev) => Math.min(totalClusterPages, prev + 1))}
-                disabled={clusterPage === totalClusterPages}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Selanjutnya
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={clusterPage}
+            totalItems={CLUSTER_CORRECTIONS.length}
+            pageSize={clusterPageSize}
+            onPageChange={setClusterPage}
+            onPageSizeChange={(newSize) => {
+              setClusterPageSize(newSize)
+              setClusterPage(1)
+            }}
+          />
         </div>
       )}
 
-      {/* Tab 3: Arahan Artikel Table (Hanya ada Setujui dan Simpan Inline) */}
+      {/* Tab 3: Arahan Artikel Table (Kolom Catatan Redaksi Dihapus) */}
       {activeTab === 'brief' && (
-        <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[760px]">
-              <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[32%]">Judul Arahan Artikel Disetujui / Disimpan</th>
-                  <th className="py-3 px-3.5 w-[18%]">Status Tindakan</th>
-                  <th className="py-3 px-3.5 w-[16%]">Editor Penanggung Jawab</th>
-                  <th className="py-3 px-3.5 w-[14%]">Waktu Eksekusi</th>
-                  <th className="py-3 px-3.5 w-[20%]">Catatan Redaksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {currentBriefs.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3 px-3.5 align-middle">
-                      <span className="font-bold text-slate-900 leading-snug">{item.title}</span>
-                    </td>
-                    <td className="py-3 px-3.5 align-middle">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
-                          item.actionType === 'Disetujui'
-                            ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
-                            : 'bg-[#EFF6FF] text-[#1866EF] border-[#BFDBFE]'
-                        }`}
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>{item.actionType}</span>
-                      </span>
-                    </td>
-                    <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">
-                      {item.editor}
-                    </td>
-                    <td className="py-3 px-3.5 align-middle text-slate-500 font-mono text-[11px]">
-                      {item.time}
-                    </td>
-                    <td className="py-3 px-3.5 align-middle text-slate-600 leading-relaxed text-[11px]">
-                      {item.notes}
-                    </td>
+        <div className="space-y-3">
+          <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[700px]">
+                <thead>
+                  <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
+                    <th className="py-3 px-3.5 w-[42%]">Judul Arahan Artikel Disetujui / Disimpan</th>
+                    <th className="py-3 px-3.5 w-[24%]">Status Tindakan</th>
+                    <th className="py-3 px-3.5 w-[20%]">Editor Penanggung Jawab</th>
+                    <th className="py-3 px-3.5 w-[14%] text-right">Waktu Eksekusi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {currentBriefs.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-3.5 align-middle">
+                        <span className="font-bold text-slate-900 leading-snug">{item.title}</span>
+                      </td>
+                      <td className="py-3 px-3.5 align-middle">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                            item.actionType === 'Disetujui'
+                              ? 'bg-[#ECFDF5] text-[#15803D] border-[#A7F3D0]'
+                              : 'bg-[#EFF6FF] text-[#1866EF] border-[#BFDBFE]'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>{item.actionType}</span>
+                        </span>
+                      </td>
+                      <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">
+                        {item.editor}
+                      </td>
+                      <td className="py-3 px-3.5 align-middle text-right text-slate-500 font-mono text-[11px]">
+                        {item.time}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-2.5 bg-slate-50/80 border-t border-[#DBEAFE] flex items-center justify-between text-xs">
-            <span className="text-slate-500">
-              Menampilkan{' '}
-              <strong className="text-slate-700">
-                {(briefPage - 1) * itemsPerPage + 1}–
-                {Math.min(briefPage * itemsPerPage, BRIEF_CORRECTIONS.length)}
-              </strong>{' '}
-              dari <strong className="text-slate-700">{BRIEF_CORRECTIONS.length}</strong> arahan disetujui / disimpan
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setBriefPage((prev) => Math.max(1, prev - 1))}
-                disabled={briefPage === 1}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Sebelumnya
-              </button>
-              <span className="px-2 py-1 font-semibold text-slate-800">
-                Hal {briefPage} dari {totalBriefPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setBriefPage((prev) => Math.min(totalBriefPages, prev + 1))}
-                disabled={briefPage === totalBriefPages}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Selanjutnya
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={briefPage}
+            totalItems={BRIEF_CORRECTIONS.length}
+            pageSize={briefPageSize}
+            onPageChange={setBriefPage}
+            onPageSizeChange={(newSize) => {
+              setBriefPageSize(newSize)
+              setBriefPage(1)
+            }}
+          />
         </div>
       )}
 
-      {/* Tab 4: Draf Artikel Table (Kolom Salin Lengkap) */}
+      {/* Tab 4: Draf Artikel Table (Kolom Tindakan Salin per Naskah) */}
       {activeTab === 'draft' && (
-        <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[850px]">
-              <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
-                  <th className="py-3 px-3.5 w-[28%]">Judul Draft Artikel</th>
-                  <th className="py-3 px-3.5 w-[46%]">Opsi Penyalinan Konten (Siap CMS)</th>
-                  <th className="py-3 px-3.5 w-[14%]">Editor Penyalindang</th>
-                  <th className="py-3 px-3.5 w-[12%] text-right">Waktu Salin</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {currentDrafts.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3 px-3.5 align-middle">
-                      <span className="font-bold text-slate-900 leading-snug">{item.title}</span>
-                    </td>
-                    <td className="py-3 px-3.5 align-middle">
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.copyOptions.map((opt, i) => {
-                          const isCopied = copiedDraftId === `${item.id}-${opt}`
-                          return (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => handleCopyOption(item.title, opt, item.id)}
-                              className={`px-2 py-1 rounded text-[11px] font-semibold border transition-all cursor-pointer inline-flex items-center gap-1 ${
-                                isCopied
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : opt === 'Salin Semua'
-                                  ? 'bg-[#1866EF] text-white hover:bg-blue-600 border-blue-600 shadow-2xs'
-                                  : 'bg-slate-50 hover:bg-blue-50/80 text-slate-700 hover:text-[#1866EF] border-slate-200'
-                              }`}
-                            >
-                              {isCopied ? (
-                                <>
-                                  <Check className="w-3 h-3 text-emerald-600" />
-                                  <span>Tersalin!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3 h-3" />
-                                  <span>{opt}</span>
-                                </>
-                              )}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </td>
-                    <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">
-                      {item.editor}
-                    </td>
-                    <td className="py-3 px-3.5 align-middle text-right text-slate-500 font-mono text-[11px]">
-                      {item.time}
-                    </td>
+        <div className="space-y-3">
+          <div className="border border-[#DBEAFE] rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[700px]">
+                <thead>
+                  <tr className="bg-[#F8FAFC] border-b border-[#DBEAFE] text-slate-600 font-semibold">
+                    <th className="py-3 px-3.5 w-[38%]">Judul Draft Artikel</th>
+                    <th className="py-3 px-3.5 w-[28%]">Tindakan Salin Konten</th>
+                    <th className="py-3 px-3.5 w-[20%]">Editor Penyalindang</th>
+                    <th className="py-3 px-3.5 w-[14%] text-right">Waktu Salin</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {currentDrafts.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-3.5 align-middle">
+                        <span className="font-bold text-slate-900 leading-snug">{item.title}</span>
+                      </td>
+                      <td className="py-3 px-3.5 align-middle">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                          <Copy className="w-3 h-3 text-[#1866EF]" />
+                          <span>{item.copiedPart}</span>
+                        </span>
+                      </td>
+                      <td className="py-3 px-3.5 align-middle font-semibold text-slate-800">
+                        {item.editor}
+                      </td>
+                      <td className="py-3 px-3.5 align-middle text-right text-slate-500 font-mono text-[11px]">
+                        {item.time}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-2.5 bg-slate-50/80 border-t border-[#DBEAFE] flex items-center justify-between text-xs">
-            <span className="text-slate-500">
-              Menampilkan{' '}
-              <strong className="text-slate-700">
-                {(draftPage - 1) * itemsPerPage + 1}–
-                {Math.min(draftPage * itemsPerPage, DRAFT_CORRECTIONS.length)}
-              </strong>{' '}
-              dari <strong className="text-slate-700">{DRAFT_CORRECTIONS.length}</strong> draf tersalin
-            </span>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setDraftPage((prev) => Math.max(1, prev - 1))}
-                disabled={draftPage === 1}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Sebelumnya
-              </button>
-              <span className="px-2 py-1 font-semibold text-slate-800">
-                Hal {draftPage} dari {totalDraftPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setDraftPage((prev) => Math.min(totalDraftPages, prev + 1))}
-                disabled={draftPage === totalDraftPages}
-                className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Selanjutnya
-              </button>
-            </div>
-          </div>
+          <TablePagination
+            currentPage={draftPage}
+            totalItems={DRAFT_CORRECTIONS.length}
+            pageSize={draftPageSize}
+            onPageChange={setDraftPage}
+            onPageSizeChange={(newSize) => {
+              setDraftPageSize(newSize)
+              setDraftPage(1)
+            }}
+          />
         </div>
       )}
     </div>

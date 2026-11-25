@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { TablePagination } from '../common/TablePagination'
 import { UserRole } from '../../types'
 
 interface DashboardRecentActivitySectionProps {
@@ -118,12 +119,11 @@ export const DashboardRecentActivitySection: React.FC<DashboardRecentActivitySec
     : ALL_ACTIVITIES
 
   const [currentPageNum, setCurrentPageNum] = useState<number>(1)
-  const itemsPerPage = 5
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage)
+  const [pageSize, setPageSize] = useState<number>(5)
 
   const currentItems = filteredActivities.slice(
-    (currentPageNum - 1) * itemsPerPage,
-    currentPageNum * itemsPerPage
+    (currentPageNum - 1) * pageSize,
+    currentPageNum * pageSize
   )
 
   return (
@@ -183,40 +183,19 @@ export const DashboardRecentActivitySection: React.FC<DashboardRecentActivitySec
             </tbody>
           </table>
         </div>
-
-        {/* Pagination Bar */}
-        <div className="px-4 py-2.5 bg-slate-50/80 border-t border-[#DBEAFE] flex items-center justify-between text-xs">
-          <span className="text-slate-500">
-            Menampilkan{' '}
-            <strong className="text-slate-700">
-              {(currentPageNum - 1) * itemsPerPage + 1}–
-              {Math.min(currentPageNum * itemsPerPage, filteredActivities.length)}
-            </strong>{' '}
-            dari <strong className="text-slate-700">{filteredActivities.length}</strong> aktivitas
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setCurrentPageNum((prev) => Math.max(1, prev - 1))}
-              disabled={currentPageNum === 1}
-              className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Sebelumnya
-            </button>
-            <span className="px-2 py-1 font-semibold text-slate-800">
-              Hal {currentPageNum} dari {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() => setCurrentPageNum((prev) => Math.min(totalPages, prev + 1))}
-              disabled={currentPageNum === totalPages}
-              className="px-2.5 py-1 border border-slate-200 hover:bg-white rounded text-slate-700 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Selanjutnya
-            </button>
-          </div>
-        </div>
       </div>
+
+      {/* Pagination Bar */}
+      <TablePagination
+        currentPage={currentPageNum}
+        totalItems={filteredActivities.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPageNum}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize)
+          setCurrentPageNum(1)
+        }}
+      />
     </div>
   )
 }

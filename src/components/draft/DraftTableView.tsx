@@ -136,8 +136,8 @@ export const DraftTableView: React.FC<DraftTableViewProps> = ({
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-block px-3 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#15803D] text-xs font-semibold">
-                          Skor SEO: {item.seoScore}/100
+                        <span className="text-xs font-semibold text-slate-800">
+                          {item.seoScore}/100
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-slate-700 font-medium">

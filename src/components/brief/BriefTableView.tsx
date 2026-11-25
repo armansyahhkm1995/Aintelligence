@@ -132,21 +132,14 @@ export const BriefTableView: React.FC<BriefTableViewProps> = ({
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-block px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#1D4ED8] text-xs font-medium">
+                        <span className="text-xs font-medium text-slate-800">
                           {item.mainKeyword}
                         </span>
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="flex flex-col gap-1 items-start">
-                          {item.supportingKeywords.map((kw, i) => (
-                            <span
-                              key={i}
-                              className="px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 text-[11px] bg-slate-50"
-                            >
-                              {kw}
-                            </span>
-                          ))}
-                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          {item.supportingKeywords.join(', ')}
+                        </p>
                       </td>
 
                       {/* Kolom Status Proses */}
