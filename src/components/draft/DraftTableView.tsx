@@ -183,14 +183,9 @@ export const DraftTableView: React.FC<DraftTableViewProps> = ({
                         {item.processStatus !== 'selesai' ? (
                           <span className="text-slate-400 font-normal italic">-</span>
                         ) : item.editor !== '-' ? (
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">
-                              {item.editor.charAt(0)}
-                            </span>
-                            <span className="text-slate-800 font-medium text-xs">
-                              {item.editor}
-                            </span>
-                          </div>
+                          <span className="text-slate-800 font-medium text-xs">
+                            {item.editor}
+                          </span>
                         ) : (
                           <span className="text-slate-400 font-medium">-</span>
                         )}

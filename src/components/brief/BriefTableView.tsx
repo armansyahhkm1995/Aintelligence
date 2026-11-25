@@ -181,12 +181,9 @@ export const BriefTableView: React.FC<BriefTableViewProps> = ({
                         {item.processStatus !== 'selesai' ? (
                           <span className="text-slate-400 font-normal italic">-</span>
                         ) : item.editor !== '-' ? (
-                          <div className="flex items-center gap-1.5 font-medium text-slate-800">
-                            <div className="w-5 h-5 rounded-full bg-blue-100 text-[#1866EF] font-bold text-[10px] flex items-center justify-center shrink-0">
-                              {item.editor.charAt(0)}
-                            </div>
-                            <span className="truncate max-w-[120px]">{item.editor}</span>
-                          </div>
+                          <span className="font-medium text-slate-800 text-xs">
+                            {item.editor}
+                          </span>
                         ) : (
                           <span className="text-slate-400 font-normal italic">-</span>
                         )}
