@@ -14,6 +14,7 @@ const PAGE_NAMES: Record<AppPage, string> = {
   users: 'Manajemen Pengguna',
   auditlog: 'Audit Log',
   konfigurasi: 'Konfigurasi Token LLM',
+  toast_doc: 'Katalog & Dokumentasi Toast Notifikasi',
 }
 
 export const Header: React.FC = () => {

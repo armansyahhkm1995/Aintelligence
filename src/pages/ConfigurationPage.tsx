@@ -4,11 +4,13 @@ import {
   Sparkles,
   AlertOctagon,
   CheckCircle2,
+  Bell,
+  ArrowRight,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 
 export const ConfigurationPage: React.FC = () => {
-  const { isTokenExhausted, toggleTokenExhausted } = useApp()
+  const { isTokenExhausted, toggleTokenExhausted, setCurrentPage } = useApp()
 
   return (
     <div className="space-y-6">
@@ -131,6 +133,31 @@ export const ConfigurationPage: React.FC = () => {
               <span>Simulasikan Token Habis</span>
             </>
           )}
+        </button>
+      </div>
+
+      {/* 4. Panel Dokumentasi & Katalog Toast Notifikasi */}
+      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-slate-900">Dokumentasi Toast Notifikasi Sistem</span>
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-[#1866EF] border border-blue-200">
+              Developer Tool
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
+            Daftar lengkap seluruh notifikasi toast (Success, Warning, Error) untuk semua modul dan skenario edge case. Dilengkapi tombol pengujian langsung dan cuplikan kode implementasi untuk tim pengembang.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setCurrentPage('toast_doc')}
+          className="px-4 py-2.5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs shrink-0"
+        >
+          <Bell className="w-3.5 h-3.5" />
+          <span>Lihat Daftar Toast</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>

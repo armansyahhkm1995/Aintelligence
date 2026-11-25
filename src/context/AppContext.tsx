@@ -36,6 +36,7 @@ export type AppPage =
   | 'auditlog'
   | 'konfigurasi'
   | 'users'
+  | 'toast_doc'
 
 interface AppContextType {
   // Navigation & Page State

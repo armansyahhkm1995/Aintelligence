@@ -13,6 +13,7 @@ import { AuditLogPage } from '../../pages/AuditLogPage'
 import { ConfigurationPage } from '../../pages/ConfigurationPage'
 import { KeywordGapPage } from '../../pages/KeywordGapPage'
 import { UsersPage } from '../../pages/UsersPage'
+import { ToastDocPage } from '../../pages/ToastDocPage'
 import { LoginPage } from '../../pages/LoginPage'
 import { ErrorBoundary } from '../common/ErrorBoundary'
 
@@ -73,6 +74,8 @@ export const AppLayout: React.FC = () => {
         return <ConfigurationPage />
       case 'users':
         return <UsersPage />
+      case 'toast_doc':
+        return <ToastDocPage />
       default:
         return <DashboardPage />
     }
