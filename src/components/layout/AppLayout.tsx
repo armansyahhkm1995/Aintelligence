@@ -14,6 +14,7 @@ import { ConfigurationPage } from '../../pages/ConfigurationPage'
 import { KeywordGapPage } from '../../pages/KeywordGapPage'
 import { UsersPage } from '../../pages/UsersPage'
 import { ToastDocPage } from '../../pages/ToastDocPage'
+import { ErrorEmptyDocPage } from '../../pages/ErrorEmptyDocPage'
 import { LoginPage } from '../../pages/LoginPage'
 import { ErrorBoundary } from '../common/ErrorBoundary'
 
@@ -76,6 +77,8 @@ export const AppLayout: React.FC = () => {
         return <UsersPage />
       case 'toast_doc':
         return <ToastDocPage />
+      case 'error_empty_doc':
+        return <ErrorEmptyDocPage />
       default:
         return <DashboardPage />
     }

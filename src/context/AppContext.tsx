@@ -37,6 +37,7 @@ export type AppPage =
   | 'konfigurasi'
   | 'users'
   | 'toast_doc'
+  | 'error_empty_doc'
 
 interface AppContextType {
   // Navigation & Page State

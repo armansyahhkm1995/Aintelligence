@@ -5,6 +5,7 @@ import {
   AlertOctagon,
   CheckCircle2,
   Bell,
+  AlertTriangle,
   ArrowRight,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
@@ -146,7 +147,7 @@ export const ConfigurationPage: React.FC = () => {
             </span>
           </div>
           <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
-            Daftar lengkap seluruh notifikasi toast (Success, Warning, Error) untuk semua modul dan skenario edge case. Dilengkapi tombol pengujian langsung dan cuplikan kode implementasi untuk tim pengembang.
+            Daftar lengkap seluruh notifikasi toast (Success, Warning, Error) untuk semua modul dan skenario edge case. Dilengkapi tombol pengujian langsung secara real-time di layar.
           </p>
         </div>
 
@@ -157,6 +158,31 @@ export const ConfigurationPage: React.FC = () => {
         >
           <Bell className="w-3.5 h-3.5" />
           <span>Lihat Daftar Toast</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* 5. Panel Dokumentasi Error & Empty State */}
+      <div className="bg-white border border-[#DBEAFE] rounded-xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-slate-900">Dokumentasi Error & Empty State Sistem</span>
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+              Developer Tool
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
+            Spesifikasi visual dan interaktif untuk seluruh Error Page sistem (401, 403, 404, 500) serta variasi Empty State pada tabel dan modul. Dilengkapi pratinjau tampilan antarmuka dan panduan aksi bagi tim pengembang.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setCurrentPage('error_empty_doc')}
+          className="px-4 py-2.5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs shrink-0"
+        >
+          <AlertTriangle className="w-3.5 h-3.5" />
+          <span>Lihat Daftar Error & Empty Page</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

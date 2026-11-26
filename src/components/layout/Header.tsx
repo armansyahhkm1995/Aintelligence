@@ -15,6 +15,7 @@ const PAGE_NAMES: Record<AppPage, string> = {
   auditlog: 'Audit Log',
   konfigurasi: 'Konfigurasi Token LLM',
   toast_doc: 'Katalog & Dokumentasi Toast Notifikasi',
+  error_empty_doc: 'Katalog & Dokumentasi Error & Empty Page',
 }
 
 export const Header: React.FC = () => {
