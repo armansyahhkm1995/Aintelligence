@@ -3,7 +3,6 @@ import {
   GripVertical,
   ChevronDown,
   Trash2,
-  BookOpen,
   X,
   RefreshCw,
   ShieldCheck,
@@ -84,7 +83,7 @@ export const BukuGayaTab: React.FC = () => {
     setIsConfirmModalOpen(false)
     showSuccess(
       'Buku Gaya Diperbarui',
-      'Sebanyak 12 arahan artikel berstatus draf berhasil disinkronkan, dan 48 arahan artikel tidak diubah karena sudah disetujui.'
+      'Sebanyak 12 arahan artikel yang belum disetujui berhasil disinkronkan, dan 48 arahan artikel tidak diubah karena sudah disetujui.'
     )
   }
 
@@ -266,16 +265,9 @@ export const BukuGayaTab: React.FC = () => {
           <div className="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center justify-center">
-                  <BookOpen className="w-4 h-4" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-slate-900">
-                    Konfirmasi Pembaruan Buku Gaya
-                  </h2>
-                </div>
-              </div>
+              <h2 className="text-base font-bold text-slate-900">
+                Konfirmasi Pembaruan Buku Gaya
+              </h2>
               <button
                 type="button"
                 onClick={() => setIsConfirmModalOpen(false)}
@@ -293,17 +285,17 @@ export const BukuGayaTab: React.FC = () => {
 
               {/* Impact Breakdown Cards */}
               <div className="space-y-2.5">
-                {/* 1. Draf / Menunggu Disinkronkan */}
+                {/* 1. Belum Disetujui (Disinkronkan) */}
                 <div className="flex items-start gap-3 p-3.5 rounded-lg border border-blue-100 bg-blue-50/60 text-xs">
                   <div className="w-6 h-6 rounded-md bg-blue-100 text-[#1866EF] flex items-center justify-center shrink-0 mt-0.5">
                     <RefreshCw className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <div className="font-bold text-slate-900">
-                      12 Arahan Artikel (Draf / Menunggu)
+                      12 arahan artikel yang belum disetujui
                     </div>
                     <div className="text-slate-500 mt-0.5 leading-relaxed">
-                      Kerangka naskah akan disinkronkan mengikuti struktur heading terbaru.
+                      <span className="text-[#1866EF] font-semibold">arahan artikel yang belum disetujui</span> akan berubah sesuai perubahan struktur baku heading artikel terbaru.
                     </div>
                   </div>
                 </div>
@@ -315,7 +307,7 @@ export const BukuGayaTab: React.FC = () => {
                   </div>
                   <div>
                     <div className="font-bold text-slate-900">
-                      48 Arahan Artikel (Sudah Disetujui)
+                      48 arahan artikel yg sudah disetujui
                     </div>
                     <div className="text-slate-500 mt-0.5 leading-relaxed">
                       Format naskah <strong className="text-emerald-800 font-semibold">tidak diubah</strong> demi menjaga integritas redaksi dan konsistensi draf berita yang sedang berjalan.

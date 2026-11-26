@@ -355,7 +355,7 @@ const TOAST_CATALOG: ToastDocItem[] = [
     module: 'Pengaturan Redaksi',
     type: 'success',
     title: 'Buku Gaya Diperbarui',
-    message: 'Sebanyak 12 arahan artikel berstatus draf berhasil disinkronkan, dan 48 arahan artikel tidak diubah karena sudah disetujui.',
+    message: 'Sebanyak 12 arahan artikel yang belum disetujui berhasil disinkronkan, dan 48 arahan artikel tidak diubah karena sudah disetujui.',
     condition: 'Admin mengonfirmasi modal pembaruan struktur heading Buku Gaya editorial.',
   },
   {
