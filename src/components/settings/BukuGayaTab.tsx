@@ -4,8 +4,6 @@ import {
   ChevronDown,
   Trash2,
   X,
-  RefreshCw,
-  ShieldCheck,
 } from 'lucide-react'
 import { useToast } from '../../context/ToastContext'
 
@@ -286,32 +284,22 @@ export const BukuGayaTab: React.FC = () => {
               {/* Impact Breakdown Cards */}
               <div className="space-y-2.5">
                 {/* 1. Belum Disetujui (Disinkronkan) */}
-                <div className="flex items-start gap-3 p-3.5 rounded-lg border border-blue-100 bg-blue-50/60 text-xs">
-                  <div className="w-6 h-6 rounded-md bg-blue-100 text-[#1866EF] flex items-center justify-center shrink-0 mt-0.5">
-                    <RefreshCw className="w-3.5 h-3.5" />
+                <div className="p-3.5 rounded-lg border border-blue-100 bg-blue-50/60 text-xs">
+                  <div className="font-bold text-slate-900">
+                    12 arahan artikel yang belum disetujui
                   </div>
-                  <div>
-                    <div className="font-bold text-slate-900">
-                      12 arahan artikel yang belum disetujui
-                    </div>
-                    <div className="text-slate-500 mt-0.5 leading-relaxed">
-                      <span className="text-[#1866EF] font-semibold">arahan artikel yang belum disetujui</span> akan berubah sesuai perubahan struktur baku heading artikel terbaru.
-                    </div>
+                  <div className="text-slate-500 mt-0.5 leading-relaxed">
+                    <span className="text-[#1866EF] font-semibold">arahan artikel yang belum disetujui</span> akan berubah sesuai perubahan struktur baku heading artikel terbaru.
                   </div>
                 </div>
 
                 {/* 2. Sudah Disetujui (Dilindungi) */}
-                <div className="flex items-start gap-3 p-3.5 rounded-lg border border-emerald-100 bg-emerald-50/60 text-xs">
-                  <div className="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
-                    <ShieldCheck className="w-3.5 h-3.5" />
+                <div className="p-3.5 rounded-lg border border-emerald-100 bg-emerald-50/60 text-xs">
+                  <div className="font-bold text-slate-900">
+                    48 arahan artikel yg sudah disetujui
                   </div>
-                  <div>
-                    <div className="font-bold text-slate-900">
-                      48 arahan artikel yg sudah disetujui
-                    </div>
-                    <div className="text-slate-500 mt-0.5 leading-relaxed">
-                      Format naskah <strong className="text-emerald-800 font-semibold">tidak diubah</strong> demi menjaga integritas redaksi dan konsistensi draf berita yang sedang berjalan.
-                    </div>
+                  <div className="text-slate-500 mt-0.5 leading-relaxed">
+                    Format naskah <strong className="text-emerald-800 font-semibold">tidak diubah</strong> demi menjaga integritas redaksi dan konsistensi draf berita yang sedang berjalan.
                   </div>
                 </div>
               </div>
