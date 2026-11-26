@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import writeXlsxFile, { type SheetData, type Row } from 'write-excel-file/browser'
 import { useToast } from '../context/ToastContext'
 import { useApp } from '../context/AppContext'
 import { MilestoneStepper } from '../components/common/MilestoneStepper'
@@ -137,203 +138,267 @@ export const ImporCSVPage: React.FC = () => {
     }, 600)
   }
 
-  const handleDownloadErrorLog = (fileName: string) => {
+  const handleDownloadErrorLog = async (fileName: string) => {
     const cleanFileName = fileName.replace(/\.[^/.]+$/, '')
 
-    const escapeXml = (str: string) =>
-      str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&apos;')
-
-    const errorRows = [
+    const HEADER_ROW: Row = [
       {
-        row: '14',
-        keyword: '',
-        column: 'Keyword',
-        value: '',
-        category: 'Baris Kosong',
-        message: 'Kolom kata kunci kosong atau tidak memiliki karakter valid.',
-        action: 'Hapus baris kosong ini dari berkas.',
+        value: 'Nomor Baris',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'center' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '28',
-        keyword: 'cek bansos kemensos 2026',
-        column: 'Search Volume',
-        value: 'N/A',
-        category: 'Format Numerik Tidak Valid',
-        message: "Nilai volume pencarian 'N/A' bukan format angka integer valid.",
-        action: "Ganti nilai 'N/A' dengan estimasi volume angka bulat atau 0.",
+        value: 'Kata Kunci Terbaca',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'left' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '45',
-        keyword: 'syarat perpanjang sim online',
-        column: 'Keyword Difficulty',
-        value: '145',
-        category: 'Di Luar Batas Indeks',
-        message: 'Skor Keyword Difficulty (145) melebihi batas maksimal valid 100.',
-        action: 'Koreksi nilai KD agar berada dalam rentang skor 0-100.',
+        value: 'Kolom Bermasalah',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'left' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '67',
-        keyword: 'pendaftaran cpns 2026 kemenkumham',
-        column: 'Keyword',
-        value: 'pendaftaran cpns 2026 kemenkumham',
-        category: 'Karakter Rusak (Encoding)',
-        message: 'Ditemukan karakter byte korup (bukan standar encoding UTF-8).',
-        action: "Simpan ulang berkas dengan pilihan encoding 'CSV UTF-8 (Comma delimited)'.",
+        value: 'Nilai Mentah',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'center' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '82',
-        keyword: 'jadwal imsakiyah ramadhan rri',
-        column: 'Search Intent',
-        value: 'UNKNOWN_XYZ',
-        category: 'Format Intent Tidak Valid',
-        message: "Intent 'UNKNOWN_XYZ' tidak sesuai standar SEO baku.",
-        action: 'Gunakan intent standar: Informational, Navigational, Commercial, atau Transactional.',
+        value: 'Kategori Galat',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'center' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '103',
-        keyword: 'cara daftar bansos kemensos online 2027',
-        column: 'Keyword',
-        value: 'cara daftar bansos kemensos online 2027',
-        category: 'Duplikasi Internal Berkas',
-        message: 'Kata kunci duplikat ditemukan lebih dari 1 kali di berkas yang sama (sebelumnya di Baris 8).',
-        action: 'Hapus baris duplikat agar kata kunci tidak diproses ganda.',
+        value: 'Pesan Galat & Alasan Penolakan',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'left' as const,
+        alignVertical: 'center' as const,
       },
       {
-        row: '119',
-        keyword: 'bantuan subsidi upah pekerja',
-        column: 'Cost Per Click (CPC)',
-        value: '$1.25',
-        category: 'Format Simbol Mata Uang',
-        message: "Nilai CPC mengandung simbol '$', parser memerlukan format desimal angka murni.",
-        action: "Hapus simbol mata uang dan gunakan format desimal angka murni (contoh: 1.25).",
-      },
-      {
-        row: '142',
-        keyword: '',
-        column: 'Volume',
-        value: '',
-        category: 'Baris Tanpa Data',
-        message: 'Seluruh kolom pada baris ini kosong / whitespace.',
-        action: 'Hapus baris kosong di akhir berkas.',
+        value: 'Rekomendasi Tindakan',
+        fontWeight: 'bold' as const,
+        textColor: '#FFFFFF',
+        backgroundColor: '#1866EF',
+        align: 'left' as const,
+        alignVertical: 'center' as const,
       },
     ]
 
-    // Format dokumen SpreadsheetML XML Microsoft Excel (.xls) resmi dengan styling rapi
-    const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
- xmlns:o="urn:schemas-microsoft-com:office:office"
- xmlns:x="urn:schemas-microsoft-com:office:excel"
- xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
- xmlns:html="http://www.w3.org/TR/REC-html40">
- <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-  <Title>Log Galat Impor CSV Semrush</Title>
-  <Subject>Log Galat Validasi Redaksi RRI Digital</Subject>
-  <Author>RRI Digital Aitelligence</Author>
- </DocumentProperties>
- <Styles>
-  <Style ss:ID="Default" ss:Name="Normal">
-   <Alignment ss:Vertical="Center"/>
-   <Borders/>
-   <Font ss:FontName="Calibri" ss:Size="11" ss:Color="#1E293B"/>
-   <Interior/>
-   <NumberFormat/>
-   <Protection/>
-  </Style>
-  <Style ss:ID="Header">
-   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
-   <Borders>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#94A3B8"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#94A3B8"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#94A3B8"/>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#94A3B8"/>
-   </Borders>
-   <Font ss:FontName="Calibri" ss:Size="11" ss:Bold="1" ss:Color="#FFFFFF"/>
-   <Interior ss:Color="#1866EF" ss:Pattern="Solid"/>
-  </Style>
-  <Style ss:ID="Cell">
-   <Alignment ss:Vertical="Center"/>
-   <Borders>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-   </Borders>
-   <Font ss:FontName="Calibri" ss:Size="10" ss:Color="#334155"/>
-  </Style>
-  <Style ss:ID="CellCenter">
-   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-   <Borders>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
-   </Borders>
-   <Font ss:FontName="Calibri" ss:Size="10" ss:Color="#334155"/>
-  </Style>
-  <Style ss:ID="CellBadge">
-   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-   <Borders>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
-   </Borders>
-   <Font ss:FontName="Calibri" ss:Size="10" ss:Bold="1" ss:Color="#B91C1C"/>
-   <Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/>
-  </Style>
- </Styles>
- <Worksheet ss:Name="Log Galat Impor">
-  <Table>
-   <Column ss:Width="80"/>
-   <Column ss:Width="190"/>
-   <Column ss:Width="140"/>
-   <Column ss:Width="110"/>
-   <Column ss:Width="160"/>
-   <Column ss:Width="300"/>
-   <Column ss:Width="280"/>
-   <Row ss:Height="26">
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Nomor Baris</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Kata Kunci Terbaca</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Kolom Bermasalah</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Nilai Mentah</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Kategori Galat</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Pesan Galat &amp; Alasan Penolakan</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Rekomendasi Tindakan</Data></Cell>
-   </Row>
-${errorRows
-  .map(
-    (r) => `   <Row ss:Height="22">
-    <Cell ss:StyleID="CellCenter"><Data ss:Type="Number">${r.row}</Data></Cell>
-    <Cell ss:StyleID="Cell"><Data ss:Type="String">${escapeXml(r.keyword)}</Data></Cell>
-    <Cell ss:StyleID="Cell"><Data ss:Type="String">${escapeXml(r.column)}</Data></Cell>
-    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${escapeXml(r.value)}</Data></Cell>
-    <Cell ss:StyleID="CellBadge"><Data ss:Type="String">${escapeXml(r.category)}</Data></Cell>
-    <Cell ss:StyleID="Cell"><Data ss:Type="String">${escapeXml(r.message)}</Data></Cell>
-    <Cell ss:StyleID="Cell"><Data ss:Type="String">${escapeXml(r.action)}</Data></Cell>
-   </Row>`
-  )
-  .join('\n')}
-  </Table>
- </Worksheet>
-</Workbook>`
+    const errorDataRows: Row[] = [
+      [
+        { value: 14, type: Number, align: 'center' as const },
+        { value: '(Baris Kosong)', type: String, fontStyle: 'italic' as const, textColor: '#94A3B8' },
+        { value: 'Keyword', type: String },
+        { value: '-', type: String, align: 'center' as const, textColor: '#94A3B8' },
+        {
+          value: 'Baris Kosong',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: 'Kolom kata kunci kosong atau tidak memiliki karakter valid.',
+          type: String,
+          wrap: true,
+        },
+        { value: 'Hapus baris kosong ini dari berkas.', type: String, wrap: true },
+      ],
+      [
+        { value: 28, type: Number, align: 'center' as const },
+        { value: 'cek bansos kemensos 2026', type: String },
+        { value: 'Search Volume', type: String },
+        { value: 'N/A', type: String, align: 'center' as const, textColor: '#B91C1C' },
+        {
+          value: 'Format Numerik Tidak Valid',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: "Nilai volume pencarian 'N/A' bukan format angka integer valid.",
+          type: String,
+          wrap: true,
+        },
+        {
+          value: "Ganti nilai 'N/A' dengan estimasi volume angka bulat atau 0.",
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 45, type: Number, align: 'center' as const },
+        { value: 'syarat perpanjang sim online', type: String },
+        { value: 'Keyword Difficulty', type: String },
+        { value: '145', type: String, align: 'center' as const, textColor: '#B91C1C' },
+        {
+          value: 'Di Luar Batas Indeks',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: 'Skor Keyword Difficulty (145) melebihi batas maksimal valid 100.',
+          type: String,
+          wrap: true,
+        },
+        {
+          value: 'Koreksi nilai KD agar berada dalam rentang skor 0-100.',
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 67, type: Number, align: 'center' as const },
+        { value: 'pendaftaran cpns 2026 kemenkumham', type: String },
+        { value: 'Keyword', type: String },
+        { value: 'pendaftaran cpns 2026 kemenkumham', type: String },
+        {
+          value: 'Karakter Rusak (Encoding)',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: 'Ditemukan karakter byte korup (bukan standar encoding UTF-8).',
+          type: String,
+          wrap: true,
+        },
+        {
+          value: "Simpan ulang berkas dengan pilihan encoding 'CSV UTF-8 (Comma delimited)'.",
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 82, type: Number, align: 'center' as const },
+        { value: 'jadwal imsakiyah ramadhan rri', type: String },
+        { value: 'Search Intent', type: String },
+        { value: 'UNKNOWN_XYZ', type: String, align: 'center' as const, textColor: '#B91C1C' },
+        {
+          value: 'Format Intent Tidak Valid',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: "Intent 'UNKNOWN_XYZ' tidak sesuai standar SEO baku.",
+          type: String,
+          wrap: true,
+        },
+        {
+          value:
+            'Gunakan intent standar: Informational, Navigational, Commercial, atau Transactional.',
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 103, type: Number, align: 'center' as const },
+        { value: 'cara daftar bansos kemensos online 2027', type: String },
+        { value: 'Keyword', type: String },
+        { value: 'cara daftar bansos kemensos online 2027', type: String },
+        {
+          value: 'Duplikasi Internal Berkas',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value:
+            'Kata kunci duplikat ditemukan lebih dari 1 kali di berkas yang sama (sebelumnya di Baris 8).',
+          type: String,
+          wrap: true,
+        },
+        {
+          value: 'Hapus baris duplikat agar kata kunci tidak diproses ganda.',
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 119, type: Number, align: 'center' as const },
+        { value: 'bantuan subsidi upah pekerja', type: String },
+        { value: 'Cost Per Click (CPC)', type: String },
+        { value: '$1.25', type: String, align: 'center' as const, textColor: '#B91C1C' },
+        {
+          value: 'Format Simbol Mata Uang',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value:
+            "Nilai CPC mengandung simbol '$', parser memerlukan format desimal angka murni.",
+          type: String,
+          wrap: true,
+        },
+        {
+          value:
+            'Hapus simbol mata uang dan gunakan format desimal angka murni (contoh: 1.25).',
+          type: String,
+          wrap: true,
+        },
+      ],
+      [
+        { value: 142, type: Number, align: 'center' as const },
+        { value: '(Baris Kosong)', type: String, fontStyle: 'italic' as const, textColor: '#94A3B8' },
+        { value: 'Volume', type: String },
+        { value: '-', type: String, align: 'center' as const, textColor: '#94A3B8' },
+        {
+          value: 'Baris Tanpa Data',
+          type: String,
+          textColor: '#B91C1C',
+          backgroundColor: '#FEF2F2',
+          align: 'center' as const,
+        },
+        {
+          value: 'Seluruh kolom pada baris ini kosong / whitespace.',
+          type: String,
+          wrap: true,
+        },
+        { value: 'Hapus baris kosong di akhir berkas.', type: String, wrap: true },
+      ],
+    ]
 
-    const blob = new Blob([xmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `log_galat_${cleanFileName}.xls`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    const data: SheetData = [HEADER_ROW, ...errorDataRows]
 
-    showSuccess('Log Galat', `Log galat untuk ${fileName} berhasil diunduh dalam format Excel (.xls).`)
+    await writeXlsxFile(data, {
+      sheet: 'Log Galat Impor',
+      columns: [
+        { width: 14 },
+        { width: 34 },
+        { width: 22 },
+        { width: 16 },
+        { width: 26 },
+        { width: 50 },
+        { width: 44 },
+      ],
+    }).toFile(`log_galat_${cleanFileName}.xlsx`)
+
+    showSuccess('Log Galat', `Log galat untuk ${fileName} berhasil diunduh dalam format Excel (.xlsx).`)
   }
 
   return (
