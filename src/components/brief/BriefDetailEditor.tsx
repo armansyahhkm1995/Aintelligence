@@ -775,18 +775,20 @@ export const BriefDetailEditor: React.FC<BriefDetailEditorProps> = ({
               {isApproved ? 'Arahan Artikel Telah Disetujui' : 'Setujui Arahan Artikel'}
             </button>
 
-            {/* Simpan Perubahan Button (Secondary button untuk menyimpan hasil edit inline) */}
-            <button
-              type="button"
-              onClick={() => {
-                showSuccess('Perubahan Tersimpan', 'Seluruh suntingan inline pada naskah arahan artikel berhasil disimpan.')
-              }}
-              className="w-full h-10 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
-              title="Simpan suntingan inline arahan artikel"
-            >
-              <Save className="w-3.5 h-3.5 text-slate-500" />
-              <span>Simpan Perubahan</span>
-            </button>
+            {/* Simpan Perubahan Button (Secondary button untuk menyimpan hasil edit inline) - Hanya muncul jika belum disetujui */}
+            {!isApproved && (
+              <button
+                type="button"
+                onClick={() => {
+                  showSuccess('Perubahan Tersimpan', 'Seluruh suntingan inline pada naskah arahan artikel berhasil disimpan.')
+                }}
+                className="w-full h-10 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                title="Simpan suntingan inline arahan artikel"
+              >
+                <Save className="w-3.5 h-3.5 text-slate-500" />
+                <span>Simpan Perubahan</span>
+              </button>
+            )}
 
             {/* Lepas Arahan Button */}
             {!isApproved && (
