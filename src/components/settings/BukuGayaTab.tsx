@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
-import { GripVertical, ChevronDown, Trash2 } from 'lucide-react'
+import {
+  GripVertical,
+  ChevronDown,
+  Trash2,
+  BookOpen,
+  X,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react'
 import { useToast } from '../../context/ToastContext'
 
 interface HeadingTemplate {
@@ -25,6 +33,7 @@ export const BukuGayaTab: React.FC = () => {
   ])
   const [openLevelDropdownId, setOpenLevelDropdownId] = useState<string | null>(null)
   const [draggedHeadingIdx, setDraggedHeadingIdx] = useState<number | null>(null)
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false)
 
   const handleDragStart = (idx: number) => {
     if (headingTemplates[idx]?.level === 'H1') return
@@ -71,8 +80,12 @@ export const BukuGayaTab: React.FC = () => {
     setOpenLevelDropdownId(null)
   }
 
-  const handleSaveBukuGaya = () => {
-    showSuccess('Pengaturan Redaksi', 'Perubahan Buku Gaya berhasil disimpan.')
+  const handleConfirmSave = () => {
+    setIsConfirmModalOpen(false)
+    showSuccess(
+      'Buku Gaya Diperbarui',
+      'Sebanyak 12 arahan artikel berstatus draf berhasil disinkronkan, dan 48 arahan artikel tidak diubah karena sudah disetujui.'
+    )
   }
 
   return (
@@ -240,12 +253,97 @@ export const BukuGayaTab: React.FC = () => {
         </button>
         <button
           type="button"
-          onClick={handleSaveBukuGaya}
+          onClick={() => setIsConfirmModalOpen(true)}
           className="h-[36px] px-5 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-[6px] transition-colors shadow-xs cursor-pointer"
         >
           Simpan Perubahan
         </button>
       </div>
+
+      {/* Modal Konfirmasi Pembaruan Buku Gaya */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1866EF] border border-blue-200 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    Konfirmasi Pembaruan Buku Gaya
+                  </h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Pembaruan struktur heading baku akan diterapkan sebagai acuan template otomatis pada naskah yang sedang diproses. Berikut adalah rincian dampak perubahan:
+              </p>
+
+              {/* Impact Breakdown Cards */}
+              <div className="space-y-2.5">
+                {/* 1. Draf / Menunggu Disinkronkan */}
+                <div className="flex items-start gap-3 p-3.5 rounded-lg border border-blue-100 bg-blue-50/60 text-xs">
+                  <div className="w-6 h-6 rounded-md bg-blue-100 text-[#1866EF] flex items-center justify-center shrink-0 mt-0.5">
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900">
+                      12 Arahan Artikel (Draf / Menunggu)
+                    </div>
+                    <div className="text-slate-500 mt-0.5 leading-relaxed">
+                      Kerangka naskah akan disinkronkan mengikuti struktur heading terbaru.
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Sudah Disetujui (Dilindungi) */}
+                <div className="flex items-start gap-3 p-3.5 rounded-lg border border-emerald-100 bg-emerald-50/60 text-xs">
+                  <div className="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900">
+                      48 Arahan Artikel (Sudah Disetujui)
+                    </div>
+                    <div className="text-slate-500 mt-0.5 leading-relaxed">
+                      Format naskah <strong className="text-emerald-800 font-semibold">tidak diubah</strong> demi menjaga integritas redaksi dan konsistensi draf berita yang sedang berjalan.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium rounded-lg transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmSave}
+                  className="px-4 py-2 bg-[#1866EF] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs cursor-pointer"
+                >
+                  Terapkan Pembaruan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
