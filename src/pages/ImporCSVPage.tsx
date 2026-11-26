@@ -138,14 +138,109 @@ export const ImporCSVPage: React.FC = () => {
   }
 
   const handleDownloadErrorLog = (fileName: string) => {
-    const text = `Log Galat Impor CSV: ${fileName}\nTanggal: 3 Jul 2026, 09:31\nBaris 2: Kolom volume 'Teks: N/A' bukan format numerik.`
-    const blob = new Blob([text], { type: 'text/plain' })
+    const cleanFileName = fileName.replace(/\.[^/.]+$/, '')
+    const csvRows = [
+      [
+        'Nomor Baris',
+        'Kata Kunci Terbaca',
+        'Kolom Bermasalah',
+        'Nilai Mentah',
+        'Kategori Galat',
+        'Pesan Galat & Alasan Penolakan',
+        'Rekomendasi Tindakan',
+      ],
+      [
+        '14',
+        '',
+        'Keyword',
+        '',
+        'Baris Kosong',
+        'Kolom kata kunci kosong atau tidak memiliki karakter valid.',
+        'Hapus baris kosong ini dari berkas CSV.',
+      ],
+      [
+        '28',
+        'cek bansos kemensos 2026',
+        'Search Volume',
+        'N/A',
+        'Format Numerik Tidak Valid',
+        "Nilai volume pencarian 'N/A' bukan angka/integer.",
+        "Ganti nilai 'N/A' dengan estimasi volume angka atau 0.",
+      ],
+      [
+        '45',
+        'syarat perpanjang sim online',
+        'Keyword Difficulty',
+        '145',
+        'Di Luar Batas Indeks',
+        'Skor Keyword Difficulty (145) melebihi batas maksimal 100.',
+        'Koreksi nilai KD agar berada di rentang 0-100.',
+      ],
+      [
+        '67',
+        'pendaftaran cpns 2026 kemenkumham',
+        'Keyword',
+        'pendaftaran cpns 2026 kemenkumham',
+        'Karakter Rusak (Encoding)',
+        'Ditemukan karakter byte korup (bukan UTF-8).',
+        "Simpan ulang berkas CSV dengan format 'CSV UTF-8 (Comma delimited)'.",
+      ],
+      [
+        '82',
+        'jadwal imsakiyah ramadhan rri',
+        'Search Intent',
+        'UNKNOWN_XYZ',
+        'Format Intent Tidak Valid',
+        "Intent 'UNKNOWN_XYZ' tidak dikenali sistem.",
+        'Gunakan intent standar: Informational, Navigational, Commercial, Transactional.',
+      ],
+      [
+        '103',
+        'cara daftar bansos kemensos online 2027',
+        'Keyword',
+        'cara daftar bansos kemensos online 2027',
+        'Duplikasi Internal Berkas',
+        'Kata kunci duplikat ditemukan lebih dari 1 kali di berkas yang sama (sebelumnya di Baris 8).',
+        'Hapus baris duplikat agar kata kunci tidak diproses ganda.',
+      ],
+      [
+        '119',
+        'bantuan subsidi upah pekerja',
+        'Cost Per Click (CPC)',
+        '$1.25',
+        'Format Simbol Mata Uang',
+        "Nilai CPC mengandung simbol '$', parser memerlukan format desimal angka murni.",
+        "Hapus simbol mata uang dan gunakan format desimal (contoh: '1.25').",
+      ],
+      [
+        '142',
+        '',
+        'Volume',
+        '',
+        'Baris Tanpa Data',
+        'Seluruh kolom pada baris ini kosong / whitespace.',
+        'Hapus baris kosong di akhir berkas CSV.',
+      ],
+    ]
+
+    // Format sebagai RFC 4180 CSV dengan UTF-8 BOM untuk kompatibilitas sempurna dengan Microsoft Excel & Google Sheets
+    const csvContent =
+      '\uFEFF' +
+      csvRows
+        .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(','))
+        .join('\r\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `error-log-${fileName}.txt`
+    a.download = `log_galat_${cleanFileName}.csv`
+    document.body.appendChild(a)
     a.click()
-    showSuccess('Log Galat', `Log galat untuk ${fileName} berhasil diunduh.`)
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+
+    showSuccess('Log Galat', `Log galat untuk ${fileName} berhasil diunduh dalam format .csv.`)
   }
 
   return (
